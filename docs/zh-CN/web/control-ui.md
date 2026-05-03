@@ -1,0 +1,484 @@
+---
+source_url: https://docs.openclaw.ai/zh-CN/web/control-ui
+title: "\u63a7\u5236\u754c\u9762 - OpenClaw"
+---
+
+[跳转到主要内容](https://docs.openclaw.ai/zh-CN/web/control-ui#content-area)
+
+[OpenClaw home page![light logo](https://mintcdn.com/clawdhub/dpADRo8IUoiDztzJ/assets/pixel-lobster.svg?fit=max&auto=format&n=dpADRo8IUoiDztzJ&q=85&s=8fdf719fb6d3eaad7c65231385bf28e5)![dark logo](https://mintcdn.com/clawdhub/dpADRo8IUoiDztzJ/assets/pixel-lobster.svg?fit=max&auto=format&n=dpADRo8IUoiDztzJ&q=85&s=8fdf719fb6d3eaad7c65231385bf28e5)](https://docs.openclaw.ai/zh-CN)
+
+![CN](https://d3gk2c5xim1je2.cloudfront.net/flags/CN.svg)
+
+简体中文
+
+搜索...
+
+Ctrl K
+
+搜索...
+
+Navigation
+
+Web 界面
+
+控制界面
+
+[快速开始](https://docs.openclaw.ai/zh-CN) [安装](https://docs.openclaw.ai/zh-CN/install) [消息渠道](https://docs.openclaw.ai/zh-CN/channels) [代理](https://docs.openclaw.ai/zh-CN/pi) [工具](https://docs.openclaw.ai/zh-CN/tools) [模型](https://docs.openclaw.ai/zh-CN/providers) [平台](https://docs.openclaw.ai/zh-CN/platforms) [网关与运维](https://docs.openclaw.ai/zh-CN/gateway) [参考](https://docs.openclaw.ai/zh-CN/cli) [帮助](https://docs.openclaw.ai/zh-CN/help)
+
+在此页面
+
+- [快速打开（本地）](https://docs.openclaw.ai/zh-CN/web/control-ui#%E5%BF%AB%E9%80%9F%E6%89%93%E5%BC%80%EF%BC%88%E6%9C%AC%E5%9C%B0%EF%BC%89)
+- [设备配对（首次连接）](https://docs.openclaw.ai/zh-CN/web/control-ui#%E8%AE%BE%E5%A4%87%E9%85%8D%E5%AF%B9%EF%BC%88%E9%A6%96%E6%AC%A1%E8%BF%9E%E6%8E%A5%EF%BC%89)
+- [个人身份（浏览器本地）](https://docs.openclaw.ai/zh-CN/web/control-ui#%E4%B8%AA%E4%BA%BA%E8%BA%AB%E4%BB%BD%EF%BC%88%E6%B5%8F%E8%A7%88%E5%99%A8%E6%9C%AC%E5%9C%B0%EF%BC%89)
+- [运行时配置端点](https://docs.openclaw.ai/zh-CN/web/control-ui#%E8%BF%90%E8%A1%8C%E6%97%B6%E9%85%8D%E7%BD%AE%E7%AB%AF%E7%82%B9)
+- [语言支持](https://docs.openclaw.ai/zh-CN/web/control-ui#%E8%AF%AD%E8%A8%80%E6%94%AF%E6%8C%81)
+- [外观主题](https://docs.openclaw.ai/zh-CN/web/control-ui#%E5%A4%96%E8%A7%82%E4%B8%BB%E9%A2%98)
+- [它现在能做什么](https://docs.openclaw.ai/zh-CN/web/control-ui#%E5%AE%83%E7%8E%B0%E5%9C%A8%E8%83%BD%E5%81%9A%E4%BB%80%E4%B9%88)
+- [Chat 行为](https://docs.openclaw.ai/zh-CN/web/control-ui#chat-%E8%A1%8C%E4%B8%BA)
+- [PWA 安装和 Web 推送](https://docs.openclaw.ai/zh-CN/web/control-ui#pwa-%E5%AE%89%E8%A3%85%E5%92%8C-web-%E6%8E%A8%E9%80%81)
+- [托管嵌入](https://docs.openclaw.ai/zh-CN/web/control-ui#%E6%89%98%E7%AE%A1%E5%B5%8C%E5%85%A5)
+- [聊天消息宽度](https://docs.openclaw.ai/zh-CN/web/control-ui#%E8%81%8A%E5%A4%A9%E6%B6%88%E6%81%AF%E5%AE%BD%E5%BA%A6)
+- [Tailnet 访问（推荐）](https://docs.openclaw.ai/zh-CN/web/control-ui#tailnet-%E8%AE%BF%E9%97%AE%EF%BC%88%E6%8E%A8%E8%8D%90%EF%BC%89)
+- [不安全 HTTP](https://docs.openclaw.ai/zh-CN/web/control-ui#%E4%B8%8D%E5%AE%89%E5%85%A8-http)
+- [内容安全策略](https://docs.openclaw.ai/zh-CN/web/control-ui#%E5%86%85%E5%AE%B9%E5%AE%89%E5%85%A8%E7%AD%96%E7%95%A5)
+- [头像路由认证](https://docs.openclaw.ai/zh-CN/web/control-ui#%E5%A4%B4%E5%83%8F%E8%B7%AF%E7%94%B1%E8%AE%A4%E8%AF%81)
+- [构建界面](https://docs.openclaw.ai/zh-CN/web/control-ui#%E6%9E%84%E5%BB%BA%E7%95%8C%E9%9D%A2)
+- [调试/测试：开发服务器 \+ 远程 Gateway 网关](https://docs.openclaw.ai/zh-CN/web/control-ui#%E8%B0%83%E8%AF%95%2F%E6%B5%8B%E8%AF%95%EF%BC%9A%E5%BC%80%E5%8F%91%E6%9C%8D%E5%8A%A1%E5%99%A8-%2B-%E8%BF%9C%E7%A8%8B-gateway-%E7%BD%91%E5%85%B3)
+- [相关内容](https://docs.openclaw.ai/zh-CN/web/control-ui#%E7%9B%B8%E5%85%B3%E5%86%85%E5%AE%B9)
+
+> ## Documentation Index
+>
+> Fetch the complete documentation index at: [https://docs.openclaw.ai/llms.txt](https://docs.openclaw.ai/llms.txt)
+>
+> Use this file to discover all available pages before exploring further.
+
+Control UI 是由 Gateway 网关提供服务的小型 **Vite + Lit** 单页应用：
+
+- 默认：`http://<host>:18789/`
+- 可选前缀：设置 `gateway.controlUi.basePath`（例如 `/openclaw`）
+
+它会在同一端口上 **直接连接到 Gateway 网关 WebSocket**。
+
+## [​](https://docs.openclaw.ai/zh-CN/web/control-ui\#%E5%BF%AB%E9%80%9F%E6%89%93%E5%BC%80%EF%BC%88%E6%9C%AC%E5%9C%B0%EF%BC%89)  快速打开（本地）
+
+如果 Gateway 网关在同一台计算机上运行，请打开：
+
+- [http://127.0.0.1:18789/](http://127.0.0.1:18789/)（或 [http://localhost:18789/](http://localhost:18789/)）
+
+如果页面加载失败，请先启动 Gateway 网关：`openclaw gateway`。身份验证会在 WebSocket 握手期间通过以下方式提供：
+
+- `connect.params.auth.token`
+- `connect.params.auth.password`
+- 当 `gateway.auth.allowTailscale: true` 时使用 Tailscale Serve 身份标头
+- 当 `gateway.auth.mode: "trusted-proxy"` 时使用可信代理身份标头
+
+仪表盘设置面板会为当前浏览器标签页会话和所选 Gateway 网关 URL 保留一个令牌；密码不会持久保存。新手引导通常会在首次连接时为共享密钥身份验证生成 Gateway 网关令牌，但当 `gateway.auth.mode` 为 `"password"` 时，密码身份验证也可使用。
+
+## [​](https://docs.openclaw.ai/zh-CN/web/control-ui\#%E8%AE%BE%E5%A4%87%E9%85%8D%E5%AF%B9%EF%BC%88%E9%A6%96%E6%AC%A1%E8%BF%9E%E6%8E%A5%EF%BC%89)  设备配对（首次连接）
+
+当你从新的浏览器或设备连接到 Control UI 时，Gateway 网关通常会要求进行 **一次性配对批准**。这是一项安全措施，用于防止未经授权的访问。**你会看到：**“disconnected (1008): pairing required”
+
+1
+
+[Navigate to header](https://docs.openclaw.ai/zh-CN/web/control-ui#)
+
+List pending requests
+
+```
+openclaw devices list
+```
+
+2
+
+[Navigate to header](https://docs.openclaw.ai/zh-CN/web/control-ui#)
+
+Approve by request ID
+
+```
+openclaw devices approve <requestId>
+```
+
+如果浏览器使用已更改的身份验证详情（角色/范围/公钥）重试配对，之前待处理的请求会被取代，并创建新的 `requestId`。批准前请重新运行 `openclaw devices list`。如果浏览器已经配对，而你将它从读取访问权限改为写入/管理员访问权限，这会被视为一次批准升级，而不是静默重新连接。OpenClaw 会保留旧批准的活跃状态，阻止权限更宽的重新连接，并要求你明确批准新的范围集合。批准后，设备会被记住，不会再要求重新批准，除非你使用 `openclaw devices revoke --device <id> --role <role>` 撤销它。有关令牌轮换和撤销，请参阅 [设备 CLI](https://docs.openclaw.ai/zh-CN/cli/devices)。
+
+- 直接的 local loopback 浏览器连接（`127.0.0.1` / `localhost`）会自动批准。
+- 当 `gateway.auth.allowTailscale: true`、Tailscale 身份验证通过，并且浏览器呈现其设备身份时，Tailscale Serve 可以为 Control UI 操作员会话跳过配对往返。
+- 直接 Tailnet 绑定、LAN 浏览器连接，以及没有设备身份的浏览器配置文件仍需要显式批准。
+- 每个浏览器配置文件都会生成唯一设备 ID，因此切换浏览器或清除浏览器数据需要重新配对。
+
+## [​](https://docs.openclaw.ai/zh-CN/web/control-ui\#%E4%B8%AA%E4%BA%BA%E8%BA%AB%E4%BB%BD%EF%BC%88%E6%B5%8F%E8%A7%88%E5%99%A8%E6%9C%AC%E5%9C%B0%EF%BC%89)  个人身份（浏览器本地）
+
+Control UI 支持按浏览器设置个人身份（显示名称和头像），并将其附加到外发消息，以便在共享会话中标明归属。它存储在浏览器存储中，作用域限定为当前浏览器配置文件，不会同步到其他设备，也不会在服务器端持久保存，除非是你实际发送消息时正常的转录作者身份元数据。清除站点数据或切换浏览器会将其重置为空。同样的浏览器本地模式也适用于助手头像覆盖。上传的助手头像只会在本地浏览器中覆盖 Gateway 网关解析出的身份，且绝不会通过 `config.patch` 往返传输。共享的 `ui.assistant.avatar` 配置字段仍可供非 UI 客户端直接写入该字段（例如脚本化 Gateway 网关或自定义仪表盘）。
+
+## [​](https://docs.openclaw.ai/zh-CN/web/control-ui\#%E8%BF%90%E8%A1%8C%E6%97%B6%E9%85%8D%E7%BD%AE%E7%AB%AF%E7%82%B9)  运行时配置端点
+
+Control UI 会从 `/__openclaw/control-ui-config.json` 获取其运行时设置。该端点与 HTTP 其余表面一样受同一 Gateway 网关身份验证保护：未经身份验证的浏览器无法获取它；成功获取需要已有有效的 Gateway 网关令牌/密码、Tailscale Serve 身份，或可信代理身份。
+
+## [​](https://docs.openclaw.ai/zh-CN/web/control-ui\#%E8%AF%AD%E8%A8%80%E6%94%AF%E6%8C%81)  语言支持
+
+Control UI 可以在首次加载时根据你的浏览器语言区域本地化自身。若要稍后覆盖它，请打开 **Overview -> Gateway Access -> Language**。语言区域选择器位于 Gateway Access 卡片中，而不是 Appearance 下。
+
+- 支持的语言区域：`en`、`zh-CN`、`zh-TW`、`pt-BR`、`de`、`es`、`ja-JP`、`ko`、`fr`、`ar`、`it`、`tr`、`uk`、`id`、`pl`、`th`、`vi`、`nl`、`fa`
+- 非英语翻译会在浏览器中懒加载。
+- 所选语言区域会保存在浏览器存储中，并在未来访问时复用。
+- 缺失的翻译键会回退到英语。
+
+文档翻译会为同一组非英语语言区域生成，但文档站点内置的 Mintlify 语言选择器受限于 Mintlify 接受的语言区域代码。泰语（`th`）和波斯语（`fa`）文档仍会在发布仓库中生成；在 Mintlify 支持这些代码之前，它们可能不会出现在该选择器中。
+
+## [​](https://docs.openclaw.ai/zh-CN/web/control-ui\#%E5%A4%96%E8%A7%82%E4%B8%BB%E9%A2%98)  外观主题
+
+Appearance 面板保留内置的 Claw、Knot 和 Dash 主题，以及一个浏览器本地 tweakcn 导入槽位。要导入主题，请打开 [tweakcn themes](https://tweakcn.com/themes)，选择或创建主题，点击 **Share**，然后将复制的主题链接粘贴到 Appearance。导入器也接受 `https://tweakcn.com/r/themes/<id>` 注册表 URL、类似 `https://tweakcn.com/editor/theme?theme=amethyst-haze` 的编辑器 URL、相对 `/themes/<id>` 路径、原始主题 ID，以及 `amethyst-haze` 等默认主题名称。导入的主题只存储在当前浏览器配置文件中。它们不会写入 Gateway 网关配置，也不会跨设备同步。替换导入的主题会更新唯一的本地槽位；如果当前选中了导入的主题，清除它会将活跃主题切回 Claw。
+
+## [​](https://docs.openclaw.ai/zh-CN/web/control-ui\#%E5%AE%83%E7%8E%B0%E5%9C%A8%E8%83%BD%E5%81%9A%E4%BB%80%E4%B9%88)  它现在能做什么
+
+Chat and Talk
+
+- 通过 Gateway 网关 WS 与模型聊天（`chat.history`、`chat.send`、`chat.abort`、`chat.inject`）。
+- 通过浏览器实时会话进行语音对话。OpenAI 使用直接 WebRTC，Google Live 通过 WebSocket 使用受限的一次性浏览器令牌，而仅后端的实时语音插件使用 Gateway 网关中继传输。中继会将提供商凭据保留在 Gateway 网关上，同时浏览器通过 `talk.realtime.relay*` RPC 流式传输麦克风 PCM，并通过 `chat.send` 将 `openclaw_agent_consult` 工具调用发送回更大的已配置 OpenClaw 模型。
+- 在 Chat 中流式传输工具调用 + 实时工具输出卡片（智能体事件）。
+
+Channels, instances, sessions, dreams
+
+- 渠道：内置渠道以及内置/外部插件渠道的状态、二维码登录和按渠道配置（`channels.status`、`web.login.*`、`config.patch`）。
+- 实例：在线列表 \+ 刷新（`system-presence`）。
+- 会话：列表 \+ 按会话设置模型/思考/快速/详细/跟踪/推理覆盖项（`sessions.list`、`sessions.patch`）。
+- Dreams：Dreaming 状态、启用/禁用开关，以及 Dream Diary 阅读器（`doctor.memory.status`、`doctor.memory.dreamDiary`、`config.patch`）。
+
+Cron, skills, nodes, exec approvals
+
+- Cron 作业：列出/添加/编辑/运行/启用/禁用 + 运行历史（`cron.*`）。
+- Skills：状态、启用/禁用、安装、API key 更新（`skills.*`）。
+- 节点：列表 \+ 能力（`node.list`）。
+- Exec 批准：编辑 Gateway 网关或节点 allowlist + `exec host=gateway/node` 的询问策略（`exec.approvals.*`）。
+
+Config
+
+- 查看/编辑 `~/.openclaw/openclaw.json`（`config.get`、`config.set`）。
+- 通过验证应用 \+ 重启（`config.apply`），并唤醒上一个活跃会话。
+- 写入包含 base-hash 保护，以防覆盖并发编辑。
+- 写入（`config.set`/`config.apply`/`config.patch`）会对提交的配置载荷中的引用预检活跃 SecretRef 解析；未解析的活跃已提交引用会在写入前被拒绝。
+- Schema + 表单渲染（`config.schema` / `config.schema.lookup`，包括字段 `title` / `description`、匹配的 UI 提示、直接子项摘要、嵌套对象/通配符/数组/组合节点上的文档元数据，以及可用时的插件 + 渠道 schema）；仅当快照具备安全的原始往返能力时，Raw JSON 编辑器才可用。
+- 如果快照无法安全地往返原始文本，Control UI 会强制使用 Form 模式，并为该快照禁用 Raw 模式。
+- Raw JSON 编辑器的 “Reset to saved” 会保留原始作者编辑的形态（格式、注释、`$include` 布局），而不是重新渲染扁平化快照，因此当快照可以安全往返时，外部编辑会在重置后保留下来。
+- 结构化 SecretRef 对象值会在表单文本输入中以只读方式呈现，以防意外发生对象到字符串的损坏。
+
+Debug, logs, update
+
+- 调试：状态/健康/模型快照 \+ 事件日志 \+ 手动 RPC 调用（`status`、`health`、`models.list`）。
+- 日志：带过滤/导出的 Gateway 网关文件日志实时 tail（`logs.tail`）。
+- 更新：运行包/git 更新 + 重启（`update.run`）并生成重启报告，然后在重新连接后轮询 `update.status`，以验证正在运行的 Gateway 网关版本。
+
+Cron jobs panel notes
+
+- 对于隔离作业，投递默认会发布摘要。如果你想要仅内部运行，可以切换为 none。
+- 选择 announce 时会显示渠道/目标字段。
+- Webhook 模式使用 `delivery.mode = "webhook"`，并将 `delivery.to` 设置为有效的 HTTP(S) webhook URL。
+- 对于主会话作业，webhook 和 none 投递模式可用。
+- 高级编辑控件包括运行后删除、清除智能体覆盖项、cron exact/stagger 选项、智能体模型/思考覆盖项，以及尽力投递开关。
+- 表单验证以内联方式显示字段级错误；无效值会禁用保存按钮，直到修正为止。
+- 设置 `cron.webhookToken` 可发送专用 bearer 令牌；如果省略，则 webhook 会在没有身份验证标头的情况下发送。
+- 已弃用的回退：存储的旧版作业如果带有 `notify: true`，在迁移前仍可使用 `cron.webhook`。
+
+## [​](https://docs.openclaw.ai/zh-CN/web/control-ui\#chat-%E8%A1%8C%E4%B8%BA)  Chat 行为
+
+发送和历史语义
+
+- `chat.send` 是 **非阻塞** 的：它会立即确认并返回 `{ runId, status: "started" }`，响应会通过 `chat` 事件流式传输。
+- 聊天上传接受图片和非视频文件。图片保留原生图片路径；其他文件会作为托管媒体存储，并在历史记录中显示为附件链接。
+- 使用同一个 `idempotencyKey` 重新发送时，运行中会返回 `{ status: "in_flight" }`，完成后会返回 `{ status: "ok" }`。
+- 为保证 UI 安全，`chat.history` 响应有大小限制。当转录条目过大时，Gateway 网关可能会截断长文本字段，省略较大的元数据块，并将超大的消息替换为占位符（`[chat.history omitted: message too large]`）。
+- 助手/生成的图片会作为托管媒体引用持久化，并通过经过身份验证的 Gateway 网关媒体 URL 返回，因此重新加载不依赖原始 base64 图片载荷继续保留在聊天历史响应中。
+- `chat.history` 还会从可见的助手文本中剥离仅用于显示的内联指令标签（例如 `[[reply_to_*]]` 和 `[[audio_as_voice]]`）、纯文本工具调用 XML 载荷（包括 `<tool_call>...</tool_call>`、`<function_call>...</function_call>`、`<tool_calls>...</tool_calls>`、`<function_calls>...</function_calls>` 以及被截断的工具调用块），以及泄漏的 ASCII/全角模型控制标记，并省略整个可见文本仅为精确静默标记 `NO_REPLY` / `no_reply` 的助手条目。
+- 在一次活跃发送和最终历史刷新期间，如果 `chat.history` 短暂返回较旧的快照，聊天视图会继续显示本地乐观的用户/助手消息；一旦 Gateway 网关历史追上，规范转录会替换这些本地消息。
+- `chat.inject` 会向会话转录追加一条助手注释，并广播一个 `chat` 事件，用于仅 UI 更新（无智能体运行，无渠道投递）。
+- 聊天标题栏的模型和思考选择器会通过 `sessions.patch` 立即修补活跃会话；它们是持久的会话覆盖项，不是仅限单轮的发送选项。
+- 在 Control UI 中输入 `/new` 会创建并切换到与 New Chat 相同的全新仪表盘会话。输入 `/reset` 会保留 Gateway 网关针对当前会话的显式原地重置。
+- 聊天模型选择器会请求 Gateway 网关配置的模型视图。如果存在 `agents.defaults.models`，该允许列表会驱动选择器。否则，选择器会显示显式的 `models.providers.*.models` 条目以及具有可用身份验证的提供商。完整目录仍可通过调试用 `models.list` RPC 并使用 `view: "all"` 获取。
+- 当新的 Gateway 网关会话使用情况报告显示上下文压力较高时，聊天撰写区域会显示一条上下文提示，并且在推荐的压缩级别下显示一个 compact 按钮，用于运行常规会话压缩路径。过期的 token 快照会被隐藏，直到 Gateway 网关再次报告新的使用情况。
+
+Talk 模式（浏览器实时）
+
+Talk 模式使用已注册的实时语音提供商。可使用 `talk.provider: "openai"` 加 `talk.providers.openai.apiKey` 配置 OpenAI，或使用 `talk.provider: "google"` 加 `talk.providers.google.apiKey` 配置 Google；Voice Call 实时提供商配置仍可作为回退复用。浏览器永远不会收到标准提供商 API key。OpenAI 会收到一个用于 WebRTC 的临时 Realtime 客户端密钥。Google Live 会收到一个一次性、受约束的 Live API 身份验证 token，用于浏览器 WebSocket 会话，指令和工具声明由 Gateway 网关锁定到该 token 中。仅公开后端实时桥接的提供商会通过 Gateway 网关中继传输运行，因此凭证和供应商 socket 会保留在服务器端，而浏览器音频通过经过身份验证的 Gateway 网关 RPC 传输。Realtime 会话提示由 Gateway 网关组装；`talk.realtime.session` 不接受调用方提供的指令覆盖。在 Chat 撰写器中，Talk 控件是麦克风听写按钮旁边的波形按钮。Talk 启动时，撰写器状态行会显示 `Connecting Talk...`，音频连接后显示 `Talk live`，或当实时工具调用正在通过 `chat.send` 咨询已配置的较大模型时显示 `Asking OpenClaw...`。维护者实时冒烟测试：`OPENAI_API_KEY=... GEMINI_API_KEY=... node --import tsx scripts/dev/realtime-talk-live-smoke.ts` 会验证 OpenAI 浏览器 WebRTC SDP 交换、Google Live 受约束 token 浏览器 WebSocket 设置，以及带有假麦克风媒体的 Gateway 网关中继浏览器适配器。该命令只打印提供商状态，不记录密钥。
+
+停止和中止
+
+- 点击 **Stop**（调用 `chat.abort`）。
+- 当运行处于活跃状态时，普通后续消息会排队。点击排队消息上的 **Steer**，可将该后续消息注入正在运行的轮次。
+- 输入 `/stop`（或独立的中止短语，如 `stop`、`stop action`、`stop run`、`stop openclaw`、`please stop`）可带外中止。
+- `chat.abort` 支持 `{ sessionKey }`（无 `runId`），用于中止该会话的所有活跃运行。
+
+中止部分内容保留
+
+- 当运行被中止时，部分助手文本仍可显示在 UI 中。
+- 当存在已缓冲输出时，Gateway 网关会将已中止的部分助手文本持久化到转录历史中。
+- 持久化条目包含中止元数据，因此转录消费者可以区分中止部分内容和正常完成输出。
+
+## [​](https://docs.openclaw.ai/zh-CN/web/control-ui\#pwa-%E5%AE%89%E8%A3%85%E5%92%8C-web-%E6%8E%A8%E9%80%81)  PWA 安装和 Web 推送
+
+Control UI 随附一个 `manifest.webmanifest` 和一个 service worker，因此现代浏览器可以将其安装为独立 PWA。Web Push 让 Gateway 网关即使在标签页或浏览器窗口未打开时，也能通过通知唤醒已安装的 PWA。
+
+| 表面 | 作用 |
+| --- | --- |
+| `ui/public/manifest.webmanifest` | PWA 清单。浏览器在可访问后会提供 “Install app”。 |
+| `ui/public/sw.js` | 处理 `push` 事件和通知点击的 service worker。 |
+| `push/vapid-keys.json`（位于 OpenClaw 状态目录下） | 自动生成的 VAPID 密钥对，用于签名 Web Push 载荷。 |
+| `push/web-push-subscriptions.json` | 持久化的浏览器订阅端点。 |
+
+当你想固定密钥（用于多主机部署、密钥轮换或测试）时，可通过 Gateway 网关进程上的环境变量覆盖 VAPID 密钥对：
+
+- `OPENCLAW_VAPID_PUBLIC_KEY`
+- `OPENCLAW_VAPID_PRIVATE_KEY`
+- `OPENCLAW_VAPID_SUBJECT`（默认值为 `mailto:openclaw@localhost`）
+
+Control UI 使用这些受范围限制的 Gateway 网关方法来注册和测试浏览器订阅：
+
+- `push.web.vapidPublicKey` — 获取活跃的 VAPID 公钥。
+- `push.web.subscribe` — 注册一个 `endpoint` 以及 `keys.p256dh`/`keys.auth`。
+- `push.web.unsubscribe` — 移除已注册的端点。
+- `push.web.test` — 向调用方的订阅发送测试通知。
+
+Web Push 独立于 iOS APNS 中继路径（关于中继支持的推送，请参阅 [配置](https://docs.openclaw.ai/zh-CN/gateway/configuration)）以及现有的 `push.test` 方法，后者面向原生移动端配对。
+
+## [​](https://docs.openclaw.ai/zh-CN/web/control-ui\#%E6%89%98%E7%AE%A1%E5%B5%8C%E5%85%A5)  托管嵌入
+
+助手消息可以使用 `[embed ...]` 短代码内联渲染托管的 Web 内容。iframe 沙箱策略由 `gateway.controlUi.embedSandbox` 控制：
+
+- strict
+
+- scripts（默认）
+
+- trusted
+
+
+禁用托管嵌入中的脚本执行。
+
+允许交互式嵌入，同时保持源隔离；这是默认值，通常足以满足自包含的浏览器游戏/小组件。
+
+在 `allow-scripts` 之上添加 `allow-same-origin`，用于有意需要更高权限的同站点文档。
+
+示例：
+
+```
+{
+  gateway: {
+    controlUi: {
+      embedSandbox: "scripts",
+    },
+  },
+}
+```
+
+仅在嵌入文档确实需要同源行为时才使用 `trusted`。对于大多数智能体生成的游戏和交互式画布，`scripts` 是更安全的选择。
+
+默认情况下，绝对外部 `http(s)` 嵌入 URL 仍会被阻止。如果你明确希望 `[embed url="https://..."]` 加载第三方页面，请设置 `gateway.controlUi.allowExternalEmbedUrls: true`。
+
+## [​](https://docs.openclaw.ai/zh-CN/web/control-ui\#%E8%81%8A%E5%A4%A9%E6%B6%88%E6%81%AF%E5%AE%BD%E5%BA%A6)  聊天消息宽度
+
+分组聊天消息使用可读性较好的默认最大宽度。宽屏显示器部署可以通过设置 `gateway.controlUi.chatMessageMaxWidth` 覆盖该值，而无需修补内置 CSS：
+
+```
+{
+  gateway: {
+    controlUi: {
+      chatMessageMaxWidth: "min(1280px, 82%)",
+    },
+  },
+}
+```
+
+该值会在到达浏览器前进行验证。支持的值包括普通长度和百分比，例如 `960px` 或 `82%`，以及受约束的 `min(...)`、`max(...)`、`clamp(...)`、`calc(...)` 和 `fit-content(...)` 宽度表达式。
+
+## [​](https://docs.openclaw.ai/zh-CN/web/control-ui\#tailnet-%E8%AE%BF%E9%97%AE%EF%BC%88%E6%8E%A8%E8%8D%90%EF%BC%89)  Tailnet 访问（推荐）
+
+- 集成 Tailscale Serve（首选）
+
+- 绑定到 tailnet + token
+
+
+将 Gateway 网关保留在 loopback 上，并让 Tailscale Serve 通过 HTTPS 代理它：
+
+```
+openclaw gateway --tailscale serve
+```
+
+打开：
+
+- `https://<magicdns>/`（或你配置的 `gateway.controlUi.basePath`）
+
+默认情况下，当 `gateway.auth.allowTailscale` 为 `true` 时，Control UI/WebSocket Serve 请求可以通过 Tailscale 身份标头（`tailscale-user-login`）进行身份验证。OpenClaw 会通过 `tailscale whois` 解析 `x-forwarded-for` 地址并将其与该标头匹配来验证身份，并且仅在请求命中 loopback 且带有 Tailscale 的 `x-forwarded-*` 标头时接受这些身份。对于带有浏览器设备身份的 Control UI 操作者会话，这个经过验证的 Serve 路径还会跳过设备配对往返；无设备浏览器和节点角色连接仍会遵循正常设备检查。如果你想即使对于 Serve 流量也要求显式共享密钥凭证，请设置 `gateway.auth.allowTailscale: false`。然后使用 `gateway.auth.mode: "token"` 或 `"password"`。对于该异步 Serve 身份路径，同一客户端 IP 和身份验证范围的失败身份验证尝试会在写入速率限制之前串行化。因此，来自同一浏览器的并发错误重试可能会在第二个请求上显示 `retry later`，而不是两个普通不匹配并行竞争。
+
+无 token 的 Serve 身份验证假设 gateway 主机可信。如果不受信任的本地代码可能在该主机上运行，请要求 token/password 身份验证。
+
+```
+openclaw gateway --bind tailnet --token "$(openssl rand -hex 32)"
+```
+
+然后打开：
+
+- `http://<tailscale-ip>:18789/`（或你配置的 `gateway.controlUi.basePath`）
+
+将匹配的共享密钥粘贴到 UI 设置中（作为 `connect.params.auth.token` 或 `connect.params.auth.password` 发送）。
+
+## [​](https://docs.openclaw.ai/zh-CN/web/control-ui\#%E4%B8%8D%E5%AE%89%E5%85%A8-http)  不安全 HTTP
+
+如果你通过普通 HTTP（`http://<lan-ip>` 或 `http://<tailscale-ip>`）打开仪表盘，浏览器会在 **非安全上下文** 中运行并阻止 WebCrypto。默认情况下，OpenClaw 会 **阻止** 没有设备身份的 Control UI 连接。已记录的例外：
+
+- 使用 `gateway.controlUi.allowInsecureAuth=true` 的仅 localhost 不安全 HTTP 兼容性
+- 通过 `gateway.auth.mode: "trusted-proxy"` 成功进行的操作者 Control UI 身份验证
+- 应急用 `gateway.controlUi.dangerouslyDisableDeviceAuth=true`
+
+\*\*推荐修复：\*\*使用 HTTPS（Tailscale Serve）或在本地打开 UI：
+
+- `https://<magicdns>/`（Serve）
+- `http://127.0.0.1:18789/`（在 gateway 主机上）
+
+不安全认证开关行为
+
+```
+{
+  gateway: {
+    controlUi: { allowInsecureAuth: true },
+    bind: "tailnet",
+    auth: { mode: "token", token: "replace-me" },
+  },
+}
+```
+
+`allowInsecureAuth` 只是一个本地兼容性开关：
+
+- 它允许 localhost 控制界面会话在非安全 HTTP 上下文中无需设备身份即可继续。
+- 它不会绕过配对检查。
+- 它不会放宽远程（非 localhost）设备身份要求。
+
+仅限紧急破例
+
+```
+{
+  gateway: {
+    controlUi: { dangerouslyDisableDeviceAuth: true },
+    bind: "tailnet",
+    auth: { mode: "token", token: "replace-me" },
+  },
+}
+```
+
+`dangerouslyDisableDeviceAuth` 会禁用控制界面的设备身份检查，这是严重的安全降级。紧急使用后请尽快恢复。
+
+可信代理说明
+
+- 成功的可信代理认证可以允许 **操作员** 控制界面会话无需设备身份进入。
+- 这 **不** 会扩展到节点角色的控制界面会话。
+- 同主机 loopback 反向代理仍然无法满足可信代理认证；请参阅 [可信代理认证](https://docs.openclaw.ai/zh-CN/gateway/trusted-proxy-auth)。
+
+请参阅 [Tailscale](https://docs.openclaw.ai/zh-CN/gateway/tailscale) 获取 HTTPS 设置指南。
+
+## [​](https://docs.openclaw.ai/zh-CN/web/control-ui\#%E5%86%85%E5%AE%B9%E5%AE%89%E5%85%A8%E7%AD%96%E7%95%A5)  内容安全策略
+
+控制界面附带严格的 `img-src` 策略：只允许 **同源** 资产、`data:` URL，以及本地生成的 `blob:` URL。远程 `http(s)` 和协议相对图片 URL 会被浏览器拒绝，并且不会发起网络获取。实际含义如下：
+
+- 通过相对路径提供的头像和图片（例如 `/avatars/<id>`）仍会渲染，包括界面获取并转换为本地 `blob:` URL 的已认证头像路由。
+- 内联 `data:image/...` URL 仍会渲染（对协议内载荷很有用）。
+- 控制界面创建的本地 `blob:` URL 仍会渲染。
+- 渠道元数据发出的远程头像 URL 会在控制界面的头像辅助逻辑中被剥离，并替换为内置徽标/徽章，因此被攻陷或恶意的渠道无法强制操作员浏览器获取任意远程图片。
+
+你无需更改任何内容即可获得此行为——它始终启用且不可配置。
+
+## [​](https://docs.openclaw.ai/zh-CN/web/control-ui\#%E5%A4%B4%E5%83%8F%E8%B7%AF%E7%94%B1%E8%AE%A4%E8%AF%81)  头像路由认证
+
+配置 Gateway 网关认证后，控制界面头像端点需要与 API 其余部分相同的 Gateway 网关令牌：
+
+- `GET /avatar/<agentId>` 只向已认证调用方返回头像图片。`GET /avatar/<agentId>?meta=1` 按相同规则返回头像元数据。
+- 对任一路由的未认证请求都会被拒绝（与同级 assistant-media 路由一致）。这可以防止头像路由在其他方面受保护的主机上泄露智能体身份。
+- 控制界面本身在获取头像时会将 Gateway 网关令牌作为 bearer 头转发，并使用已认证的 blob URL，因此图片仍会在仪表板中渲染。
+
+如果你禁用 Gateway 网关认证（不建议在共享主机上这样做），头像路由也会与 Gateway 网关其余部分一样变为未认证。
+
+## [​](https://docs.openclaw.ai/zh-CN/web/control-ui\#%E6%9E%84%E5%BB%BA%E7%95%8C%E9%9D%A2)  构建界面
+
+Gateway 网关从 `dist/control-ui` 提供静态文件。使用以下命令构建：
+
+```
+pnpm ui:build
+```
+
+可选的绝对基路径（当你需要固定资产 URL 时）：
+
+```
+OPENCLAW_CONTROL_UI_BASE_PATH=/openclaw/ pnpm ui:build
+```
+
+用于本地开发（单独的开发服务器）：
+
+```
+pnpm ui:dev
+```
+
+然后将界面指向你的 Gateway 网关 WS URL（例如 `ws://127.0.0.1:18789`）。
+
+## [​](https://docs.openclaw.ai/zh-CN/web/control-ui\#%E8%B0%83%E8%AF%95/%E6%B5%8B%E8%AF%95%EF%BC%9A%E5%BC%80%E5%8F%91%E6%9C%8D%E5%8A%A1%E5%99%A8-+-%E8%BF%9C%E7%A8%8B-gateway-%E7%BD%91%E5%85%B3)  调试/测试：开发服务器 \+ 远程 Gateway 网关
+
+控制界面是静态文件；WebSocket 目标可配置，并且可以不同于 HTTP 来源。当你想在本地使用 Vite 开发服务器，而 Gateway 网关在其他地方运行时，这很有用。
+
+1
+
+[Navigate to header](https://docs.openclaw.ai/zh-CN/web/control-ui#)
+
+启动界面开发服务器
+
+```
+pnpm ui:dev
+```
+
+2
+
+[Navigate to header](https://docs.openclaw.ai/zh-CN/web/control-ui#)
+
+使用 gatewayUrl 打开
+
+```
+http://localhost:5173/?gatewayUrl=ws%3A%2F%2F<gateway-host>%3A18789
+```
+
+可选的一次性认证（如有需要）：
+
+```
+http://localhost:5173/?gatewayUrl=wss%3A%2F%2F<gateway-host>%3A18789#token=<gateway-token>
+```
+
+说明
+
+- `gatewayUrl` 会在加载后存储到 localStorage 中，并从 URL 中移除。
+- 如果你通过 `gatewayUrl` 传递完整的 `ws://` 或 `wss://` 端点，请对 `gatewayUrl` 值进行 URL 编码，以便浏览器正确解析查询字符串。
+- 应尽可能通过 URL 片段（`#token=...`）传递 `token`。片段不会发送到服务器，这可以避免请求日志和 Referer 泄露。旧版 `?token=` 查询参数仍会为兼容性导入一次，但仅作为回退，并会在启动引导后立即剥离。
+- `password` 只保留在内存中。
+- 设置 `gatewayUrl` 后，界面不会回退到配置或环境凭据。请显式提供 `token`（或 `password`）。缺少显式凭据会导致错误。
+- 当 Gateway 网关位于 TLS 后方时（Tailscale Serve、HTTPS 代理等），请使用 `wss://`。
+- `gatewayUrl` 只在顶层窗口中被接受（不能嵌入），以防止点击劫持。
+- 非 loopback 控制界面部署必须显式设置 `gateway.controlUi.allowedOrigins`（完整来源）。这包括远程开发设置。
+- Gateway 网关启动可能会根据有效运行时绑定和端口注入本地来源，例如 `http://localhost:<port>` 和 `http://127.0.0.1:<port>`，但远程浏览器来源仍需要显式条目。
+- 除非用于严格受控的本地测试，否则不要使用 `gateway.controlUi.allowedOrigins: ["*"]`。它表示允许任何浏览器来源，而不是“匹配我正在使用的任意主机”。
+- `gateway.controlUi.dangerouslyAllowHostHeaderOriginFallback=true` 会启用 Host 头来源回退模式，但这是危险的安全模式。
+
+示例：
+
+```
+{
+  gateway: {
+    controlUi: {
+      allowedOrigins: ["http://localhost:5173"],
+    },
+  },
+}
+```
+
+远程访问设置详情： [远程访问](https://docs.openclaw.ai/zh-CN/gateway/remote)。
+
+## [​](https://docs.openclaw.ai/zh-CN/web/control-ui\#%E7%9B%B8%E5%85%B3%E5%86%85%E5%AE%B9)  相关内容
+
+- [仪表板](https://docs.openclaw.ai/zh-CN/web/dashboard) — Gateway 网关仪表板
+- [健康检查](https://docs.openclaw.ai/zh-CN/gateway/health) — Gateway 网关健康监控
+- [TUI](https://docs.openclaw.ai/zh-CN/web/tui) — 终端用户界面
+- [WebChat](https://docs.openclaw.ai/zh-CN/web/webchat) — 基于浏览器的聊天界面
+
+[Web](https://docs.openclaw.ai/zh-CN/web) [仪表板](https://docs.openclaw.ai/zh-CN/web/dashboard)
+
+Ctrl+I

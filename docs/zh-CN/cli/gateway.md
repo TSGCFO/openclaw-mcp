@@ -1,0 +1,832 @@
+---
+source_url: https://docs.openclaw.ai/zh-CN/cli/gateway
+title: "Gateway \u7f51\u5173 - OpenClaw"
+---
+
+[跳转到主要内容](https://docs.openclaw.ai/zh-CN/cli/gateway#content-area)
+
+[OpenClaw home page![light logo](https://mintcdn.com/clawdhub/dpADRo8IUoiDztzJ/assets/pixel-lobster.svg?fit=max&auto=format&n=dpADRo8IUoiDztzJ&q=85&s=8fdf719fb6d3eaad7c65231385bf28e5)![dark logo](https://mintcdn.com/clawdhub/dpADRo8IUoiDztzJ/assets/pixel-lobster.svg?fit=max&auto=format&n=dpADRo8IUoiDztzJ&q=85&s=8fdf719fb6d3eaad7c65231385bf28e5)](https://docs.openclaw.ai/zh-CN)
+
+![CN](https://d3gk2c5xim1je2.cloudfront.net/flags/CN.svg)
+
+简体中文
+
+搜索...
+
+Ctrl K
+
+搜索...
+
+Navigation
+
+CLI 命令
+
+Gateway 网关
+
+[快速开始](https://docs.openclaw.ai/zh-CN) [安装](https://docs.openclaw.ai/zh-CN/install) [消息渠道](https://docs.openclaw.ai/zh-CN/channels) [代理](https://docs.openclaw.ai/zh-CN/pi) [工具](https://docs.openclaw.ai/zh-CN/tools) [模型](https://docs.openclaw.ai/zh-CN/providers) [平台](https://docs.openclaw.ai/zh-CN/platforms) [网关与运维](https://docs.openclaw.ai/zh-CN/gateway) [参考](https://docs.openclaw.ai/zh-CN/cli) [帮助](https://docs.openclaw.ai/zh-CN/help)
+
+在此页面
+
+- [运行 Gateway 网关](https://docs.openclaw.ai/zh-CN/cli/gateway#%E8%BF%90%E8%A1%8C-gateway-%E7%BD%91%E5%85%B3)
+- [选项](https://docs.openclaw.ai/zh-CN/cli/gateway#%E9%80%89%E9%A1%B9)
+- [启动性能分析](https://docs.openclaw.ai/zh-CN/cli/gateway#%E5%90%AF%E5%8A%A8%E6%80%A7%E8%83%BD%E5%88%86%E6%9E%90)
+- [查询正在运行的 Gateway 网关](https://docs.openclaw.ai/zh-CN/cli/gateway#%E6%9F%A5%E8%AF%A2%E6%AD%A3%E5%9C%A8%E8%BF%90%E8%A1%8C%E7%9A%84-gateway-%E7%BD%91%E5%85%B3)
+- [gateway health](https://docs.openclaw.ai/zh-CN/cli/gateway#gateway-health)
+- [gateway usage-cost](https://docs.openclaw.ai/zh-CN/cli/gateway#gateway-usage-cost)
+- [gateway stability](https://docs.openclaw.ai/zh-CN/cli/gateway#gateway-stability)
+- [gateway diagnostics export](https://docs.openclaw.ai/zh-CN/cli/gateway#gateway-diagnostics-export)
+- [gateway status](https://docs.openclaw.ai/zh-CN/cli/gateway#gateway-status)
+- [gateway probe](https://docs.openclaw.ai/zh-CN/cli/gateway#gateway-probe)
+- [通过 SSH 访问远程目标（Mac 应用一致性）](https://docs.openclaw.ai/zh-CN/cli/gateway#%E9%80%9A%E8%BF%87-ssh-%E8%AE%BF%E9%97%AE%E8%BF%9C%E7%A8%8B%E7%9B%AE%E6%A0%87%EF%BC%88mac-%E5%BA%94%E7%94%A8%E4%B8%80%E8%87%B4%E6%80%A7%EF%BC%89)
+- [gateway call <method>](https://docs.openclaw.ai/zh-CN/cli/gateway#gateway-call-%3Cmethod%3E)
+- [管理 Gateway 网关服务](https://docs.openclaw.ai/zh-CN/cli/gateway#%E7%AE%A1%E7%90%86-gateway-%E7%BD%91%E5%85%B3%E6%9C%8D%E5%8A%A1)
+- [使用包装器安装](https://docs.openclaw.ai/zh-CN/cli/gateway#%E4%BD%BF%E7%94%A8%E5%8C%85%E8%A3%85%E5%99%A8%E5%AE%89%E8%A3%85)
+- [发现 Gateway 网关（Bonjour）](https://docs.openclaw.ai/zh-CN/cli/gateway#%E5%8F%91%E7%8E%B0-gateway-%E7%BD%91%E5%85%B3%EF%BC%88bonjour%EF%BC%89)
+- [gateway discover](https://docs.openclaw.ai/zh-CN/cli/gateway#gateway-discover)
+- [相关](https://docs.openclaw.ai/zh-CN/cli/gateway#%E7%9B%B8%E5%85%B3)
+
+> ## Documentation Index
+>
+> Fetch the complete documentation index at: [https://docs.openclaw.ai/llms.txt](https://docs.openclaw.ai/llms.txt)
+>
+> Use this file to discover all available pages before exploring further.
+
+Gateway 网关是 OpenClaw 的 WebSocket 服务器（渠道、节点、会话、钩子）。本页中的子命令位于 `openclaw gateway …` 下。
+
+[**Bonjour 设备发现** \\
+\\
+本地 mDNS + 广域 DNS-SD 设置。](https://docs.openclaw.ai/zh-CN/gateway/bonjour)
+
+[**设备发现概览** \\
+\\
+OpenClaw 如何公布和查找 Gateway 网关。](https://docs.openclaw.ai/zh-CN/gateway/discovery)
+
+[**配置** \\
+\\
+顶层 Gateway 网关配置键。](https://docs.openclaw.ai/zh-CN/gateway/configuration)
+
+## [​](https://docs.openclaw.ai/zh-CN/cli/gateway\#%E8%BF%90%E8%A1%8C-gateway-%E7%BD%91%E5%85%B3)  运行 Gateway 网关
+
+运行本地 Gateway 网关进程：
+
+```
+openclaw gateway
+```
+
+前台别名：
+
+```
+openclaw gateway run
+```
+
+启动行为
+
+- 默认情况下，除非在 `~/.openclaw/openclaw.json` 中设置了 `gateway.mode=local`，否则 Gateway 网关会拒绝启动。对临时/开发运行使用 `--allow-unconfigured`。
+- `openclaw onboard --mode local` 和 `openclaw setup` 预期会写入 `gateway.mode=local`。如果文件存在但缺少 `gateway.mode`，请将其视为损坏或被覆盖的配置并修复，而不是隐式假定为本地模式。
+- 如果文件存在且缺少 `gateway.mode`，Gateway 网关会将其视为可疑的配置损坏，并拒绝替你“猜测为本地”。
+- 未启用凭证时，禁止绑定到超出回环地址的范围（安全防护栏）。
+- 获得授权时，`SIGUSR1` 会触发进程内重启（`commands.restart` 默认启用；设置 `commands.restart: false` 可阻止手动重启，同时仍允许 Gateway 网关工具/配置应用/更新）。
+- `SIGINT`/`SIGTERM` 处理程序会停止 Gateway 网关进程，但不会恢复任何自定义终端状态。如果你用 TUI 或 raw-mode 输入包装 CLI，请在退出前恢复终端。
+
+### [​](https://docs.openclaw.ai/zh-CN/cli/gateway\#%E9%80%89%E9%A1%B9)  选项
+
+[​](https://docs.openclaw.ai/zh-CN/cli/gateway#param-port-port)
+
+--port <port>
+
+number
+
+WebSocket 端口（默认值来自配置/环境；通常为 `18789`）。
+
+[​](https://docs.openclaw.ai/zh-CN/cli/gateway#param-bind-loopback-lan-tailnet-auto-custom)
+
+--bind <loopback\|lan\|tailnet\|auto\|custom>
+
+string
+
+监听器绑定模式。
+
+[​](https://docs.openclaw.ai/zh-CN/cli/gateway#param-auth-token-password)
+
+--auth <token\|password>
+
+string
+
+凭证模式覆盖。
+
+[​](https://docs.openclaw.ai/zh-CN/cli/gateway#param-token-token)
+
+--token <token>
+
+string
+
+令牌覆盖（也会为该进程设置 `OPENCLAW_GATEWAY_TOKEN`）。
+
+[​](https://docs.openclaw.ai/zh-CN/cli/gateway#param-password-password)
+
+--password <password>
+
+string
+
+密码覆盖。
+
+[​](https://docs.openclaw.ai/zh-CN/cli/gateway#param-password-file-path)
+
+--password-file <path>
+
+string
+
+从文件读取 Gateway 网关密码。
+
+[​](https://docs.openclaw.ai/zh-CN/cli/gateway#param-tailscale-off-serve-funnel)
+
+--tailscale <off\|serve\|funnel>
+
+string
+
+通过 Tailscale 暴露 Gateway 网关。
+
+[​](https://docs.openclaw.ai/zh-CN/cli/gateway#param-tailscale-reset-on-exit)
+
+--tailscale-reset-on-exit
+
+boolean
+
+关闭时重置 Tailscale serve/funnel 配置。
+
+[​](https://docs.openclaw.ai/zh-CN/cli/gateway#param-allow-unconfigured)
+
+--allow-unconfigured
+
+boolean
+
+允许在配置中没有 `gateway.mode=local` 时启动 Gateway 网关。仅对临时/开发引导绕过启动保护；不会写入或修复配置文件。
+
+[​](https://docs.openclaw.ai/zh-CN/cli/gateway#param-dev)
+
+--dev
+
+boolean
+
+如果缺失，则创建开发配置 \+ 工作区（跳过 BOOTSTRAP.md）。
+
+[​](https://docs.openclaw.ai/zh-CN/cli/gateway#param-reset)
+
+--reset
+
+boolean
+
+重置开发配置 \+ 凭据 \+ 会话 \+ 工作区（需要 `--dev`）。
+
+[​](https://docs.openclaw.ai/zh-CN/cli/gateway#param-force)
+
+--force
+
+boolean
+
+启动前终止所选端口上的任何现有监听器。
+
+[​](https://docs.openclaw.ai/zh-CN/cli/gateway#param-verbose)
+
+--verbose
+
+boolean
+
+详细日志。
+
+[​](https://docs.openclaw.ai/zh-CN/cli/gateway#param-cli-backend-logs)
+
+--cli-backend-logs
+
+boolean
+
+仅在控制台显示 CLI 后端日志（并启用 stdout/stderr）。
+
+[​](https://docs.openclaw.ai/zh-CN/cli/gateway#param-ws-log-auto-full-compact)
+
+--ws-log <auto\|full\|compact>
+
+string
+
+默认值:"auto"
+
+WebSocket 日志样式。
+
+[​](https://docs.openclaw.ai/zh-CN/cli/gateway#param-compact)
+
+--compact
+
+boolean
+
+`--ws-log compact` 的别名。
+
+[​](https://docs.openclaw.ai/zh-CN/cli/gateway#param-raw-stream)
+
+--raw-stream
+
+boolean
+
+将原始模型流事件记录到 jsonl。
+
+[​](https://docs.openclaw.ai/zh-CN/cli/gateway#param-raw-stream-path-path)
+
+--raw-stream-path <path>
+
+string
+
+原始流 jsonl 路径。
+
+内联 `--password` 可能会暴露在本地进程列表中。优先使用 `--password-file`、环境变量，或由 SecretRef 支持的 `gateway.auth.password`。
+
+### [​](https://docs.openclaw.ai/zh-CN/cli/gateway\#%E5%90%AF%E5%8A%A8%E6%80%A7%E8%83%BD%E5%88%86%E6%9E%90)  启动性能分析
+
+- 设置 `OPENCLAW_GATEWAY_STARTUP_TRACE=1` 可在 Gateway 网关启动期间记录阶段耗时，包括每个阶段的 `eventLoopMax` 延迟，以及已安装索引、插件清单注册表、启动规划和 owner-map 工作的插件查找表耗时。
+- 设置 `OPENCLAW_DIAGNOSTICS=timeline` 并配合 `OPENCLAW_DIAGNOSTICS_TIMELINE_PATH=<path>`，可为外部 QA harness 写入尽力而为的 JSONL 启动诊断时间线。你也可以在配置中使用 `diagnostics.flags: ["timeline"]` 启用该标志；路径仍由环境变量提供。添加 `OPENCLAW_DIAGNOSTICS_EVENT_LOOP=1` 可包含事件循环采样。
+- 运行 `pnpm test:startup:gateway -- --runs 5 --warmup 1` 可对 Gateway 网关启动进行基准测试。该基准会记录首个进程输出、`/healthz`、`/readyz`、启动跟踪耗时、事件循环延迟，以及插件查找表耗时详情。
+
+## [​](https://docs.openclaw.ai/zh-CN/cli/gateway\#%E6%9F%A5%E8%AF%A2%E6%AD%A3%E5%9C%A8%E8%BF%90%E8%A1%8C%E7%9A%84-gateway-%E7%BD%91%E5%85%B3)  查询正在运行的 Gateway 网关
+
+所有查询命令都使用 WebSocket RPC。
+
+- 输出模式
+
+- 共享选项
+
+
+- 默认：人类可读（在 TTY 中带颜色）。
+- `--json`：机器可读 JSON（无样式/旋转指示器）。
+- `--no-color`（或 `NO_COLOR=1`）：在保留人类可读布局的同时禁用 ANSI。
+
+- `--url <url>`：Gateway 网关 WebSocket URL。
+- `--token <token>`：Gateway 网关令牌。
+- `--password <password>`：Gateway 网关密码。
+- `--timeout <ms>`：超时/预算（因命令而异）。
+- `--expect-final`：等待 “final” 响应（智能体调用）。
+
+设置 `--url` 时，CLI 不会回退到配置或环境凭据。请显式传入 `--token` 或 `--password`。缺少显式凭据会报错。
+
+### [​](https://docs.openclaw.ai/zh-CN/cli/gateway\#gateway-health)  `gateway health`
+
+```
+openclaw gateway health --url ws://127.0.0.1:18789
+```
+
+HTTP `/healthz` 端点是存活探针：只要服务器可以响应 HTTP，它就会返回。HTTP `/readyz` 端点更严格，并且会在启动中的插件 sidecar、渠道或已配置钩子仍在就绪过程中时保持红色。本地或已认证的详细就绪响应包含一个 `eventLoop` 诊断块，其中包含事件循环延迟、事件循环利用率、CPU 核心比例和 `degraded` 标志。
+
+### [​](https://docs.openclaw.ai/zh-CN/cli/gateway\#gateway-usage-cost)  `gateway usage-cost`
+
+从会话日志获取使用成本摘要。
+
+```
+openclaw gateway usage-cost
+openclaw gateway usage-cost --days 7
+openclaw gateway usage-cost --json
+```
+
+[​](https://docs.openclaw.ai/zh-CN/cli/gateway#param-days-days)
+
+--days <days>
+
+number
+
+默认值:"30"
+
+要包含的天数。
+
+### [​](https://docs.openclaw.ai/zh-CN/cli/gateway\#gateway-stability)  `gateway stability`
+
+从正在运行的 Gateway 网关获取最近的诊断稳定性记录器。
+
+```
+openclaw gateway stability
+openclaw gateway stability --type payload.large
+openclaw gateway stability --bundle latest
+openclaw gateway stability --bundle latest --export
+openclaw gateway stability --json
+```
+
+[​](https://docs.openclaw.ai/zh-CN/cli/gateway#param-limit-limit)
+
+--limit <limit>
+
+number
+
+默认值:"25"
+
+要包含的最近事件最大数量（最大 `1000`）。
+
+[​](https://docs.openclaw.ai/zh-CN/cli/gateway#param-type-type)
+
+--type <type>
+
+string
+
+按诊断事件类型过滤，例如 `payload.large` 或 `diagnostic.memory.pressure`。
+
+[​](https://docs.openclaw.ai/zh-CN/cli/gateway#param-since-seq-seq)
+
+--since-seq <seq>
+
+number
+
+仅包含诊断序列号之后的事件。
+
+[​](https://docs.openclaw.ai/zh-CN/cli/gateway#param-bundle-path)
+
+--bundle \[path\]
+
+string
+
+读取持久化稳定性捆绑包，而不是调用正在运行的 Gateway 网关。使用 `--bundle latest`（或仅使用 `--bundle`）读取状态目录下最新的捆绑包，或直接传入捆绑包 JSON 路径。
+
+[​](https://docs.openclaw.ai/zh-CN/cli/gateway#param-export)
+
+--export
+
+boolean
+
+写入可共享的支持诊断 zip，而不是打印稳定性详情。
+
+[​](https://docs.openclaw.ai/zh-CN/cli/gateway#param-output-path)
+
+--output <path>
+
+string
+
+`--export` 的输出路径。
+
+隐私和捆绑包行为
+
+- 记录会保留运行元数据：事件名称、计数、字节大小、内存读数、队列/会话状态、渠道/插件名称，以及经过脱敏的会话摘要。它们不会保留聊天文本、webhook 正文、工具输出、原始请求或响应正文、令牌、cookie、密钥值、主机名或原始会话 ID。设置 `diagnostics.enabled: false` 可完全禁用记录器。
+- 在 Gateway 网关致命退出、关闭超时和重启启动失败时，如果记录器有事件，OpenClaw 会将相同的诊断快照写入 `~/.openclaw/logs/stability/openclaw-stability-*.json`。使用 `openclaw gateway stability --bundle latest` 检查最新捆绑包；`--limit`、`--type` 和 `--since-seq` 也适用于捆绑包输出。
+
+### [​](https://docs.openclaw.ai/zh-CN/cli/gateway\#gateway-diagnostics-export)  `gateway diagnostics export`
+
+写入一个本地诊断 zip，设计用于附加到错误报告。有关隐私模型和捆绑包内容，请参阅 [诊断导出](https://docs.openclaw.ai/zh-CN/gateway/diagnostics)。
+
+```
+openclaw gateway diagnostics export
+openclaw gateway diagnostics export --output openclaw-diagnostics.zip
+openclaw gateway diagnostics export --json
+```
+
+[​](https://docs.openclaw.ai/zh-CN/cli/gateway#param-output-path-1)
+
+--output <path>
+
+string
+
+输出 zip 路径。默认为状态目录下的支持导出。
+
+[​](https://docs.openclaw.ai/zh-CN/cli/gateway#param-log-lines-count)
+
+--log-lines <count>
+
+number
+
+默认值:"5000"
+
+要包含的最大已清理日志行数。
+
+[​](https://docs.openclaw.ai/zh-CN/cli/gateway#param-log-bytes-bytes)
+
+--log-bytes <bytes>
+
+number
+
+默认值:"1000000"
+
+要检查的最大日志字节数。
+
+[​](https://docs.openclaw.ai/zh-CN/cli/gateway#param-url-url)
+
+--url <url>
+
+string
+
+用于健康快照的 Gateway 网关 WebSocket URL。
+
+[​](https://docs.openclaw.ai/zh-CN/cli/gateway#param-token-token-1)
+
+--token <token>
+
+string
+
+用于健康快照的 Gateway 网关令牌。
+
+[​](https://docs.openclaw.ai/zh-CN/cli/gateway#param-password-password-1)
+
+--password <password>
+
+string
+
+用于健康快照的 Gateway 网关密码。
+
+[​](https://docs.openclaw.ai/zh-CN/cli/gateway#param-timeout-ms)
+
+--timeout <ms>
+
+number
+
+默认值:"3000"
+
+Status/健康快照超时。
+
+[​](https://docs.openclaw.ai/zh-CN/cli/gateway#param-no-stability-bundle)
+
+--no-stability-bundle
+
+boolean
+
+跳过持久化稳定性捆绑包查找。
+
+[​](https://docs.openclaw.ai/zh-CN/cli/gateway#param-json)
+
+--json
+
+boolean
+
+将写入路径、大小和清单打印为 JSON。
+
+该导出包含清单、Markdown 摘要、配置形状、已清理的配置详情、已清理的日志摘要、已清理的 Gateway 网关 Status/健康快照，以及存在时的最新稳定性捆绑包。它用于共享。它会保留有助于调试的运行细节，例如安全的 OpenClaw 日志字段、子系统名称、状态码、持续时间、已配置模式、端口、插件 ID、提供商 ID、非密钥功能设置，以及经过脱敏的运行日志消息。它会省略或脱敏聊天文本、webhook 正文、工具输出、凭据、cookie、账号/消息标识符、提示词/指令文本、主机名和密钥值。当 LogTape 风格的消息看起来像用户/聊天/工具载荷文本时，导出仅保留该消息已被省略以及其字节数。
+
+### [​](https://docs.openclaw.ai/zh-CN/cli/gateway\#gateway-status)  `gateway status`
+
+`gateway status` 显示 Gateway 网关服务（launchd/systemd/schtasks），以及可选的连接性/凭证能力探针。
+
+```
+openclaw gateway status
+openclaw gateway status --json
+openclaw gateway status --require-rpc
+```
+
+[​](https://docs.openclaw.ai/zh-CN/cli/gateway#param-url-url-1)
+
+--url <url>
+
+string
+
+添加显式探针目标。仍会探测已配置的远程目标 \+ localhost。
+
+[​](https://docs.openclaw.ai/zh-CN/cli/gateway#param-token-token-2)
+
+--token <token>
+
+string
+
+探针的令牌凭证。
+
+[​](https://docs.openclaw.ai/zh-CN/cli/gateway#param-password-password-2)
+
+--password <password>
+
+string
+
+探针的密码凭证。
+
+[​](https://docs.openclaw.ai/zh-CN/cli/gateway#param-timeout-ms-1)
+
+--timeout <ms>
+
+number
+
+默认值:"10000"
+
+探针超时。
+
+[​](https://docs.openclaw.ai/zh-CN/cli/gateway#param-no-probe)
+
+--no-probe
+
+boolean
+
+跳过连接性探针（仅服务视图）。
+
+[​](https://docs.openclaw.ai/zh-CN/cli/gateway#param-deep)
+
+--deep
+
+boolean
+
+同时扫描系统级服务。
+
+[​](https://docs.openclaw.ai/zh-CN/cli/gateway#param-require-rpc)
+
+--require-rpc
+
+boolean
+
+将默认连接性探针升级为读取探针，并在该读取探针失败时以非零状态退出。不能与 `--no-probe` 组合使用。
+
+Status 语义
+
+- `gateway status` 即使在本地 CLI 配置缺失或无效时，也仍可用于诊断。
+- 默认的 `gateway status` 会证明服务状态、WebSocket 连接，以及握手时可见的认证能力。它不会证明读/写/管理员操作。
+- 对于首次设备认证，诊断探测不会变更状态：当已有缓存设备令牌时会复用它，但不会仅为检查状态而创建新的 CLI 设备身份或只读设备配对记录。
+- `gateway status` 会在可行时解析已配置的认证 SecretRefs，用于探测认证。
+- 如果此命令路径中必需的认证 SecretRef 未解析，`gateway status --json` 会在探测连接/认证失败时报告 `rpc.authWarning`；请显式传入 `--token`/`--password`，或先解析密钥来源。
+- 如果探测成功，未解析的 auth-ref 警告会被抑制，以避免误报。
+- 在脚本和自动化中，如果监听中的服务还不够，并且你还需要读取范围的 RPC 调用也保持健康，请使用 `--require-rpc`。
+- `--deep` 会尽力扫描额外的 launchd/systemd/schtasks 安装。检测到多个类似 Gateway 网关的服务时，人工可读输出会打印清理提示，并警告大多数设置应在每台机器上运行一个 Gateway 网关。
+- 人工可读输出包含解析后的文件日志路径，以及 CLI 与服务的配置路径/有效性快照，用于帮助诊断配置文件或状态目录漂移。
+
+Linux systemd 认证漂移检查
+
+- 在 Linux systemd 安装中，服务认证漂移检查会从 unit 中读取 `Environment=` 和 `EnvironmentFile=` 值（包括 `%h`、带引号的路径、多个文件，以及可选的 `-` 文件）。
+- 漂移检查会使用合并后的运行时环境解析 `gateway.auth.token` SecretRefs（先使用服务命令环境，再回退到进程环境）。
+- 如果令牌认证实际上未启用（显式 `gateway.auth.mode` 为 `password`/`none`/`trusted-proxy`，或模式未设置且密码可能胜出、没有令牌候选可胜出），令牌漂移检查会跳过配置令牌解析。
+
+### [​](https://docs.openclaw.ai/zh-CN/cli/gateway\#gateway-probe)  `gateway probe`
+
+`gateway probe` 是“调试所有内容”的命令。它始终会探测：
+
+- 你配置的远程 Gateway 网关（如果已设置），以及
+- localhost（loopback）， **即使已配置远程目标**。
+
+如果你传入 `--url`，该显式目标会添加到这两者之前。人工可读输出会将目标标记为：
+
+- `URL (explicit)`
+- `Remote (configured)` 或 `Remote (configured, inactive)`
+- `Local loopback`
+
+如果多个 Gateway 网关可达，它会全部打印出来。当你使用隔离的配置文件/端口（例如救援机器人）时，支持多个 Gateway 网关，但大多数安装仍只运行单个 Gateway 网关。
+
+```
+openclaw gateway probe
+openclaw gateway probe --json
+```
+
+解读
+
+- `Reachable: yes` 表示至少一个目标接受了 WebSocket 连接。
+- `Capability: read-only|write-capable|admin-capable|pairing-pending|connect-only` 报告探测可以证明的认证状态。它与可达性分开。
+- `Read probe: ok` 表示读取范围的详细 RPC 调用（`health`/`status`/`system-presence`/`config.get`）也成功。
+- `Read probe: limited - missing scope: operator.read` 表示连接成功，但读取范围的 RPC 受限。这会报告为 **降级** 可达性，而不是完全失败。
+- `Connect: ok` 之后的 `Read probe: failed` 表示 Gateway 网关接受了 WebSocket 连接，但后续读取诊断超时或失败。这也属于 **降级** 可达性，而不是 Gateway 网关不可达。
+- 与 `gateway status` 一样，探测会复用现有缓存设备认证，但不会创建首次设备身份或配对状态。
+- 只有在没有任何被探测目标可达时，退出码才非零。
+
+JSON 输出
+
+顶层：
+
+- `ok`：至少一个目标可达。
+- `degraded`：至少一个目标接受了连接，但未完成完整的详细 RPC 诊断。
+- `capability`：在可达目标中看到的最佳能力（`read_only`、`write_capable`、`admin_capable`、`pairing_pending`、`connected_no_operator_scope` 或 `unknown`）。
+- `primaryTargetId`：按以下顺序视为活动胜出者的最佳目标：显式 URL、SSH 隧道、已配置远程目标，然后是 local loopback。
+- `warnings[]`：尽力提供的警告记录，包含 `code`、`message` 和可选的 `targetIds`。
+- `network`：根据当前配置和主机网络推导出的 local loopback/tailnet URL 提示。
+- `discovery.timeoutMs` 和 `discovery.count`：此次探测实际使用的设备发现预算/结果数量。
+
+每个目标（`targets[].connect`）：
+
+- `ok`：连接后的可达性 \+ 降级分类。
+- `rpcOk`：完整详细 RPC 成功。
+- `scopeLimited`：详细 RPC 因缺少 operator scope 而失败。
+
+每个目标（`targets[].auth`）：
+
+- `role`：可用时，在 `hello-ok` 中报告的认证角色。
+- `scopes`：可用时，在 `hello-ok` 中报告的已授予范围。
+- `capability`：该目标暴露的认证能力分类。
+
+常见警告代码
+
+- `ssh_tunnel_failed`：SSH 隧道设置失败；命令已回退到直接探测。
+- `multiple_gateways`：多个目标可达；除非你有意运行隔离配置文件，例如救援机器人，否则这并不常见。
+- `auth_secretref_unresolved`：无法为失败目标解析已配置的认证 SecretRef。
+- `probe_scope_limited`：WebSocket 连接成功，但读取探测因缺少 `operator.read` 而受限。
+
+#### [​](https://docs.openclaw.ai/zh-CN/cli/gateway\#%E9%80%9A%E8%BF%87-ssh-%E8%AE%BF%E9%97%AE%E8%BF%9C%E7%A8%8B%E7%9B%AE%E6%A0%87%EF%BC%88mac-%E5%BA%94%E7%94%A8%E4%B8%80%E8%87%B4%E6%80%A7%EF%BC%89)  通过 SSH 访问远程目标（Mac 应用一致性）
+
+macOS 应用的“通过 SSH 访问远程目标”模式使用本地端口转发，使远程 Gateway 网关（可能只绑定到 loopback）可通过 `ws://127.0.0.1:<port>` 访问。CLI 等价命令：
+
+```
+openclaw gateway probe --ssh user@gateway-host
+```
+
+[​](https://docs.openclaw.ai/zh-CN/cli/gateway#param-ssh-target)
+
+--ssh <target>
+
+string
+
+`user@host` 或 `user@host:port`（端口默认值为 `22`）。
+
+[​](https://docs.openclaw.ai/zh-CN/cli/gateway#param-ssh-identity-path)
+
+--ssh-identity <path>
+
+string
+
+身份文件。
+
+[​](https://docs.openclaw.ai/zh-CN/cli/gateway#param-ssh-auto)
+
+--ssh-auto
+
+boolean
+
+从解析后的设备发现端点（`local.` 加上已配置的广域域名，如果有）中选择第一个发现的 Gateway 网关主机作为 SSH 目标。仅 TXT 的提示会被忽略。
+
+配置（可选，用作默认值）：
+
+- `gateway.remote.sshTarget`
+- `gateway.remote.sshIdentity`
+
+### [​](https://docs.openclaw.ai/zh-CN/cli/gateway\#gateway-call-%3Cmethod%3E)  `gateway call <method>`
+
+低级 RPC 辅助工具。
+
+```
+openclaw gateway call status
+openclaw gateway call logs.tail --params '{"sinceMs": 60000}'
+```
+
+[​](https://docs.openclaw.ai/zh-CN/cli/gateway#param-params-json)
+
+--params <json>
+
+string
+
+默认值:"{}"
+
+用于参数的 JSON 对象字符串。
+
+[​](https://docs.openclaw.ai/zh-CN/cli/gateway#param-url-url-2)
+
+--url <url>
+
+string
+
+Gateway 网关 WebSocket URL。
+
+[​](https://docs.openclaw.ai/zh-CN/cli/gateway#param-token-token-3)
+
+--token <token>
+
+string
+
+Gateway 网关令牌。
+
+[​](https://docs.openclaw.ai/zh-CN/cli/gateway#param-password-password-3)
+
+--password <password>
+
+string
+
+Gateway 网关密码。
+
+[​](https://docs.openclaw.ai/zh-CN/cli/gateway#param-timeout-ms-2)
+
+--timeout <ms>
+
+number
+
+超时预算。
+
+[​](https://docs.openclaw.ai/zh-CN/cli/gateway#param-expect-final)
+
+--expect-final
+
+boolean
+
+主要用于 agent 风格的 RPC，它们会在最终载荷之前流式传输中间事件。
+
+[​](https://docs.openclaw.ai/zh-CN/cli/gateway#param-json-1)
+
+--json
+
+boolean
+
+机器可读的 JSON 输出。
+
+`--params` 必须是有效 JSON。
+
+## [​](https://docs.openclaw.ai/zh-CN/cli/gateway\#%E7%AE%A1%E7%90%86-gateway-%E7%BD%91%E5%85%B3%E6%9C%8D%E5%8A%A1)  管理 Gateway 网关服务
+
+```
+openclaw gateway install
+openclaw gateway start
+openclaw gateway stop
+openclaw gateway restart
+openclaw gateway uninstall
+```
+
+### [​](https://docs.openclaw.ai/zh-CN/cli/gateway\#%E4%BD%BF%E7%94%A8%E5%8C%85%E8%A3%85%E5%99%A8%E5%AE%89%E8%A3%85)  使用包装器安装
+
+当托管服务必须通过另一个可执行文件启动时，请使用 `--wrapper`，例如
+密钥管理器 shim 或 run-as 辅助工具。包装器接收正常的 Gateway 网关参数，并负责
+最终使用这些参数执行 `openclaw` 或 Node。
+
+```
+cat > ~/.local/bin/openclaw-doppler <<'EOF'
+#!/usr/bin/env bash
+set -euo pipefail
+exec doppler run --project my-project --config production -- openclaw "$@"
+EOF
+chmod +x ~/.local/bin/openclaw-doppler
+
+openclaw gateway install --wrapper ~/.local/bin/openclaw-doppler --force
+openclaw gateway restart
+```
+
+你也可以通过环境设置包装器。`gateway install` 会验证该路径是
+可执行文件，将包装器写入服务 `ProgramArguments`，并在服务环境中持久化
+`OPENCLAW_WRAPPER`，以供后续强制重新安装、更新和 Doctor
+修复使用。
+
+```
+OPENCLAW_WRAPPER="$HOME/.local/bin/openclaw-doppler" openclaw gateway install --force
+openclaw doctor
+```
+
+要移除持久化的包装器，请在重新安装时清空 `OPENCLAW_WRAPPER`：
+
+```
+OPENCLAW_WRAPPER= openclaw gateway install --force
+openclaw gateway restart
+```
+
+命令选项
+
+- `gateway status`：`--url`、`--token`、`--password`、`--timeout`、`--no-probe`、`--require-rpc`、`--deep`、`--json`
+- `gateway install`：`--port`、`--runtime <node|bun>`、`--token`、`--wrapper <path>`、`--force`、`--json`
+- `gateway restart`：`--force`、`--wait <duration>`、`--json`
+- `gateway uninstall|start|stop`：`--json`
+
+生命周期行为
+
+- 使用 `gateway restart` 重启托管服务。不要将 `gateway stop` 和 `gateway start` 串联起来替代重启；在 macOS 上，`gateway stop` 会在停止 LaunchAgent 前有意禁用它。
+- `gateway restart --wait 30s` 会为本次重启覆盖已配置的重启排空预算。裸数字表示毫秒；也接受 `s`、`m` 和 `h` 等单位。`--wait 0` 会无限期等待。
+- `gateway restart --force` 会跳过活跃工作排空并立即重启。当 operator 已经检查过列出的任务阻塞项，并且希望 Gateway 网关立即恢复时使用它。
+- 生命周期命令接受 `--json`，便于脚本使用。
+
+安装时的认证和 SecretRefs
+
+- 当令牌认证需要令牌且 `gateway.auth.token` 由 SecretRef 管理时，`gateway install` 会验证 SecretRef 可解析，但不会将解析后的令牌持久化到服务环境元数据中。
+- 如果令牌认证需要令牌，而配置的令牌 SecretRef 未解析，安装会关闭失败，而不是持久化回退明文。
+- 对于 `gateway run` 上的密码认证，相比内联 `--password`，优先使用 `OPENCLAW_GATEWAY_PASSWORD`、`--password-file` 或由 SecretRef 支持的 `gateway.auth.password`。
+- 在推断认证模式中，仅 shell 的 `OPENCLAW_GATEWAY_PASSWORD` 不会放宽安装令牌要求；安装托管服务时请使用持久配置（`gateway.auth.password` 或配置 `env`）。
+- 如果同时配置了 `gateway.auth.token` 和 `gateway.auth.password`，且 `gateway.auth.mode` 未设置，安装会被阻止，直到显式设置模式。
+
+## [​](https://docs.openclaw.ai/zh-CN/cli/gateway\#%E5%8F%91%E7%8E%B0-gateway-%E7%BD%91%E5%85%B3%EF%BC%88bonjour%EF%BC%89)  发现 Gateway 网关（Bonjour）
+
+`gateway discover` 会扫描 Gateway 网关信标（`_openclaw-gw._tcp`）。
+
+- 组播 DNS-SD：`local.`
+- 单播 DNS-SD（广域 Bonjour）：选择一个域名（示例：`openclaw.internal.`）并设置拆分 DNS + DNS 服务器；请参阅 [Bonjour](https://docs.openclaw.ai/zh-CN/gateway/bonjour)。
+
+只有启用了 Bonjour 设备发现（默认）的 Gateway 网关会广播信标。广域设备发现记录包含（TXT）：
+
+- `role`（Gateway 网关角色提示）
+- `transport`（传输提示，例如 `gateway`）
+- `gatewayPort`（WebSocket 端口，通常为 `18789`）
+- `sshPort`（可选；缺失时客户端默认 SSH 目标为 `22`）
+- `tailnetDns`（MagicDNS 主机名，可用时）
+- `gatewayTls` / `gatewayTlsSha256`（TLS 已启用 + 证书指纹）
+- `cliPath`（写入广域区域的远程安装提示）
+
+### [​](https://docs.openclaw.ai/zh-CN/cli/gateway\#gateway-discover)  `gateway discover`
+
+```
+openclaw gateway discover
+```
+
+[​](https://docs.openclaw.ai/zh-CN/cli/gateway#param-timeout-ms-3)
+
+--timeout <ms>
+
+number
+
+默认值:"2000"
+
+每条命令的超时时间（browse/resolve）。
+
+[​](https://docs.openclaw.ai/zh-CN/cli/gateway#param-json-2)
+
+--json
+
+boolean
+
+机器可读输出（也会禁用样式/旋转指示器）。
+
+示例：
+
+```
+openclaw gateway discover --timeout 4000
+openclaw gateway discover --json | jq '.beacons[].wsUrl'
+```
+
+- CLI 会扫描 `local.` 以及已配置且启用的广域网域名。
+- JSON 输出中的 `wsUrl` 派生自解析后的服务端点，而不是来自仅 TXT 的提示，例如 `lanHost` 或 `tailnetDns`。
+- 在 `local.` mDNS 上，只有当 `discovery.mdns.mode` 为 `full` 时，才会广播 `sshPort` 和 `cliPath`。广域 DNS-SD 仍会写入 `cliPath`；`sshPort` 在那里也保持可选。
+
+## [​](https://docs.openclaw.ai/zh-CN/cli/gateway\#%E7%9B%B8%E5%85%B3)  相关
+
+- [CLI 参考](https://docs.openclaw.ai/zh-CN/cli)
+- [Gateway 网关运行手册](https://docs.openclaw.ai/zh-CN/gateway)
+
+[Doctor](https://docs.openclaw.ai/zh-CN/cli/doctor) [健康检查](https://docs.openclaw.ai/zh-CN/cli/health)
+
+Ctrl+I

@@ -1,0 +1,534 @@
+---
+source_url: https://docs.openclaw.ai/zh-CN/tools/clawhub
+title: "ClawHub - OpenClaw"
+---
+
+[跳转到主要内容](https://docs.openclaw.ai/zh-CN/tools/clawhub#content-area)
+
+[OpenClaw home page![light logo](https://mintcdn.com/clawdhub/dpADRo8IUoiDztzJ/assets/pixel-lobster.svg?fit=max&auto=format&n=dpADRo8IUoiDztzJ&q=85&s=8fdf719fb6d3eaad7c65231385bf28e5)![dark logo](https://mintcdn.com/clawdhub/dpADRo8IUoiDztzJ/assets/pixel-lobster.svg?fit=max&auto=format&n=dpADRo8IUoiDztzJ&q=85&s=8fdf719fb6d3eaad7c65231385bf28e5)](https://docs.openclaw.ai/zh-CN)
+
+![CN](https://d3gk2c5xim1je2.cloudfront.net/flags/CN.svg)
+
+简体中文
+
+搜索...
+
+Ctrl K
+
+搜索...
+
+Navigation
+
+技能
+
+ClawHub
+
+[快速开始](https://docs.openclaw.ai/zh-CN) [安装](https://docs.openclaw.ai/zh-CN/install) [消息渠道](https://docs.openclaw.ai/zh-CN/channels) [代理](https://docs.openclaw.ai/zh-CN/pi) [工具](https://docs.openclaw.ai/zh-CN/tools) [模型](https://docs.openclaw.ai/zh-CN/providers) [平台](https://docs.openclaw.ai/zh-CN/platforms) [网关与运维](https://docs.openclaw.ai/zh-CN/gateway) [参考](https://docs.openclaw.ai/zh-CN/cli) [帮助](https://docs.openclaw.ai/zh-CN/help)
+
+在此页面
+
+- [快速开始](https://docs.openclaw.ai/zh-CN/tools/clawhub#%E5%BF%AB%E9%80%9F%E5%BC%80%E5%A7%8B)
+- [原生 OpenClaw 流程](https://docs.openclaw.ai/zh-CN/tools/clawhub#%E5%8E%9F%E7%94%9F-openclaw-%E6%B5%81%E7%A8%8B)
+- [ClawHub 是什么](https://docs.openclaw.ai/zh-CN/tools/clawhub#clawhub-%E6%98%AF%E4%BB%80%E4%B9%88)
+- [工作区和 Skill 加载](https://docs.openclaw.ai/zh-CN/tools/clawhub#%E5%B7%A5%E4%BD%9C%E5%8C%BA%E5%92%8C-skill-%E5%8A%A0%E8%BD%BD)
+- [服务功能](https://docs.openclaw.ai/zh-CN/tools/clawhub#%E6%9C%8D%E5%8A%A1%E5%8A%9F%E8%83%BD)
+- [安全与审核](https://docs.openclaw.ai/zh-CN/tools/clawhub#%E5%AE%89%E5%85%A8%E4%B8%8E%E5%AE%A1%E6%A0%B8)
+- [ClawHub CLI](https://docs.openclaw.ai/zh-CN/tools/clawhub#clawhub-cli)
+- [全局选项](https://docs.openclaw.ai/zh-CN/tools/clawhub#%E5%85%A8%E5%B1%80%E9%80%89%E9%A1%B9)
+- [命令](https://docs.openclaw.ai/zh-CN/tools/clawhub#%E5%91%BD%E4%BB%A4)
+- [常见工作流](https://docs.openclaw.ai/zh-CN/tools/clawhub#%E5%B8%B8%E8%A7%81%E5%B7%A5%E4%BD%9C%E6%B5%81)
+- [插件包元数据](https://docs.openclaw.ai/zh-CN/tools/clawhub#%E6%8F%92%E4%BB%B6%E5%8C%85%E5%85%83%E6%95%B0%E6%8D%AE)
+- [版本控制、锁文件和遥测](https://docs.openclaw.ai/zh-CN/tools/clawhub#%E7%89%88%E6%9C%AC%E6%8E%A7%E5%88%B6%E3%80%81%E9%94%81%E6%96%87%E4%BB%B6%E5%92%8C%E9%81%A5%E6%B5%8B)
+- [环境变量](https://docs.openclaw.ai/zh-CN/tools/clawhub#%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F)
+- [相关内容](https://docs.openclaw.ai/zh-CN/tools/clawhub#%E7%9B%B8%E5%85%B3%E5%86%85%E5%AE%B9)
+
+> ## Documentation Index
+>
+> Fetch the complete documentation index at: [https://docs.openclaw.ai/llms.txt](https://docs.openclaw.ai/llms.txt)
+>
+> Use this file to discover all available pages before exploring further.
+
+ClawHub 是 **OpenClaw Skills 和插件** 的公共注册表。
+
+- 使用原生 `openclaw` 命令搜索、安装和更新 Skills，并从 ClawHub 安装插件。
+- 使用单独的 `clawhub` CLI 处理注册表认证、发布、删除/取消删除和同步工作流。
+
+站点： [clawhub.ai](https://clawhub.ai/)
+
+## [​](https://docs.openclaw.ai/zh-CN/tools/clawhub\#%E5%BF%AB%E9%80%9F%E5%BC%80%E5%A7%8B)  快速开始
+
+1
+
+[Navigate to header](https://docs.openclaw.ai/zh-CN/tools/clawhub#)
+
+搜索
+
+```
+openclaw skills search "calendar"
+```
+
+2
+
+[Navigate to header](https://docs.openclaw.ai/zh-CN/tools/clawhub#)
+
+安装
+
+```
+openclaw skills install <skill-slug>
+```
+
+3
+
+[Navigate to header](https://docs.openclaw.ai/zh-CN/tools/clawhub#)
+
+使用
+
+启动新的 OpenClaw 会话，它会加载新 Skill。
+
+4
+
+[Navigate to header](https://docs.openclaw.ai/zh-CN/tools/clawhub#)
+
+发布（可选）
+
+对于需要注册表认证的工作流（发布、同步、管理），请安装
+单独的 `clawhub` CLI：
+
+```
+npm i -g clawhub
+# or
+pnpm add -g clawhub
+```
+
+## [​](https://docs.openclaw.ai/zh-CN/tools/clawhub\#%E5%8E%9F%E7%94%9F-openclaw-%E6%B5%81%E7%A8%8B)  原生 OpenClaw 流程
+
+- Skills
+
+- 插件
+
+
+```
+openclaw skills search "calendar"
+openclaw skills install <skill-slug>
+openclaw skills update --all
+```
+
+原生 `openclaw` 命令会安装到你的活动工作区，并
+持久化源元数据，这样后续 `update` 调用就能继续使用 ClawHub。
+
+```
+openclaw plugins search "calendar"
+openclaw plugins install clawhub:<package>
+openclaw plugins update --all
+```
+
+`plugins search` 会查询 ClawHub 插件目录，并打印可直接安装的
+包名。裸的 npm 安全插件规范也会先尝试在 ClawHub 中解析，
+然后再尝试 npm：
+
+```
+openclaw plugins install openclaw-codex-app-server
+```
+
+如果你只想使用 npm 解析而不进行
+ClawHub 查找，请使用 `npm:<package>`：
+
+```
+openclaw plugins install npm:openclaw-codex-app-server
+```
+
+插件安装会在归档安装运行前验证声明的 `pluginApi` 和
+`minGatewayVersion` 兼容性，因此不兼容的主机会提前失败关闭，
+而不是部分安装该包。当某个包版本发布了 ClawPack 工件时，
+OpenClaw 会优先使用精确上传的 npm-pack `.tgz`，验证 ClawHub
+摘要标头和下载字节，并记录工件类型、npm
+完整性、npm shasum、tarball 名称和 ClawPack 摘要元数据，以供后续
+更新使用。没有 ClawPack 元数据的旧包版本仍会使用
+旧版包归档验证路径。
+
+`openclaw plugins install clawhub:...` 只接受可安装的插件
+系列。如果 ClawHub 包实际上是 Skill，OpenClaw 会停止并
+改为指向 `openclaw skills install <slug>`。匿名 ClawHub 插件安装也会对私有包失败关闭。
+社区或其他非官方渠道仍可安装，但 OpenClaw
+会发出警告，方便操作员在启用前审查来源和验证。
+
+## [​](https://docs.openclaw.ai/zh-CN/tools/clawhub\#clawhub-%E6%98%AF%E4%BB%80%E4%B9%88)  ClawHub 是什么
+
+- OpenClaw Skills 和插件的公共注册表。
+- Skill 包及其元数据的版本化存储。
+- 用于搜索、标签和使用信号的发现界面。
+
+典型的 Skill 是一个包含以下内容的版本化文件包：
+
+- 一个包含主要描述和用法的 `SKILL.md` 文件。
+- Skill 使用的可选配置、脚本或支持文件。
+- 标签、摘要和安装要求等元数据。
+
+ClawHub 使用元数据来支持发现，并安全公开 Skill
+能力。注册表会跟踪使用信号（星标、下载量），以
+提升排名和可见性。每次发布都会创建一个新的 semver
+版本，并且注册表会保留版本历史，以便用户审计
+变更。
+
+## [​](https://docs.openclaw.ai/zh-CN/tools/clawhub\#%E5%B7%A5%E4%BD%9C%E5%8C%BA%E5%92%8C-skill-%E5%8A%A0%E8%BD%BD)  工作区和 Skill 加载
+
+单独的 `clawhub` CLI 也会把 Skills 安装到
+当前工作目录下的 `./skills`。如果已配置 OpenClaw 工作区，
+`clawhub` 会回退到该工作区，除非你覆盖 `--workdir`
+（或 `CLAWHUB_WORKDIR`）。OpenClaw 会从
+`<workspace>/skills` 加载工作区 Skills，并在 **下一个** 会话中
+加载它们。如果你已经使用 `~/.openclaw/skills` 或内置 Skills，工作区
+Skills 优先。有关 Skills 如何加载、
+共享和受控的更多详情，请参阅 [Skills](https://docs.openclaw.ai/zh-CN/tools/skills)。
+
+## [​](https://docs.openclaw.ai/zh-CN/tools/clawhub\#%E6%9C%8D%E5%8A%A1%E5%8A%9F%E8%83%BD)  服务功能
+
+| 功能 | 说明 |
+| --- | --- |
+| 公开浏览 | Skills 及其 `SKILL.md` 内容可公开查看。 |
+| 搜索 | 由嵌入驱动（向量搜索），不只是关键词。 |
+| 版本控制 | Semver、变更日志和标签（包括 `latest`）。 |
+| 下载 | 每个版本一个 Zip。 |
+| 星标和评论 | 社区反馈。 |
+| 安全扫描摘要 | 详情页会在安装或下载前显示最新扫描状态。 |
+| 扫描器详情页 | VirusTotal、ClawScan 和静态分析结果有深层链接。 |
+| 所有者恢复仪表板 | 发布者可以从 `/dashboard` 查看被扫描暂扣的自有内容。 |
+| 所有者请求重新扫描 | 所有者可以请求有限的重新扫描，以处理误报恢复。 |
+| 审核 | 审批和审计。 |
+| CLI 友好 API | 适合自动化和脚本。 |
+
+## [​](https://docs.openclaw.ai/zh-CN/tools/clawhub\#%E5%AE%89%E5%85%A8%E4%B8%8E%E5%AE%A1%E6%A0%B8)  安全与审核
+
+ClawHub 默认开放，任何人都可以上传 Skills，但 GitHub
+账号必须 **至少创建一周** 才能发布。这会减缓
+滥用，同时不阻碍合法贡献者。
+
+安全扫描
+
+ClawHub 会对已发布的 Skills 和插件
+发布版本运行自动化安全检查。公开详情页会总结当前结果，扫描器
+行会链接到 VirusTotal、ClawScan 和静态
+分析的专用详情页。被扫描暂扣或阻止的发布版本可能无法在公共目录和
+安装界面中使用，但其所有者仍可在 `/dashboard` 中看到。
+
+报告
+
+- 任何已登录用户都可以报告 Skill。
+- 必须填写报告原因，并会被记录。
+- 每个用户一次最多可以有 20 个活动报告。
+- 默认情况下，收到超过 3 个唯一报告的 Skills 会被自动隐藏。
+
+审核
+
+- 审核员可以查看隐藏的 Skills、取消隐藏、删除它们，或封禁用户。
+- 滥用报告功能可能导致账号被封禁。
+- 有兴趣成为审核员？请在 OpenClaw Discord 中询问，并联系审核员或维护者。
+
+## [​](https://docs.openclaw.ai/zh-CN/tools/clawhub\#clawhub-cli)  ClawHub CLI
+
+只有在需要注册表认证的工作流（例如
+发布/同步）中，你才需要它。
+
+### [​](https://docs.openclaw.ai/zh-CN/tools/clawhub\#%E5%85%A8%E5%B1%80%E9%80%89%E9%A1%B9)  全局选项
+
+[​](https://docs.openclaw.ai/zh-CN/tools/clawhub#param-workdir-dir)
+
+--workdir <dir>
+
+string
+
+工作目录。默认：当前目录；回退到 OpenClaw 工作区。
+
+[​](https://docs.openclaw.ai/zh-CN/tools/clawhub#param-dir-dir)
+
+--dir <dir>
+
+string
+
+默认值:"skills"
+
+Skills 目录，相对于工作目录。
+
+[​](https://docs.openclaw.ai/zh-CN/tools/clawhub#param-site-url)
+
+--site <url>
+
+string
+
+站点基础 URL（浏览器登录）。
+
+[​](https://docs.openclaw.ai/zh-CN/tools/clawhub#param-registry-url)
+
+--registry <url>
+
+string
+
+注册表 API 基础 URL。
+
+[​](https://docs.openclaw.ai/zh-CN/tools/clawhub#param-no-input)
+
+--no-input
+
+boolean
+
+禁用提示（非交互式）。
+
+[​](https://docs.openclaw.ai/zh-CN/tools/clawhub#param-v-cli-version)
+
+-V, --cli-version
+
+boolean
+
+打印 CLI 版本。
+
+### [​](https://docs.openclaw.ai/zh-CN/tools/clawhub\#%E5%91%BD%E4%BB%A4)  命令
+
+认证（登录 / 登出 / whoami）
+
+```
+clawhub login              # browser flow
+clawhub login --token <token>
+clawhub logout
+clawhub whoami
+```
+
+登录选项：
+
+- `--token <token>` — 粘贴 API 令牌。
+- `--label <label>` — 为浏览器登录令牌存储的标签（默认：`CLI token`）。
+- `--no-browser` — 不打开浏览器（需要 `--token`）。
+
+搜索
+
+```
+clawhub search "query"
+```
+
+搜索 Skills。对于插件/包发现，请使用 `clawhub package explore`。
+
+- `--limit <n>` — 最大结果数。
+
+浏览 / 检查插件
+
+```
+clawhub package explore --family code-plugin
+clawhub package explore "episodic-claw" --family code-plugin
+clawhub package inspect episodic-claw
+```
+
+`package explore` 和 `package inspect` 是 ClawHub CLI 中用于插件/包发现和元数据检查的界面。原生 OpenClaw 安装仍使用 `openclaw plugins install clawhub:<package>`。选项：
+
+- `--family skill|code-plugin|bundle-plugin` — 筛选包系列。
+- `--official` — 只显示官方包。
+- `--executes-code` — 只显示执行代码的包。
+- `--version <version>` / `--tag <tag>` — 检查特定包版本。
+- `--versions`, `--files`, `--file <path>` — 检查包历史和文件。
+- `--json` — 机器可读输出。
+
+安装 / 更新 / 列出
+
+```
+clawhub install <slug>
+clawhub update <slug>
+clawhub update --all
+clawhub list
+```
+
+选项：
+
+- `--version <version>` — 安装或更新到特定版本（在 `update` 上仅限单个 slug）。
+- `--force` — 如果文件夹已存在，或本地文件与任何已发布版本都不匹配，则覆盖。
+- `clawhub list` 读取 `.clawhub/lock.json`。
+
+发布 Skills
+
+```
+clawhub skill publish <path>
+```
+
+选项：
+
+- `--slug <slug>` — Skill slug。
+- `--name <name>` — 显示名称。
+- `--version <version>` — semver 版本。
+- `--changelog <text>` — 变更日志文本（可为空）。
+- `--tags <tags>` — 逗号分隔的标签（默认：`latest`）。
+
+发布插件
+
+```
+clawhub package publish <source>
+```
+
+`<source>` 可以是本地文件夹、`owner/repo`、`owner/repo@ref`，或
+GitHub URL。选项：
+
+- `--dry-run` — 构建精确的发布计划，不上传任何内容。
+- `--json` — 为 CI 输出机器可读内容。
+- `--source-repo`, `--source-commit`, `--source-ref` — 自动检测不足时的可选覆盖项。
+
+请求重新扫描
+
+```
+clawhub skill rescan <slug>
+clawhub skill rescan <slug> --yes --json
+
+clawhub package rescan <name>
+clawhub package rescan <name> --yes --json
+```
+
+重新扫描命令需要已登录的所有者令牌，并以最新
+已发布的 Skill 版本或插件发布版本为目标。在非交互式运行中，传入
+`--yes`。JSON 响应包含目标类型、名称、版本、重新扫描状态，以及
+该版本或发布版本的剩余/最大请求次数。
+
+删除 / 取消删除（所有者或管理员）
+
+```
+clawhub delete <slug> --yes
+clawhub undelete <slug> --yes
+```
+
+同步（扫描本地 \+ 发布新增或更新项）
+
+```
+clawhub sync
+```
+
+选项：
+
+- `--root <dir...>` — 额外扫描根目录。
+- `--all` — 不提示，上传所有内容。
+- `--dry-run` — 显示将上传的内容。
+- `--bump <type>` — 用于更新的 `patch|minor|major`（默认：`patch`）。
+- `--changelog <text>` — 非交互式更新的变更日志。
+- `--tags <tags>` — 逗号分隔的标签（默认：`latest`）。
+- `--concurrency <n>` — 注册表检查数（默认：`4`）。
+
+## [​](https://docs.openclaw.ai/zh-CN/tools/clawhub\#%E5%B8%B8%E8%A7%81%E5%B7%A5%E4%BD%9C%E6%B5%81)  常见工作流
+
+- 搜索
+
+- 查找插件
+
+- 安装
+
+- 全部更新
+
+- 发布单个 Skill
+
+- 同步多个 Skills
+
+- 从 GitHub 发布插件
+
+
+```
+clawhub search "postgres backups"
+```
+
+```
+clawhub package explore --family code-plugin
+clawhub package explore "memory" --family code-plugin
+clawhub package inspect episodic-claw
+```
+
+```
+clawhub install my-skill-pack
+```
+
+```
+clawhub update --all
+```
+
+```
+clawhub skill publish ./my-skill --slug my-skill --name "My Skill" --version 1.0.0 --tags latest
+```
+
+```
+clawhub sync --all
+```
+
+```
+clawhub package publish your-org/your-plugin --dry-run
+clawhub package publish your-org/your-plugin
+clawhub package publish your-org/your-plugin@v1.0.0
+clawhub package publish https://github.com/your-org/your-plugin
+```
+
+### [​](https://docs.openclaw.ai/zh-CN/tools/clawhub\#%E6%8F%92%E4%BB%B6%E5%8C%85%E5%85%83%E6%95%B0%E6%8D%AE)  插件包元数据
+
+代码插件必须在
+`package.json` 中包含必需的 OpenClaw 元数据：
+
+```
+{
+  "name": "@myorg/openclaw-my-plugin",
+  "version": "1.0.0",
+  "type": "module",
+  "openclaw": {
+    "extensions": ["./src/index.ts"],
+    "runtimeExtensions": ["./dist/index.js"],
+    "compat": {
+      "pluginApi": ">=2026.3.24-beta.2",
+      "minGatewayVersion": "2026.3.24-beta.2"
+    },
+    "build": {
+      "openclawVersion": "2026.3.24-beta.2",
+      "pluginSdkVersion": "2026.3.24-beta.2"
+    }
+  }
+}
+```
+
+已发布的软件包应随附 **构建后的 JavaScript**，并将
+`runtimeExtensions` 指向该输出。通过 Git checkout 安装时，如果不存在已构建文件，仍可回退到 TypeScript 源码，但构建后的运行时入口可避免在启动、Doctor 和插件加载路径中进行运行时 TypeScript 编译。
+
+## [​](https://docs.openclaw.ai/zh-CN/tools/clawhub\#%E7%89%88%E6%9C%AC%E6%8E%A7%E5%88%B6%E3%80%81%E9%94%81%E6%96%87%E4%BB%B6%E5%92%8C%E9%81%A5%E6%B5%8B)  版本控制、锁文件和遥测
+
+版本控制和标签
+
+- 每次发布都会创建一个新的 **semver**`SkillVersion`。
+- 标签（如 `latest`）指向某个版本；移动标签可让你回滚。
+- 变更日志按版本附加，在同步或发布更新时可以为空。
+
+本地更改与注册表版本
+
+更新会使用内容哈希，将本地 Skill 内容与注册表版本进行比较。如果本地文件与任何已发布版本都不匹配，CLI 会在覆盖前询问（或在非交互式运行中要求使用 `--force`）。
+
+同步扫描和回退根目录
+
+`clawhub sync` 会先扫描你当前的工作目录。如果未找到 Skills，它会回退到已知的旧位置（例如
+`~/openclaw/skills` 和 `~/.openclaw/skills`）。这样设计是为了无需额外标志即可找到较早的 Skill 安装。
+
+存储和锁文件
+
+- 已安装的 Skills 会记录在你工作目录下的 `.clawhub/lock.json` 中。
+- 身份验证令牌存储在 ClawHub CLI 配置文件中（可通过 `CLAWHUB_CONFIG_PATH` 覆盖）。
+
+遥测（安装计数）
+
+当你在已登录状态下运行 `clawhub sync` 时，CLI 会发送最小快照以计算安装计数。你可以完全禁用此功能：
+
+```
+export CLAWHUB_DISABLE_TELEMETRY=1
+```
+
+## [​](https://docs.openclaw.ai/zh-CN/tools/clawhub\#%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F)  环境变量
+
+| 变量 | 作用 |
+| --- | --- |
+| `CLAWHUB_SITE` | 覆盖站点 URL。 |
+| `CLAWHUB_REGISTRY` | 覆盖注册表 API URL。 |
+| `CLAWHUB_CONFIG_PATH` | 覆盖 CLI 存储令牌/配置的位置。 |
+| `CLAWHUB_WORKDIR` | 覆盖默认工作目录。 |
+| `CLAWHUB_DISABLE_TELEMETRY=1` | 在 `sync` 时禁用遥测。 |
+
+## [​](https://docs.openclaw.ai/zh-CN/tools/clawhub\#%E7%9B%B8%E5%85%B3%E5%86%85%E5%AE%B9)  相关内容
+
+- [社区插件](https://docs.openclaw.ai/zh-CN/plugins/community)
+- [插件](https://docs.openclaw.ai/zh-CN/tools/plugin)
+- [Skills](https://docs.openclaw.ai/zh-CN/tools/skills)
+
+[Skills 配置](https://docs.openclaw.ai/zh-CN/tools/skills-config) [Install and Configure](https://docs.openclaw.ai/zh-CN/tools/plugin)
+
+Ctrl+I

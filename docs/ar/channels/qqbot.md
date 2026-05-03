@@ -1,0 +1,324 @@
+---
+source_url: https://docs.openclaw.ai/ar/channels/qqbot
+title: "\u0628\u0648\u062a QQ - OpenClaw"
+---
+
+[الانتقال إلى المحتوى الرئيسي](https://docs.openclaw.ai/ar/channels/qqbot#content-area)
+
+[OpenClaw home page![light logo](https://mintcdn.com/clawdhub/dpADRo8IUoiDztzJ/assets/pixel-lobster.svg?fit=max&auto=format&n=dpADRo8IUoiDztzJ&q=85&s=8fdf719fb6d3eaad7c65231385bf28e5)![dark logo](https://mintcdn.com/clawdhub/dpADRo8IUoiDztzJ/assets/pixel-lobster.svg?fit=max&auto=format&n=dpADRo8IUoiDztzJ&q=85&s=8fdf719fb6d3eaad7c65231385bf28e5)](https://docs.openclaw.ai/ar)
+
+![SA](https://d3gk2c5xim1je2.cloudfront.net/flags/SA.svg)
+
+العربية
+
+...ابحث
+
+Ctrl K
+
+...ابحث
+
+Navigation
+
+Regional platforms
+
+بوت QQ
+
+[Get started](https://docs.openclaw.ai/ar) [Install](https://docs.openclaw.ai/ar/install) [Channels](https://docs.openclaw.ai/ar/channels) [Agents](https://docs.openclaw.ai/ar/concepts/architecture) [Tools & Plugins](https://docs.openclaw.ai/ar/tools) [Models](https://docs.openclaw.ai/ar/providers) [Platforms](https://docs.openclaw.ai/ar/platforms) [Gateway & Ops](https://docs.openclaw.ai/ar/gateway) [Reference](https://docs.openclaw.ai/ar/cli) [Help](https://docs.openclaw.ai/ar/help)
+
+في هذه الصفحة
+
+- [التثبيت](https://docs.openclaw.ai/ar/channels/qqbot#%D8%A7%D9%84%D8%AA%D8%AB%D8%A8%D9%8A%D8%AA)
+- [الإعداد](https://docs.openclaw.ai/ar/channels/qqbot#%D8%A7%D9%84%D8%A5%D8%B9%D8%AF%D8%A7%D8%AF)
+- [التكوين](https://docs.openclaw.ai/ar/channels/qqbot#%D8%A7%D9%84%D8%AA%D9%83%D9%88%D9%8A%D9%86)
+- [إعداد متعدد الحسابات](https://docs.openclaw.ai/ar/channels/qqbot#%D8%A5%D8%B9%D8%AF%D8%A7%D8%AF-%D9%85%D8%AA%D8%B9%D8%AF%D8%AF-%D8%A7%D9%84%D8%AD%D8%B3%D8%A7%D8%A8%D8%A7%D8%AA)
+- [محادثات المجموعات](https://docs.openclaw.ai/ar/channels/qqbot#%D9%85%D8%AD%D8%A7%D8%AF%D8%AB%D8%A7%D8%AA-%D8%A7%D9%84%D9%85%D8%AC%D9%85%D9%88%D8%B9%D8%A7%D8%AA)
+- [الصوت (STT / TTS)](https://docs.openclaw.ai/ar/channels/qqbot#%D8%A7%D9%84%D8%B5%D9%88%D8%AA-stt-%2F-tts)
+- [تنسيقات الهدف](https://docs.openclaw.ai/ar/channels/qqbot#%D8%AA%D9%86%D8%B3%D9%8A%D9%82%D8%A7%D8%AA-%D8%A7%D9%84%D9%87%D8%AF%D9%81)
+- [أوامر الشرطة المائلة](https://docs.openclaw.ai/ar/channels/qqbot#%D8%A3%D9%88%D8%A7%D9%85%D8%B1-%D8%A7%D9%84%D8%B4%D8%B1%D8%B7%D8%A9-%D8%A7%D9%84%D9%85%D8%A7%D8%A6%D9%84%D8%A9)
+- [بنية المحرك](https://docs.openclaw.ai/ar/channels/qqbot#%D8%A8%D9%86%D9%8A%D8%A9-%D8%A7%D9%84%D9%85%D8%AD%D8%B1%D9%83)
+- [الإلحاق عبر رمز QR](https://docs.openclaw.ai/ar/channels/qqbot#%D8%A7%D9%84%D8%A5%D9%84%D8%AD%D8%A7%D9%82-%D8%B9%D8%A8%D8%B1-%D8%B1%D9%85%D8%B2-qr)
+- [استكشاف الأخطاء وإصلاحها](https://docs.openclaw.ai/ar/channels/qqbot#%D8%A7%D8%B3%D8%AA%D9%83%D8%B4%D8%A7%D9%81-%D8%A7%D9%84%D8%A3%D8%AE%D8%B7%D8%A7%D8%A1-%D9%88%D8%A5%D8%B5%D9%84%D8%A7%D8%AD%D9%87%D8%A7)
+- [ذات صلة](https://docs.openclaw.ai/ar/channels/qqbot#%D8%B0%D8%A7%D8%AA-%D8%B5%D9%84%D8%A9)
+
+> ## Documentation Index
+>
+> Fetch the complete documentation index at: [https://docs.openclaw.ai/llms.txt](https://docs.openclaw.ai/llms.txt)
+>
+> Use this file to discover all available pages before exploring further.
+
+يتصل QQ Bot بـ OpenClaw عبر QQ Bot API الرسمي (Gateway WebSocket). يدعم
+Plugin الدردشة الخاصة C2C، ورسائل @ في المجموعات، ورسائل قنوات المجتمعات مع
+وسائط غنية (صور، صوت، فيديو، ملفات).الحالة: Plugin قابل للتنزيل. الرسائل المباشرة، ومحادثات المجموعات، وقنوات المجتمعات،
+والوسائط مدعومة. التفاعلات وسلاسل النقاش غير مدعومة.
+
+## [​](https://docs.openclaw.ai/ar/channels/qqbot\#%D8%A7%D9%84%D8%AA%D8%AB%D8%A8%D9%8A%D8%AA)  التثبيت
+
+ثبّت QQ Bot قبل الإعداد:
+
+```
+openclaw plugins install @openclaw/qqbot
+```
+
+## [​](https://docs.openclaw.ai/ar/channels/qqbot\#%D8%A7%D9%84%D8%A5%D8%B9%D8%AF%D8%A7%D8%AF)  الإعداد
+
+1. انتقل إلى [QQ Open Platform](https://q.qq.com/) وامسح رمز QR باستخدام
+QQ على هاتفك للتسجيل / تسجيل الدخول.
+2. انقر على **Create Bot** لإنشاء بوت QQ جديد.
+3. ابحث عن **AppID** و **AppSecret** في صفحة إعدادات البوت وانسخهما.
+
+> لا يُخزّن AppSecret كنص عادي — إذا غادرت الصفحة من دون حفظه،
+> فسيتعين عليك إنشاء واحد جديد.
+
+4. أضف القناة:
+
+```
+openclaw channels add --channel qqbot --token "AppID:AppSecret"
+```
+
+5. أعد تشغيل Gateway.
+
+مسارات الإعداد التفاعلية:
+
+```
+openclaw channels add
+openclaw configure --section channels
+```
+
+## [​](https://docs.openclaw.ai/ar/channels/qqbot\#%D8%A7%D9%84%D8%AA%D9%83%D9%88%D9%8A%D9%86)  التكوين
+
+أدنى تكوين:
+
+```
+{
+  channels: {
+    qqbot: {
+      enabled: true,
+      appId: "YOUR_APP_ID",
+      clientSecret: "YOUR_APP_SECRET",
+    },
+  },
+}
+```
+
+متغيرات البيئة للحساب الافتراضي:
+
+- `QQBOT_APP_ID`
+- `QQBOT_CLIENT_SECRET`
+
+AppSecret مدعوم بملف:
+
+```
+{
+  channels: {
+    qqbot: {
+      enabled: true,
+      appId: "YOUR_APP_ID",
+      clientSecretFile: "/path/to/qqbot-secret.txt",
+    },
+  },
+}
+```
+
+ملاحظات:
+
+- ينطبق بديل البيئة على حساب QQ Bot الافتراضي فقط.
+- يوفّر `openclaw channels add --channel qqbot --token-file ...`
+AppSecret فقط؛ يجب أن يكون AppID مضبوطًا مسبقًا في التكوين أو `QQBOT_APP_ID`.
+- يقبل `clientSecret` أيضًا إدخال SecretRef، وليس سلسلة نص عادي فقط.
+
+### [​](https://docs.openclaw.ai/ar/channels/qqbot\#%D8%A5%D8%B9%D8%AF%D8%A7%D8%AF-%D9%85%D8%AA%D8%B9%D8%AF%D8%AF-%D8%A7%D9%84%D8%AD%D8%B3%D8%A7%D8%A8%D8%A7%D8%AA)  إعداد متعدد الحسابات
+
+شغّل عدة بوتات QQ ضمن نسخة OpenClaw واحدة:
+
+```
+{
+  channels: {
+    qqbot: {
+      enabled: true,
+      appId: "111111111",
+      clientSecret: "secret-of-bot-1",
+      accounts: {
+        bot2: {
+          enabled: true,
+          appId: "222222222",
+          clientSecret: "secret-of-bot-2",
+        },
+      },
+    },
+  },
+}
+```
+
+يطلق كل حساب اتصال WebSocket خاصًا به ويحافظ على ذاكرة تخزين مؤقت مستقلة
+للرموز (معزولة حسب `appId`).أضف بوتًا ثانيًا عبر CLI:
+
+```
+openclaw channels add --channel qqbot --account bot2 --token "222222222:secret-of-bot-2"
+```
+
+### [​](https://docs.openclaw.ai/ar/channels/qqbot\#%D9%85%D8%AD%D8%A7%D8%AF%D8%AB%D8%A7%D8%AA-%D8%A7%D9%84%D9%85%D8%AC%D9%85%D9%88%D8%B9%D8%A7%D8%AA)  محادثات المجموعات
+
+يستخدم دعم محادثات المجموعات في QQ Bot معرّفات OpenID الخاصة بمجموعات QQ، لا أسماء العرض. أضف البوت
+إلى مجموعة، ثم اذكره أو اضبط المجموعة لتعمل من دون ذكر.
+
+```
+{
+  channels: {
+    qqbot: {
+      groupPolicy: "allowlist",
+      groupAllowFrom: ["member_openid"],
+      groups: {
+        "*": {
+          requireMention: true,
+          historyLimit: 50,
+          toolPolicy: "restricted",
+        },
+        GROUP_OPENID: {
+          name: "Release room",
+          requireMention: false,
+          ignoreOtherMentions: true,
+          historyLimit: 20,
+          prompt: "Keep replies short and operational.",
+        },
+      },
+    },
+  },
+}
+```
+
+تضبط `groups["*"]` الإعدادات الافتراضية لكل مجموعة، ويتجاوز إدخال
+`groups.GROUP_OPENID` محدد تلك الإعدادات الافتراضية لمجموعة واحدة. تتضمن
+إعدادات المجموعة:
+
+- `requireMention`: يتطلب @mention قبل أن يرد البوت. الافتراضي: `true`.
+- `ignoreOtherMentions`: يسقط الرسائل التي تذكر شخصًا آخر ولا تذكر البوت.
+- `historyLimit`: يحتفظ برسائل المجموعة الحديثة التي لا تتضمن ذكرًا كسياق للدور التالي الذي يتضمن ذكرًا. اضبطه على `0` للتعطيل.
+- `toolPolicy`: `full` أو `restricted` أو `none` للأدوات ضمن نطاق المجموعة.
+- `name`: تسمية ودية تُستخدم في السجلات وسياق المجموعة.
+- `prompt`: موجّه سلوك خاص بكل مجموعة يُلحق بسياق الوكيل.
+
+أوضاع التفعيل هي `mention` و `always`. يتطابق `requireMention: true` مع
+`mention`؛ ويتطابق `requireMention: false` مع `always`. وعند وجود تجاوز تفعيل
+على مستوى الجلسة، تكون له الأولوية على التكوين.الطابور الوارد يكون لكل نظير. تحصل نظراء المجموعات على حد طابور أكبر، وتُبقي
+رسائل البشر قبل المحادثات التي ألّفها البوت عند الامتلاء، وتدمج دفعات رسائل
+المجموعة العادية في دور واحد منسوب. تظل أوامر الشرطة المائلة تعمل واحدًا تلو الآخر.
+
+### [​](https://docs.openclaw.ai/ar/channels/qqbot\#%D8%A7%D9%84%D8%B5%D9%88%D8%AA-stt-/-tts)  الصوت (STT / TTS)
+
+يدعم STT و TTS تكوينًا من مستويين مع بديل حسب الأولوية:
+
+| الإعداد | خاص بـ Plugin | بديل إطار العمل |
+| --- | --- | --- |
+| STT | `channels.qqbot.stt` | `tools.media.audio.models[0]` |
+| TTS | `channels.qqbot.tts`, `channels.qqbot.accounts.<id>.tts` | `messages.tts` |
+
+```
+{
+  channels: {
+    qqbot: {
+      stt: {
+        provider: "your-provider",
+        model: "your-stt-model",
+      },
+      tts: {
+        provider: "your-provider",
+        model: "your-tts-model",
+        voice: "your-voice",
+      },
+      accounts: {
+        qq-main: {
+          tts: {
+            providers: {
+              openai: { voice: "shimmer" },
+            },
+          },
+        },
+      },
+    },
+  },
+}
+```
+
+اضبط `enabled: false` على أي منهما للتعطيل.
+تستخدم تجاوزات TTS على مستوى الحساب البنية نفسها مثل `messages.tts` وتُدمج بعمق
+فوق تكوين TTS على مستوى القناة/العمومي.تُعرض مرفقات الصوت الواردة من QQ للوكلاء كبيانات تعريف وسائط صوتية مع
+إبقاء ملفات الصوت الخام خارج `MediaPaths` العامة. تقوم ردود النص العادي
+`[[audio_as_voice]]` بتوليف TTS وإرسال رسالة صوتية أصلية في QQ عندما يكون TTS
+مكوّنًا.يمكن أيضًا ضبط سلوك رفع/تحويل ترميز الصوت الصادر باستخدام
+`channels.qqbot.audioFormatPolicy`:
+
+- `sttDirectFormats`
+- `uploadDirectFormats`
+- `transcodeEnabled`
+
+## [​](https://docs.openclaw.ai/ar/channels/qqbot\#%D8%AA%D9%86%D8%B3%D9%8A%D9%82%D8%A7%D8%AA-%D8%A7%D9%84%D9%87%D8%AF%D9%81)  تنسيقات الهدف
+
+| التنسيق | الوصف |
+| --- | --- |
+| `qqbot:c2c:OPENID` | دردشة خاصة (C2C) |
+| `qqbot:group:GROUP_OPENID` | دردشة مجموعة |
+| `qqbot:channel:CHANNEL_ID` | قناة مجتمع |
+
+> لكل بوت مجموعته الخاصة من OpenIDs للمستخدمين. لا يمكن استخدام OpenID استقبله Bot A **لإرسال**
+> رسائل عبر Bot B.
+
+## [​](https://docs.openclaw.ai/ar/channels/qqbot\#%D8%A3%D9%88%D8%A7%D9%85%D8%B1-%D8%A7%D9%84%D8%B4%D8%B1%D8%B7%D8%A9-%D8%A7%D9%84%D9%85%D8%A7%D8%A6%D9%84%D8%A9)  أوامر الشرطة المائلة
+
+أوامر مضمّنة تُعترض قبل طابور الذكاء الاصطناعي:
+
+| الأمر | الوصف |
+| --- | --- |
+| `/bot-ping` | اختبار زمن الاستجابة |
+| `/bot-version` | عرض إصدار إطار عمل OpenClaw |
+| `/bot-help` | سرد كل الأوامر |
+| `/bot-me` | عرض معرّف مستخدم QQ للمرسل (openid) لإعداد `allowFrom`/`groupAllowFrom` |
+| `/bot-upgrade` | عرض رابط دليل ترقية QQBot |
+| `/bot-logs` | تصدير سجلات Gateway الحديثة كملف |
+| `/bot-approve` | الموافقة على إجراء QQ Bot معلّق (على سبيل المثال، تأكيد رفع C2C أو مجموعة) عبر التدفق الأصلي. |
+
+ألحق `?` بأي أمر للحصول على مساعدة الاستخدام (مثلًا `/bot-upgrade ?`).أوامر المسؤول (`/bot-me`, `/bot-upgrade`, `/bot-logs`, `/bot-clear-storage`, `/bot-streaming`, `/bot-approve`) مخصصة للرسائل المباشرة فقط وتتطلب وجود openid الخاص بالمرسل في قائمة `allowFrom` صريحة وغير بدل عام. يسمح `allowFrom: ["*"]` بالمحادثة لكنه لا يمنح صلاحية الوصول إلى أوامر المسؤول. تُطابق رسائل المجموعات مع `groupAllowFrom` أولًا ثم تعود إلى `allowFrom`. يؤدي تشغيل أمر مسؤول في مجموعة إلى إرجاع تلميح بدل إسقاطه بصمت.
+
+## [​](https://docs.openclaw.ai/ar/channels/qqbot\#%D8%A8%D9%86%D9%8A%D8%A9-%D8%A7%D9%84%D9%85%D8%AD%D8%B1%D9%83)  بنية المحرك
+
+يأتي QQ Bot كمحرك مستقل داخل Plugin:
+
+- يملك كل حساب مكدس موارد معزولًا (اتصال WebSocket، عميل API، ذاكرة تخزين مؤقت للرموز، جذر تخزين الوسائط) مفهرسًا حسب `appId`. لا تشارك الحسابات أبدًا حالة الوارد/الصادر.
+- يوسم المسجّل متعدد الحسابات أسطر السجل بالحساب المالك حتى تبقى التشخيصات قابلة للفصل عند تشغيل عدة بوتات تحت Gateway واحد.
+- تشترك مسارات الوارد والصادر وجسر Gateway في جذر حمولة وسائط واحد تحت `~/.openclaw/media`، بحيث تهبط عمليات الرفع والتنزيل وذواكر التخزين المؤقت لتحويل الترميز تحت دليل واحد محمي بدل شجرة لكل نظام فرعي.
+- يمر تسليم الوسائط الغنية عبر مسار `sendMedia` واحد لأهداف C2C والمجموعات. تستخدم الملفات المحلية والمخازن المؤقتة التي تتجاوز حد الملفات الكبيرة نقاط نهاية الرفع المجزأ في QQ، بينما تستخدم الحمولات الأصغر API الوسائط أحادي العملية.
+- يمكن نسخ بيانات الاعتماد احتياطيًا واستعادتها كجزء من لقطات بيانات اعتماد OpenClaw القياسية؛ يعيد المحرك إرفاق مكدس موارد كل حساب عند الاستعادة من دون الحاجة إلى اقتران جديد برمز QR.
+
+## [​](https://docs.openclaw.ai/ar/channels/qqbot\#%D8%A7%D9%84%D8%A5%D9%84%D8%AD%D8%A7%D9%82-%D8%B9%D8%A8%D8%B1-%D8%B1%D9%85%D8%B2-qr)  الإلحاق عبر رمز QR
+
+كبديل للصق `AppID:AppSecret` يدويًا، يدعم المحرك تدفق إلحاق عبر رمز QR لربط QQ Bot بـ OpenClaw:
+
+1. شغّل مسار إعداد QQ Bot (على سبيل المثال `openclaw channels add --channel qqbot`) واختر تدفق رمز QR عند المطالبة.
+2. امسح رمز QR المُنشأ باستخدام تطبيق الهاتف المرتبط بـ QQ Bot الهدف.
+3. وافق على الاقتران على الهاتف. يحفظ OpenClaw بيانات الاعتماد المُعادة في `credentials/` ضمن نطاق الحساب الصحيح.
+
+تظهر مطالبات الموافقة التي ينشئها البوت نفسه (على سبيل المثال، تدفقات “السماح بهذا الإجراء؟” التي يعرضها QQ Bot API) كمطالبات OpenClaw أصلية يمكنك قبولها باستخدام `/bot-approve` بدل الرد عبر عميل QQ الخام.
+
+## [​](https://docs.openclaw.ai/ar/channels/qqbot\#%D8%A7%D8%B3%D8%AA%D9%83%D8%B4%D8%A7%D9%81-%D8%A7%D9%84%D8%A3%D8%AE%D8%B7%D8%A7%D8%A1-%D9%88%D8%A5%D8%B5%D9%84%D8%A7%D8%AD%D9%87%D8%A7)  استكشاف الأخطاء وإصلاحها
+
+- **يرد البوت “gone to Mars”:** بيانات الاعتماد غير مكوّنة أو Gateway غير مشغّل.
+- **لا توجد رسائل واردة:** تحقق من صحة `appId` و `clientSecret`، وأن
+البوت مفعّل على QQ Open Platform.
+- **ردود ذاتية متكررة:** يسجل OpenClaw فهارس مراجع الصادر في QQ على أنها
+مؤلفة بواسطة البوت ويتجاهل الأحداث الواردة التي يطابق `msgIdx` الحالي لها
+حساب البوت نفسه. يمنع هذا حلقات صدى المنصة مع السماح للمستخدمين
+باقتباس رسائل البوت السابقة أو الرد عليها.
+- **الإعداد باستخدام `--token-file` ما زال يظهر كغير مكوّن:** يضبط `--token-file`
+AppSecret فقط. ما زلت تحتاج إلى `appId` في التكوين أو `QQBOT_APP_ID`.
+- **الرسائل الاستباقية لا تصل:** قد يعترض QQ الرسائل التي يبدأها البوت إذا
+لم يتفاعل المستخدم مؤخرًا.
+- **الصوت لا يُنسخ نصيًا:** تأكد من تكوين STT وأن المزوّد قابل للوصول.
+
+## [​](https://docs.openclaw.ai/ar/channels/qqbot\#%D8%B0%D8%A7%D8%AA-%D8%B5%D9%84%D8%A9)  ذات صلة
+
+- [الاقتران](https://docs.openclaw.ai/ar/channels/pairing)
+- [المجموعات](https://docs.openclaw.ai/ar/channels/groups)
+- [استكشاف أخطاء القنوات وإصلاحها](https://docs.openclaw.ai/ar/channels/troubleshooting)
+
+[WeChat](https://docs.openclaw.ai/ar/channels/wechat) [Feishu](https://docs.openclaw.ai/ar/channels/feishu)
+
+Ctrl+I

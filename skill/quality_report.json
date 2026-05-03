@@ -1,13 +1,13 @@
 {
-  "timestamp": "2026-05-03T21:38:48.531692",
-  "skill_name": "openclaw",
+  "timestamp": "2026-05-03T22:37:30.095775",
+  "skill_name": "openclaw-mcp",
   "overall_score": {
-    "total_score": 83.0,
+    "total_score": 89.0,
     "completeness": 80.0,
     "accuracy": 100.0,
     "coverage": 80.0,
-    "health": 70.0,
-    "grade": "B+"
+    "health": 100.0,
+    "grade": "A-"
   },
   "metrics": [
     {
@@ -37,26 +37,20 @@
     },
     {
       "name": "Health",
-      "value": 70.0,
-      "level": "MetricLevel.WARNING",
-      "description": "Skill health: 70.0%",
-      "suggestions": [
-        "Very large file: tools_plugins.md",
-        "Very large file: gateway_ops.md",
-        "Very large file: other.md"
-      ]
+      "value": 100.0,
+      "level": "MetricLevel.INFO",
+      "description": "Skill health: 100.0%",
+      "suggestions": []
     }
   ],
   "statistics": {
-    "total_files": 17,
-    "total_size_bytes": 5448961,
-    "markdown_files": 17,
-    "reference_files": 16,
-    "total_characters": 5297664,
-    "total_words": 580947
+    "total_files": 33,
+    "total_size_bytes": 1299855,
+    "markdown_files": 33,
+    "reference_files": 32,
+    "total_characters": 1273267,
+    "total_words": 152254
   },
-  "recommendations": [
-    "\ud83d\udfe1 Fix health issues (empty files, structure)"
-  ],
+  "recommendations": [],
   "history": []
 }

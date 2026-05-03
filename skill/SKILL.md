@@ -1,5 +1,5 @@
 ---
-name: openclaw
+name: openclaw-mcp
 description: "Comprehensive OpenClaw 🦞 expertise built from the official docs.openclaw.ai. OpenClaw is a self-hosted gateway that connects chat apps (Discord, iMessage, Matrix, Microsoft Teams, Signal, Slack, Telegram, WhatsApp, Zalo, WebChat, and more) to AI coding agents like Pi/Codex/Claude. Use when installing or upgrading OpenClaw, running and operating the Gateway daemon, configuring agents/providers/models/runtimes, wiring channels and pairing devices, building or invoking tools/plugins/skills, managing sessions and credentials/SecretRef, deploying via Docker/Kubernetes/systemd/launchd, exposing OpenAI-compatible endpoints, integrating MCP servers, troubleshooting `openclaw doctor`/logs, or scripting via the `openclaw` CLI."
 license: MIT
 metadata:

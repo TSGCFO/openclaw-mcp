@@ -1,161 +1,582 @@
 # Getting Started
 
-_39 pages from docs.openclaw.ai_
+_39 pages from docs.openclaw.ai — full content preserved._
 
+## Contents
 
----
-
-## Onboard - OpenClaw
-
-_Source: <https://docs.openclaw.ai/cli/onboard>_
-
-# `openclaw onboard`
-
-Interactive onboarding for local or remote Gateway setup.
-
-## Related guides
-
-[**CLI onboarding hub** \\
-\\
-Walkthrough of the interactive CLI flow.](https://docs.openclaw.ai/start/wizard)
-
-[**Onboarding overview** \\
-\\
-How OpenClaw onboarding fits together.](https://docs.openclaw.ai/start/onboarding-overview)
-
-[**CLI setup reference** \\
-\\
-Outputs, internals, and per-step behavior.](https://docs.openclaw.ai/start/wizard-cli-reference)
-
-[**CLI automation** \\
-\\
-Non-interactive flags and scripted setups.](https://docs.openclaw.ai/start/wizard-cli-automation)
-
-[**macOS app onboarding** \\
-\\
-Onboarding flow for the macOS menu bar app.](https://docs.openclaw.ai/start/onboarding)
-
-## Examples
-
-```
-openclaw onboard
-openclaw onboard --modern
-openclaw onboard --flow quickstart
-openclaw onboard --flow manual
-openclaw onboard --flow import
-openclaw onboard --import-from hermes --import-source ~/.hermes
-openclaw onboard --skip-bootstrap
-openclaw onboard --mode remote --remote-url wss://gateway-host:18789
-```
-
-`--flow import` uses plugin-owned migration providers such as Hermes. It only runs against a fresh OpenClaw setup; if existing config, credentials, sessions, or workspace memory/identity files are present, reset or choose a fresh setup before importing.`--modern` starts the Crestodian conversational onboarding preview. Without
-`--modern`, `openclaw onboard` keeps the classic onboarding flow.For plaintext private-network `ws://` targets (trusted networks only), set
-`OPENCLAW_ALLOW_INSECURE_PRIVATE_WS=1` in the onboarding process environment.
-There is no `openclaw.json` equivalent for this client-side transport
-break-glass.Non-interactive custom provider:
-
-```
-openclaw onboard --non-interactive \
-  --auth-choice custom-api-key \
-  --custom-base-url "https://llm.example.com/v1" \
-  --custom-model-id "foo-large" \
-  --custom-api-key "$CUSTOM_API_KEY" \
-  --secret-input-mode plaintext \
-  --custom-compatibility openai \
-  --custom-image-input
-```
-
-`--custom-api-key` is optional in non-interactive mode. If omitted, onboarding checks `CUSTOM_API_KEY`.
-OpenClaw marks common vision model IDs as image-capable automatically. Pass `--custom-image-input` for unknown custom vision IDs, or `--custom-text-input` to force text-only metadata.LM Studio also supports a provider-specific key flag in non-interactive mode:
-
-```
-openclaw onboard --non-interactive \
-  --auth-choice lmstudio \
-  --custom-base-url "http://localhost:1234/v1" \
-  --custom-model-id "qwen/qwen3.5-9b" \
-  --lmstudio-api-key "$LM_API_TOKEN" \
-  --accept-risk
-```
-
-Non-interactive Ollama:
-
-```
-openclaw onboard --non-interactive \
-  --auth-choice ollama \
-  --custom-base-url "http://ollama-host:11434" \
-  --custom-model-id "qwen3.5:27b" \
-  --accept-risk
-```
-
-`--custom-base-url` defaults to `http://127.0.0.1:11434`. `--custom-model-id` is optional; if omitted, onboarding uses Ollama’s suggested defaults. Cloud model IDs such as `kimi-k2.5:cloud` also work here.Store provider keys as refs instead of plaintext:
-
-```
-openclaw onboard --non-interactive \
-  --auth-choice openai-api-key \
-  --secret-input-mode ref \
-  --accept-risk
-```
-
-With `--secret-input-mode ref`, onboarding writes env-backed refs instead of plaintext key values.
-For auth-profile backed providers this writes `keyRef` entries; for custom providers this writes `models.providers.<id>.apiKey` as an env ref (for example `{ source: "env", provider: "default", id: "CUSTOM_API_KEY" }`).Non-interactive `ref` mode contract:
-
-- Set the provider env var in the onboarding process environment (for example `OPENAI_API_KEY`).
-- Do not pass inline key flags (for example `--openai-api-key`) unless that env var is also set.
-- If an inline key flag is passed without the required env var, onboarding fails fast with guidance.
-
-Gateway token options in non-interactive mode:
-
-- `--gateway-auth token --gateway-token <token>` stores a plaintext token.
-- `--gateway-auth token --gateway-token-ref-env <name>` stores `gatew
-
-_… [truncated; see https://docs.openclaw.ai/cli/onboard for full content]_
-
+- [OpenClaw - OpenClaw](#openclaw---openclaw)
+- [Azure - OpenClaw](#azure---openclaw)
+- [Install - OpenClaw](#install---openclaw)
+- [Bun (experimental) - OpenClaw](#bun-experimental---openclaw)
+- [Docker - OpenClaw](#docker---openclaw)
+- [Docker VM runtime - OpenClaw](#docker-vm-runtime---openclaw)
+- [Docker VM runtime - OpenClaw](#docker-vm-runtime---openclaw)
+- [WhatsApp (QR)](#whatsapp-qr)
+- [exe.dev - OpenClaw](#exedev---openclaw)
+- [GCP - OpenClaw](#gcp---openclaw)
+- [Hetzner - OpenClaw](#hetzner---openclaw)
+- [Hostinger - OpenClaw](#hostinger---openclaw)
+- [https://docs.openclaw.ai/install/index.md](#httpsdocsopenclawaiinstallindexmd)
+- [Installer internals - OpenClaw](#installer-internals---openclaw)
+- [Migration guide - OpenClaw](#migration-guide---openclaw)
+- [Migrating from Hermes - OpenClaw](#migrating-from-hermes---openclaw)
+- [https://docs.openclaw.ai/install/migrating.md](#httpsdocsopenclawaiinstallmigratingmd)
+- [Node.js - OpenClaw](#nodejs---openclaw)
+- [Oracle Cloud - OpenClaw](#oracle-cloud---openclaw)
+- [Podman - OpenClaw](#podman---openclaw)
+- [Railway - OpenClaw](#railway---openclaw)
+- [Raspberry Pi - OpenClaw](#raspberry-pi---openclaw)
+- [Uninstall - OpenClaw](#uninstall---openclaw)
+- [https://docs.openclaw.ai/install/uninstall.md](#httpsdocsopenclawaiinstalluninstallmd)
+- [Updating - OpenClaw](#updating---openclaw)
+- [Agent bootstrapping - OpenClaw](#agent-bootstrapping---openclaw)
+- [Getting started - OpenClaw](#getting-started---openclaw)
+- [Copy your built static files into that directory.](#copy-your-built-static-files-into-that-directory)
+- [Docs hubs - OpenClaw](#docs-hubs---openclaw)
+- [OpenClaw lore - OpenClaw](#openclaw-lore---openclaw)
+- [Onboarding (macOS app) - OpenClaw](#onboarding-macos-app---openclaw)
+- [Onboarding overview - OpenClaw](#onboarding-overview---openclaw)
+- [Personal assistant setup - OpenClaw](#personal-assistant-setup---openclaw)
+- [Setup - OpenClaw](#setup---openclaw)
+- [Showcase - OpenClaw](#showcase---openclaw)
+- [Onboarding (CLI) - OpenClaw](#onboarding-cli---openclaw)
+- [CLI automation - OpenClaw](#cli-automation---openclaw)
+- [CLI setup reference - OpenClaw](#cli-setup-reference---openclaw)
+- [Kubernetes - OpenClaw](#kubernetes---openclaw)
 
 ---
 
-## Uninstall - OpenClaw
+## OpenClaw - OpenClaw
 
-_Source: <https://docs.openclaw.ai/cli/uninstall>_
+_Source: <https://docs.openclaw.ai>_
 
-# `openclaw uninstall`
+# OpenClaw 🦞
 
-Uninstall the gateway service + local data (CLI remains).Options:
+> _“EXFOLIATE! EXFOLIATE!”_ — A space lobster, probably
 
-- `--service`: remove the gateway service
-- `--state`: remove state and config
-- `--workspace`: remove workspace directories
-- `--app`: remove the macOS app
-- `--all`: remove service, state, workspace, and app
-- `--yes`: skip confirmation prompts
-- `--non-interactive`: disable prompts; requires `--yes`
-- `--dry-run`: print actions without removing files
+**Any OS gateway for AI agents across Discord, Google Chat, iMessage, Matrix, Microsoft Teams, Signal, Slack, Telegram, WhatsApp, Zalo, and more.**
 
-Examples:
+Send a message, get an agent response from your pocket. Run one Gateway across built-in channels, bundled channel plugins, WebChat, and mobile nodes.
+
+[**Get Started** \\
+\\
+Install OpenClaw and bring up the Gateway in minutes.](https://docs.openclaw.ai/start/getting-started)
+
+[**Run Onboarding** \\
+\\
+Guided setup with `openclaw onboard` and pairing flows.](https://docs.openclaw.ai/start/wizard)
+
+[**Open the Control UI** \\
+\\
+Launch the browser dashboard for chat, config, and sessions.](https://docs.openclaw.ai/web/control-ui)
+
+## What is OpenClaw?
+
+OpenClaw is a **self-hosted gateway** that connects your favorite chat apps and channel surfaces — built-in channels plus bundled or external channel plugins such as Discord, Google Chat, iMessage, Matrix, Microsoft Teams, Signal, Slack, Telegram, WhatsApp, Zalo, and more — to AI coding agents like Pi. You run a single Gateway process on your own machine (or a server), and it becomes the bridge between your messaging apps and an always-available AI assistant.**Who is it for?** Developers and power users who want a personal AI assistant they can message from anywhere — without giving up control of their data or relying on a hosted service.**What makes it different?**
+
+- **Self-hosted**: runs on your hardware, your rules
+- **Multi-channel**: one Gateway serves built-in channels plus bundled or external channel plugins simultaneously
+- **Agent-native**: built for coding agents with tool use, sessions, memory, and multi-agent routing
+- **Open source**: MIT licensed, community-driven
+
+**What do you need?** Node 24 (recommended), or Node 22 LTS (`22.14+`) for compatibility, an API key from your chosen provider, and 5 minutes. For best quality and security, use the strongest latest-generation model available.
+
+## How it works
+
+The Gateway is the single source of truth for sessions, routing, and channel connections.
+
+## Key capabilities
+
+[**Multi-channel gateway** \\
+\\
+Discord, iMessage, Signal, Slack, Telegram, WhatsApp, WebChat, and more with a single Gateway process.](https://docs.openclaw.ai/channels)
+
+[**Plugin channels** \\
+\\
+Bundled plugins add Matrix, Nostr, Twitch, Zalo, and more in normal current releases.](https://docs.openclaw.ai/tools/plugin)
+
+[**Multi-agent routing** \\
+\\
+Isolated sessions per agent, workspace, or sender.](https://docs.openclaw.ai/concepts/multi-agent)
+
+[**Media support** \\
+\\
+Send and receive images, audio, and documents.](https://docs.openclaw.ai/nodes/images)
+
+[**Web Control UI** \\
+\\
+Browser dashboard for chat, config, sessions, and nodes.](https://docs.openclaw.ai/web/control-ui)
+
+[**Mobile nodes** \\
+\\
+Pair iOS and Android nodes for Canvas, camera, and voice-enabled workflows.](https://docs.openclaw.ai/nodes)
+
+## Quick start
+
+1
+
+[Navigate to header](https://docs.openclaw.ai/#)
+
+Install OpenClaw
 
 ```
-openclaw backup create
-openclaw uninstall
-openclaw uninstall --service --yes --non-interactive
-openclaw uninstall --state --workspace --yes --non-interactive
-openclaw uninstall --all --yes
-openclaw uninstall --dry-run
+npm install -g openclaw@latest
 ```
 
-Notes:
+2
 
-- Run `openclaw backup create` first if you want a restorable snapshot before removing state or workspaces.
-- `--all` is shorthand for removing service, state, workspace, and app together.
-- `--non-interactive` requires `--yes`.
+[Navigate to header](https://docs.openclaw.ai/#)
 
-## Related
+Onboard and install the service
 
-- [CLI reference](https://docs.openclaw.ai/cli)
-- [Uninstall](https://docs.openclaw.ai/install/uninstall)
+```
+openclaw onboard --install-daemon
+```
 
-[Status](https://docs.openclaw.ai/cli/status) [Update](https://docs.openclaw.ai/cli/update)
+3
+
+[Navigate to header](https://docs.openclaw.ai/#)
+
+Chat
+
+Open the Control UI in your browser and send a message:
+
+```
+openclaw dashboard
+```
+
+Or connect a channel ( [Telegram](https://docs.openclaw.ai/channels/telegram) is fastest) and chat from your phone.
+
+Need the full install and dev setup? See [Getting Started](https://docs.openclaw.ai/start/getting-started).
+
+## Dashboard
+
+Open the browser Control UI after the Gateway starts.
+
+- Local default: [http://127.0.0.1:18789/](http://127.0.0.1:18789/)
+- Remote access: [Web surfaces](https://docs.openclaw.ai/web) and [Tailscale](https://docs.openclaw.ai/gateway/tailscale)
+
+## Configuration (optional)
+
+Config lives at `~/.openclaw/openclaw.json`.
+
+- If you **do nothing**, OpenClaw uses the bundled Pi binary in RPC mode with per-sender sessions.
+- If you want to lock it down, start with `channels.whatsapp.allowFrom` and (for groups) mention rules.
+
+Example:
+
+```
+{
+  channels: {
+    whatsapp: {
+      allowFrom: ["+15555550123"],
+      groups: { "*": { requireMention: true } },
+    },
+  },
+  messages: { groupChat: { mentionPatterns: ["@openclaw"] } },
+}
+```
+
+## Start here
+
+[**Docs hubs** \\
+\\
+All docs and guides, organized by use case.](https://docs.openclaw.ai/start/hubs)
+
+[**Configuration** \\
+\\
+Core Gateway settings, tokens, and provider config.](https://docs.openclaw.ai/gateway/configuration)
+
+[**Remote access** \\
+\\
+SSH and tailnet access patterns.](https://docs.openclaw.ai/gateway/remote)
+
+[**Channels** \\
+\\
+Channel-specific setup for Feishu, Microsoft Teams, WhatsApp, Telegram, Discord, and more.](https://docs.openclaw.ai/channels/telegram)
+
+[**Nodes** \\
+\\
+iOS and Android nodes with pairing, Canvas, camera, and device actions.](https://docs.openclaw.ai/nodes)
+
+[**Help** \\
+\\
+Common fixes and troubleshooting entry point.](https://docs.openclaw.ai/help)
+
+## Learn more
+
+[**Full feature list** \\
+\\
+Complete channel, routing, and media capabilities.](https://docs.openclaw.ai/concepts/features)
+
+[**Multi-agent routing** \\
+\\
+Workspace isolation and per-agent sessions.](https://docs.openclaw.ai/concepts/multi-agent)
+
+[**Security** \\
+\\
+Tokens, allowlists, and safety controls.](https://docs.openclaw.ai/gateway/security)
+
+[**Troubleshooting** \\
+\\
+Gateway diagnostics and common errors.](https://docs.openclaw.ai/gateway/troubleshooting)
+
+[**About and credits** \\
+\\
+Project origins, contributors, and license.](https://docs.openclaw.ai/reference/credits)
+
+[Showcase](https://docs.openclaw.ai/start/showcase)
 
 Ctrl+I
 
+---
+
+## Azure - OpenClaw
+
+_Source: <https://docs.openclaw.ai/id/install/azure>_
+
+# OpenClaw di Azure Linux VM
+
+Panduan ini menyiapkan Azure Linux VM dengan Azure CLI, menerapkan hardening Network Security Group (NSG), mengonfigurasi Azure Bastion untuk akses SSH, dan memasang OpenClaw.
+
+## Yang akan Anda lakukan
+
+- Membuat resource jaringan Azure (VNet, subnet, NSG) dan komputasi dengan Azure CLI
+- Menerapkan aturan Network Security Group sehingga SSH VM hanya diizinkan dari Azure Bastion
+- Menggunakan Azure Bastion untuk akses SSH (tanpa IP publik pada VM)
+- Memasang OpenClaw dengan skrip installer
+- Memverifikasi Gateway
+
+## Yang Anda butuhkan
+
+- Langganan Azure dengan izin untuk membuat resource komputasi dan jaringan
+- Azure CLI terpasang (lihat [langkah pemasangan Azure CLI](https://learn.microsoft.com/cli/azure/install-azure-cli) bila diperlukan)
+- Sepasang kunci SSH (panduan ini mencakup pembuatan jika diperlukan)
+- ~20-30 menit
+
+## Konfigurasikan deployment
+
+1
+
+[Navigate to header](https://docs.openclaw.ai/id/install/azure#)
+
+Masuk ke Azure CLI
+
+```
+az login
+az extension add -n ssh
+```
+
+Ekstensi `ssh` diperlukan untuk tunneling SSH native Azure Bastion.
+
+2
+
+[Navigate to header](https://docs.openclaw.ai/id/install/azure#)
+
+Daftarkan provider resource yang diperlukan (sekali saja)
+
+```
+az provider register --namespace Microsoft.Compute
+az provider register --namespace Microsoft.Network
+```
+
+Verifikasi pendaftaran. Tunggu sampai keduanya menampilkan `Registered`.
+
+```
+az provider show --namespace Microsoft.Compute --query registrationState -o tsv
+az provider show --namespace Microsoft.Network --query registrationState -o tsv
+```
+
+3
+
+[Navigate to header](https://docs.openclaw.ai/id/install/azure#)
+
+Tetapkan variabel deployment
+
+```
+RG="rg-openclaw"
+LOCATION="westus2"
+VNET_NAME="vnet-openclaw"
+VNET_PREFIX="10.40.0.0/16"
+VM_SUBNET_NAME="snet-openclaw-vm"
+VM_SUBNET_PREFIX="10.40.2.0/24"
+BASTION_SUBNET_PREFIX="10.40.1.0/26"
+NSG_NAME="nsg-openclaw-vm"
+VM_NAME="vm-openclaw"
+ADMIN_USERNAME="openclaw"
+BASTION_NAME="bas-openclaw"
+BASTION_PIP_NAME="pip-openclaw-bastion"
+```
+
+Sesuaikan nama dan rentang CIDR agar sesuai dengan environment Anda. Subnet Bastion harus minimal `/26`.
+
+4
+
+[Navigate to header](https://docs.openclaw.ai/id/install/azure#)
+
+Pilih kunci SSH
+
+Gunakan kunci publik yang sudah ada jika Anda memilikinya:
+
+```
+SSH_PUB_KEY="$(cat ~/.ssh/id_ed25519.pub)"
+```
+
+Jika Anda belum memiliki kunci SSH, buat satu:
+
+```
+ssh-keygen -t ed25519 -a 100 -f ~/.ssh/id_ed25519 -C "you@example.com"
+SSH_PUB_KEY="$(cat ~/.ssh/id_ed25519.pub)"
+```
+
+5
+
+[Navigate to header](https://docs.openclaw.ai/id/install/azure#)
+
+Pilih ukuran VM dan ukuran disk OS
+
+```
+VM_SIZE="Standard_B2as_v2"
+OS_DISK_SIZE_GB=64
+```
+
+Pilih ukuran VM dan ukuran disk OS yang tersedia pada langganan dan region Anda:
+
+- Mulai dari yang lebih kecil untuk penggunaan ringan dan tingkatkan nanti
+- Gunakan lebih banyak vCPU/RAM/disk untuk otomatisasi yang lebih berat, lebih banyak channel, atau beban kerja model/alat yang lebih besar
+- Jika ukuran VM tidak tersedia di region atau kuota langganan Anda, pilih SKU terdekat yang tersedia
+
+Daftar ukuran VM yang tersedia di region target Anda:
+
+```
+az vm list-skus --location "${LOCATION}" --resource-type virtualMachines -o table
+```
+
+Periksa penggunaan/kuota vCPU dan disk Anda saat ini:
+
+```
+az vm list-usage --location "${LOCATION}" -o table
+```
+
+## Deploy resource Azure
+
+1
+
+[Navigate to header](https://docs.openclaw.ai/id/install/azure#)
+
+Buat resource group
+
+```
+az group create -n "${RG}" -l "${LOCATION}"
+```
+
+2
+
+[Navigate to header](https://docs.openclaw.ai/id/install/azure#)
+
+Buat network security group
+
+Buat NSG dan tambahkan aturan agar hanya subnet Bastion yang dapat SSH ke VM.
+
+```
+az network nsg create \
+  -g "${RG}" -n "${NSG_NAME}" -l "${LOCATION}"
+
+# Izinkan SSH hanya dari subnet Bastion
+az network nsg rule create \
+  -g "${RG}" --nsg-name "${NSG_NAME}" \
+  -n AllowSshFromBastionSubnet --priority 100 \
+  --access Allow --direction Inbound --protocol Tcp \
+  --source-address-prefixes "${BASTION_SUBNET_PREFIX}" \
+  --destination-port-ranges 22
+
+# Tolak SSH dari internet publik
+az network nsg rule create \
+  -g "${RG}" --nsg-name "${NSG_NAME}" \
+  -n DenyInternetSsh --priority 110 \
+  --access Deny --direction Inbound --protocol Tcp \
+  --source-address-prefixes Internet \
+  --destination-port-ranges 22
+
+# Tolak SSH dari sumber VNet lain
+az network nsg rule create \
+  -g "${RG}" --nsg-name "${NSG_NAME}" \
+  -n DenyVnetSsh --priority 120 \
+  --access Deny --direction Inbound --protocol Tcp \
+  --source-address-prefixes VirtualNetwork \
+  --destination-port-ranges 22
+```
+
+Aturan dievaluasi berdasarkan prioritas (angka terkecil lebih dulu): lalu lintas Bastion diizinkan pada 100, lalu semua SSH lain diblokir pada 110 dan 120.
+
+3
+
+[Navigate to header](https://docs.openclaw.ai/id/install/azure#)
+
+Buat virtual network dan subnet
+
+Buat VNet dengan subnet VM (NSG terpasang), lalu tambahkan subnet Bastion.
+
+```
+az network vnet create \
+  -g "${RG}" -n "${VNET_NAME}" -l "${LOCATION}" \
+  --address-prefixes "${VNET_PREFIX}" \
+  --subnet-name "${VM_SUBNET_NAME}" \
+  --subnet-prefixes "${VM_SUBNET_PREFIX}"
+
+# Pasang NSG ke subnet VM
+az network vnet subnet update \
+  -g "${RG}" --vnet-name "${VNET_NAME}" \
+  -n "${VM_SUBNET_NAME}" --nsg "${NSG_NAME}"
+
+# AzureBastionSubnet — nama ini diwajibkan oleh Azure
+az network vnet subnet create \
+  -g "${RG}" --vnet-name "${VNET_NAME}" \
+  -n AzureBastionSubnet \
+  --address-prefixes "${BASTION_SUBNET_PREFIX}"
+```
+
+4
+
+[Navigate to header](https://docs.openclaw.ai/id/install/azure#)
+
+Buat VM
+
+VM tidak memiliki IP publik. Akses SSH dilakukan secara eksklusif melalui Azure Bastion.
+
+```
+az vm create \
+  -g "${RG}" -n "${VM_NAME}" -l "${LOCATION}" \
+  --image "Canonical:ubuntu-24_04-lts:server:latest" \
+  --size "${VM_SIZE}" \
+  --os-disk-size-gb "${OS_DISK_SIZE_GB}" \
+  --storage-sku StandardSSD_LRS \
+  --admin-username "${ADMIN_USERNAME}" \
+  --ssh-key-values "${SSH_PUB_KEY}" \
+  --vnet-name "${VNET_NAME}" \
+  --subnet "${VM_SUBNET_NAME}" \
+  --public-ip-address "" \
+  --nsg ""
+```
+
+`--public-ip-address ""` mencegah IP publik ditetapkan. `--nsg ""` melewati pembuatan NSG per-NIC (NSG tingkat subnet menangani keamanan).**Reproduksibilitas:** Perintah di atas menggunakan `latest` untuk image Ubuntu. Untuk menyematkan versi tertentu, daftar versi yang tersedia lalu ganti `latest`:
+
+```
+az vm image list \
+  --publisher Canonical --offer ubuntu-24_04-lts \
+  --sku server --all -o table
+```
+
+5
+
+[Navigate to header](https://docs.openclaw.ai/id/install/azure#)
+
+Buat Azure Bastion
+
+Azure Bastion menyediakan akses SSH terkelola ke VM tanpa mengekspos IP publik. SKU Standard dengan tunneling diperlukan untuk `az network bastion ssh` berbasis CLI.
+
+```
+az network public-ip create \
+  -g "${RG}" -n "${BASTION_PIP_NAME}" -l "${LOCATION}" \
+  --sku Standard --allocation-method Static
+
+az network bastion create \
+  -g "${RG}" -n "${BASTION_NAME}" -l "${LOCATION}" \
+  --vnet-name "${VNET_NAME}" \
+  --public-ip-address "${BASTION_PIP_NAME}" \
+  --sku Standard --enable-tunneling true
+```
+
+Provisioning Bastion biasanya memakan waktu 5-10 menit tetapi bisa sampai 15-30 menit di beberapa region.
+
+## Pasang OpenClaw
+
+1
+
+[Navigate to header](https://docs.openclaw.ai/id/install/azure#)
+
+SSH ke VM melalui Azure Bastion
+
+```
+VM_ID="$(az vm show -g "${RG}" -n "${VM_NAME}" --query id -o tsv)"
+
+az network bastion ssh \
+  --name "${BASTION_NAME}" \
+  --resource-group "${RG}" \
+  --target-resource-id "${VM_ID}" \
+  --auth-type ssh-key \
+  --username "${ADMIN_USERNAME}" \
+  --ssh-key ~/.ssh/id_ed25519
+```
+
+2
+
+[Navigate to header](https://docs.openclaw.ai/id/install/azure#)
+
+Pasang OpenClaw (di shell VM)
+
+```
+curl -fsSL https://openclaw.ai/install.sh -o /tmp/install.sh
+bash /tmp/install.sh
+rm -f /tmp/install.sh
+```
+
+Installer memasang Node LTS dan dependensi jika belum ada, memasang OpenClaw, dan meluncurkan wizard onboarding. Lihat [Install](https://docs.openclaw.ai/id/install) untuk detailnya.
+
+3
+
+[Navigate to header](https://docs.openclaw.ai/id/install/azure#)
+
+Verifikasi Gateway
+
+Setelah onboarding selesai:
+
+```
+openclaw gateway status
+```
+
+Sebagian besar tim enterprise Azure sudah memiliki lisensi GitHub Copilot. Jika itu kasus Anda, kami merekomendasikan memilih provider GitHub Copilot di wizard onboarding OpenClaw. Lihat [provider GitHub Copilot](https://docs.openclaw.ai/id/providers/github-copilot).
+
+## Pertimbangan biaya
+
+Azure Bastion Standard SKU berjalan sekitar **$140/bulan** dan VM (Standard\_B2as\_v2) berjalan sekitar **$55/bulan**.Untuk mengurangi biaya:
+
+- **Deallocate VM** saat tidak digunakan (menghentikan penagihan komputasi; biaya disk tetap ada). Gateway OpenClaw tidak akan dapat dijangkau saat VM dideallocate — mulai lagi saat Anda membutuhkannya aktif:
+
+```
+az vm deallocate -g "${RG}" -n "${VM_NAME}"
+az vm start -g "${RG}" -n "${VM_NAME}"   # mulai lagi nanti
+```
+
+- **Hapus Bastion saat tidak diperlukan** dan buat ulang saat Anda membutuhkan akses SSH. Bastion adalah komponen biaya terbesar dan hanya memerlukan beberapa menit untuk provisioning.
+- **Gunakan Basic Bastion SKU** (~$38/bulan) jika Anda hanya memerlukan SSH berbasis Portal dan tidak memerlukan tunneling CLI (`az network bastion ssh`).
+
+## Pembersihan
+
+Untuk menghapus semua resource yang dibuat oleh panduan ini:
+
+```
+az group delete -n "${RG}" --yes --no-wait
+```
+
+Ini menghapus resource group dan semua yang ada di dalamnya (VM, VNet, NSG, Bastion, IP publik).
+
+## Langkah selanjutnya
+
+- Siapkan channel pesan: [Channels](https://docs.openclaw.ai/id/channels)
+- Pair perangkat lokal sebagai node: [Nodes](https://docs.openclaw.ai/id/nodes)
+- Konfigurasikan Gateway: [Konfigurasi Gateway](https://docs.openclaw.ai/id/gateway/configuration)
+- Untuk detail lebih lanjut tentang deployment OpenClaw di Azure dengan provider model GitHub Copilot: [OpenClaw on Azure with GitHub Copilot](https://github.com/johnsonshi/openclaw-azure-github-copilot)
+
+## Terkait
+
+- [Ikhtisar instalasi](https://docs.openclaw.ai/id/install)
+- [GCP](https://docs.openclaw.ai/id/install/gcp)
+- [DigitalOcean](https://docs.openclaw.ai/id/install/digitalocean)
+
+[Podman](https://docs.openclaw.ai/id/install/podman) [DigitalOcean](https://docs.openclaw.ai/id/install/digitalocean)
+
+Ctrl+I
 
 ---
 
@@ -315,10 +736,87 @@ If you want managed startup after install:
 
 - macOS: LaunchAgent via `openclaw onboard --install-daemon` or `openclaw gateway install`
 - Linux/WSL2: systemd user service via the same commands
-- Native Windows: Scheduled Task first, with a per-user Startup-folder login item fallback if task
+- Native Windows: Scheduled Task first, with a per-user Startup-folder login item fallback if task creation is denied
 
-_… [truncated; see https://docs.openclaw.ai/install for full content]_
+## Hosting and deployment
 
+Deploy OpenClaw on a cloud server or VPS:
+
+[**VPS** \\
+\\
+Any Linux VPS](https://docs.openclaw.ai/vps)
+
+[**Docker VM** \\
+\\
+Shared Docker steps](https://docs.openclaw.ai/install/docker-vm-runtime)
+
+[**Kubernetes** \\
+\\
+K8s](https://docs.openclaw.ai/install/kubernetes)
+
+[**Fly.io** \\
+\\
+Fly.io](https://docs.openclaw.ai/install/fly)
+
+[**Hetzner** \\
+\\
+Hetzner](https://docs.openclaw.ai/install/hetzner)
+
+[**GCP** \\
+\\
+Google Cloud](https://docs.openclaw.ai/install/gcp)
+
+[**Azure** \\
+\\
+Azure](https://docs.openclaw.ai/install/azure)
+
+[**Railway** \\
+\\
+Railway](https://docs.openclaw.ai/install/railway)
+
+[**Render** \\
+\\
+Render](https://docs.openclaw.ai/install/render)
+
+[**Northflank** \\
+\\
+Northflank](https://docs.openclaw.ai/install/northflank)
+
+## Update, migrate, or uninstall
+
+[**Updating** \\
+\\
+Keep OpenClaw up to date.](https://docs.openclaw.ai/install/updating)
+
+[**Migrating** \\
+\\
+Move to a new machine.](https://docs.openclaw.ai/install/migrating)
+
+[**Uninstall** \\
+\\
+Remove OpenClaw completely.](https://docs.openclaw.ai/install/uninstall)
+
+## Troubleshooting: `openclaw` not found
+
+If the install succeeded but `openclaw` is not found in your terminal:
+
+```
+node -v           # Node installed?
+npm prefix -g     # Where are global packages?
+echo "$PATH"      # Is the global bin dir in PATH?
+```
+
+If `$(npm prefix -g)/bin` is not in your `$PATH`, add it to your shell startup file (`~/.zshrc` or `~/.bashrc`):
+
+```
+export PATH="$(npm prefix -g)/bin:$PATH"
+```
+
+Then open a new terminal. See [Node setup](https://docs.openclaw.ai/install/node) for more details.
+
+[Installer internals](https://docs.openclaw.ai/install/installer)
+
+Ctrl+I
 
 ---
 
@@ -391,7 +889,6 @@ Some scripts still hardcode pnpm (for example `docs:build`, `ui:*`, `protocol:ch
 [Ansible](https://docs.openclaw.ai/install/ansible) [ClawDock](https://docs.openclaw.ai/install/clawdock)
 
 Ctrl+I
-
 
 ---
 
@@ -477,10 +974,322 @@ export OTEL_SERVICE_NAME="openclaw-gateway"
 ```
 
 Install the official `@openclaw/diagnostics-otel` plugin from ClawHub in
-packaged
+packaged Docker installs before enabling export. Custom source-built images can
+still include the local plugin source with
+`OPENCLAW_EXTENSIONS=diagnostics-otel`. To enable export, allow and enable the
+`diagnostics-otel` plugin in config, then set
+`diagnostics.otel.enabled=true` or use the config example in [OpenTelemetry\\
+export](https://docs.openclaw.ai/gateway/opentelemetry). Collector auth headers are configured through
+`diagnostics.otel.headers`, not through Docker environment variables.Prometheus metrics use the already-published Gateway port. Install
+`clawhub:@openclaw/diagnostics-prometheus`, enable the
+`diagnostics-prometheus` plugin, then scrape:
 
-_… [truncated; see https://docs.openclaw.ai/install/docker for full content]_
+```
+http://<gateway-host>:18789/api/diagnostics/prometheus
+```
 
+The route is protected by Gateway authentication. Do not expose a separate
+public `/metrics` port or unauthenticated reverse-proxy path. See
+[Prometheus metrics](https://docs.openclaw.ai/gateway/prometheus).
+
+### Health checks
+
+Container probe endpoints (no auth required):
+
+```
+curl -fsS http://127.0.0.1:18789/healthz   # liveness
+curl -fsS http://127.0.0.1:18789/readyz     # readiness
+```
+
+The Docker image includes a built-in `HEALTHCHECK` that pings `/healthz`.
+If checks keep failing, Docker marks the container as `unhealthy` and
+orchestration systems can restart or replace it.Authenticated deep health snapshot:
+
+```
+docker compose exec openclaw-gateway node dist/index.js health --token "$OPENCLAW_GATEWAY_TOKEN"
+```
+
+### LAN vs loopback
+
+`scripts/docker/setup.sh` defaults `OPENCLAW_GATEWAY_BIND=lan` so host access to
+`http://127.0.0.1:18789` works with Docker port publishing.
+
+- `lan` (default): host browser and host CLI can reach the published gateway port.
+- `loopback`: only processes inside the container network namespace can reach
+the gateway directly.
+
+Use bind mode values in `gateway.bind` (`lan` / `loopback` / `custom` /
+`tailnet` / `auto`), not host aliases like `0.0.0.0` or `127.0.0.1`.
+
+### Host Local Providers
+
+When OpenClaw runs in Docker, `127.0.0.1` inside the container is the container
+itself, not your host machine. Use `host.docker.internal` for AI providers that
+run on the host:
+
+| Provider | Host default URL | Docker setup URL |
+| --- | --- | --- |
+| LM Studio | `http://127.0.0.1:1234` | `http://host.docker.internal:1234` |
+| Ollama | `http://127.0.0.1:11434` | `http://host.docker.internal:11434` |
+
+The bundled Docker setup uses those host URLs as the LM Studio and Ollama
+onboarding defaults, and `docker-compose.yml` maps `host.docker.internal` to
+Docker’s host gateway for Linux Docker Engine. Docker Desktop already provides
+the same hostname on macOS and Windows.Host services must also listen on an address reachable from Docker:
+
+```
+lms server start --port 1234 --bind 0.0.0.0
+OLLAMA_HOST=0.0.0.0:11434 ollama serve
+```
+
+If you use your own Compose file or `docker run` command, add the same host
+mapping yourself, for example
+`--add-host=host.docker.internal:host-gateway`.
+
+### Bonjour / mDNS
+
+Docker bridge networking usually does not forward Bonjour/mDNS multicast
+(`224.0.0.251:5353`) reliably. The bundled Compose setup therefore defaults
+`OPENCLAW_DISABLE_BONJOUR=1` so the Gateway does not crash-loop or repeatedly
+restart advertising when the bridge drops multicast traffic.Use the published Gateway URL, Tailscale, or wide-area DNS-SD for Docker hosts.
+Set `OPENCLAW_DISABLE_BONJOUR=0` only when running with host networking, macvlan,
+or another network where mDNS multicast is known to work.For gotchas and troubleshooting, see [Bonjour discovery](https://docs.openclaw.ai/gateway/bonjour).
+
+### Storage and persistence
+
+Docker Compose bind-mounts `OPENCLAW_CONFIG_DIR` to `/home/node/.openclaw` and
+`OPENCLAW_WORKSPACE_DIR` to `/home/node/.openclaw/workspace`, so those paths
+survive container replacement. When either variable is unset, the bundled
+`docker-compose.yml` falls back to `${HOME}/.openclaw` (and
+`${HOME}/.openclaw/workspace` for the workspace mount), or `/tmp/.openclaw`
+when `HOME` itself is also missing. That keeps `docker compose up` from
+emitting an empty-source volume spec on bare environments.That mounted config directory is where OpenClaw keeps:
+
+- `openclaw.json` for behavior config
+- `agents/<agentId>/agent/auth-profiles.json` for stored provider OAuth/API-key auth
+- `.env` for env-backed runtime secrets such as `OPENCLAW_GATEWAY_TOKEN`
+
+Installed downloadable plugins store their package state under the mounted
+OpenClaw home, so plugin install records and package roots survive container
+replacement. Gateway startup does not generate bundled-plugin dependency trees.For full persistence details on VM deployments, see
+[Docker VM Runtime - What persists where](https://docs.openclaw.ai/install/docker-vm-runtime#what-persists-where).**Disk growth hotspots:** watch `media/`, session JSONL files,
+`cron/runs/*.jsonl`, installed plugin package roots, and rolling file logs
+under `/tmp/openclaw/`.
+
+### Shell helpers (optional)
+
+For easier day-to-day Docker management, install `ClawDock`:
+
+```
+mkdir -p ~/.clawdock && curl -sL https://raw.githubusercontent.com/openclaw/openclaw/main/scripts/clawdock/clawdock-helpers.sh -o ~/.clawdock/clawdock-helpers.sh
+echo 'source ~/.clawdock/clawdock-helpers.sh' >> ~/.zshrc && source ~/.zshrc
+```
+
+If you installed ClawDock from the older `scripts/shell-helpers/clawdock-helpers.sh` raw path, rerun the install command above so your local helper file tracks the new location.Then use `clawdock-start`, `clawdock-stop`, `clawdock-dashboard`, etc. Run
+`clawdock-help` for all commands.
+See [ClawDock](https://docs.openclaw.ai/install/clawdock) for the full helper guide.
+
+Enable agent sandbox for Docker gateway
+
+```
+export OPENCLAW_SANDBOX=1
+./scripts/docker/setup.sh
+```
+
+Custom socket path (e.g. rootless Docker):
+
+```
+export OPENCLAW_SANDBOX=1
+export OPENCLAW_DOCKER_SOCKET=/run/user/1000/docker.sock
+./scripts/docker/setup.sh
+```
+
+The script mounts `docker.sock` only after sandbox prerequisites pass. If
+sandbox setup cannot complete, the script resets `agents.defaults.sandbox.mode`
+to `off`.
+
+Automation / CI (non-interactive)
+
+Disable Compose pseudo-TTY allocation with `-T`:
+
+```
+docker compose run -T --rm openclaw-cli gateway probe
+docker compose run -T --rm openclaw-cli devices list --json
+```
+
+Shared-network security note
+
+`openclaw-cli` uses `network_mode: "service:openclaw-gateway"` so CLI
+commands can reach the gateway over `127.0.0.1`. Treat this as a shared
+trust boundary. The compose config drops `NET_RAW`/`NET_ADMIN` and enables
+`no-new-privileges` on `openclaw-cli`.
+
+Permissions and EACCES
+
+The image runs as `node` (uid 1000). If you see permission errors on
+`/home/node/.openclaw`, make sure your host bind mounts are owned by uid 1000:
+
+```
+sudo chown -R 1000:1000 /path/to/openclaw-config /path/to/openclaw-workspace
+```
+
+Faster rebuilds
+
+Order your Dockerfile so dependency layers are cached. This avoids re-running
+`pnpm install` unless lockfiles change:
+
+```
+FROM node:24-bookworm
+RUN curl -fsSL https://bun.sh/install | bash
+ENV PATH="/root/.bun/bin:${PATH}"
+RUN corepack enable
+WORKDIR /app
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml .npmrc ./
+COPY ui/package.json ./ui/package.json
+COPY scripts ./scripts
+RUN pnpm install --frozen-lockfile
+COPY . .
+RUN pnpm build
+RUN pnpm ui:install
+RUN pnpm ui:build
+ENV NODE_ENV=production
+CMD ["node","dist/index.js"]
+```
+
+Power-user container options
+
+The default image is security-first and runs as non-root `node`. For a more
+full-featured container:
+
+1. **Persist `/home/node`**: `export OPENCLAW_HOME_VOLUME="openclaw_home"`
+2. **Bake system deps**: `export OPENCLAW_DOCKER_APT_PACKAGES="git curl jq"`
+3. **Install Playwright browsers**:
+
+```
+docker compose run --rm openclaw-cli \
+     node /app/node_modules/playwright-core/cli.js install chromium
+```
+
+4. **Persist browser downloads**: set
+`PLAYWRIGHT_BROWSERS_PATH=/home/node/.cache/ms-playwright` and use
+`OPENCLAW_HOME_VOLUME` or `OPENCLAW_EXTRA_MOUNTS`.
+
+OpenAI Codex OAuth (headless Docker)
+
+If you pick OpenAI Codex OAuth in the wizard, it opens a browser URL. In
+Docker or headless setups, copy the full redirect URL you land on and paste
+it back into the wizard to finish auth.
+
+Base image metadata
+
+The main Docker runtime image uses `node:24-bookworm-slim` and publishes OCI
+base-image annotations including `org.opencontainers.image.base.name`,
+`org.opencontainers.image.source`, and others. The Node base digest is
+refreshed through Dependabot Docker base-image PRs; release builds do not run
+a distro upgrade layer. See
+[OCI image annotations](https://github.com/opencontainers/image-spec/blob/main/annotations.md).
+
+### Running on a VPS?
+
+See [Hetzner (Docker VPS)](https://docs.openclaw.ai/install/hetzner) and
+[Docker VM Runtime](https://docs.openclaw.ai/install/docker-vm-runtime) for shared VM deployment steps
+including binary baking, persistence, and updates.
+
+## Agent sandbox
+
+When `agents.defaults.sandbox` is enabled with the Docker backend, the gateway
+runs agent tool execution (shell, file read/write, etc.) inside isolated Docker
+containers while the gateway itself stays on the host. This gives you a hard wall
+around untrusted or multi-tenant agent sessions without containerizing the entire
+gateway.Sandbox scope can be per-agent (default), per-session, or shared. Each scope
+gets its own workspace mounted at `/workspace`. You can also configure
+allow/deny tool policies, network isolation, resource limits, and browser
+containers.For full configuration, images, security notes, and multi-agent profiles, see:
+
+- [Sandboxing](https://docs.openclaw.ai/gateway/sandboxing) — complete sandbox reference
+- [OpenShell](https://docs.openclaw.ai/gateway/openshell) — interactive shell access to sandbox containers
+- [Multi-Agent Sandbox and Tools](https://docs.openclaw.ai/tools/multi-agent-sandbox-tools) — per-agent overrides
+
+### Quick enable
+
+```
+{
+  agents: {
+    defaults: {
+      sandbox: {
+        mode: "non-main", // off | non-main | all
+        scope: "agent", // session | agent | shared
+      },
+    },
+  },
+}
+```
+
+Build the default sandbox image (from a source checkout):
+
+```
+scripts/sandbox-setup.sh
+```
+
+For npm installs without a source checkout, see [Sandboxing § Images and setup](https://docs.openclaw.ai/gateway/sandboxing#images-and-setup) for inline `docker build` commands.
+
+## Troubleshooting
+
+Image missing or sandbox container not starting
+
+Build the sandbox image with
+[`scripts/sandbox-setup.sh`](https://github.com/openclaw/openclaw/blob/main/scripts/sandbox-setup.sh)
+(source checkout) or the inline `docker build` command from [Sandboxing § Images and setup](https://docs.openclaw.ai/gateway/sandboxing#images-and-setup) (npm install),
+or set `agents.defaults.sandbox.docker.image` to your custom image.
+Containers are auto-created per session on demand.
+
+Permission errors in sandbox
+
+Set `docker.user` to a UID:GID that matches your mounted workspace ownership,
+or chown the workspace folder.
+
+Custom tools not found in sandbox
+
+OpenClaw runs commands with `sh -lc` (login shell), which sources
+`/etc/profile` and may reset PATH. Set `docker.env.PATH` to prepend your
+custom tool paths, or add a script under `/etc/profile.d/` in your Dockerfile.
+
+OOM-killed during image build (exit 137)
+
+The VM needs at least 2 GB RAM. Use a larger machine class and retry.
+
+Unauthorized or pairing required in Control UI
+
+Fetch a fresh dashboard link and approve the browser device:
+
+```
+docker compose run --rm openclaw-cli dashboard --no-open
+docker compose run --rm openclaw-cli devices list
+docker compose run --rm openclaw-cli devices approve <requestId>
+```
+
+More detail: [Dashboard](https://docs.openclaw.ai/web/dashboard), [Devices](https://docs.openclaw.ai/cli/devices).
+
+Gateway target shows ws://172.x.x.x or pairing errors from Docker CLI
+
+Reset gateway mode and bind:
+
+```
+docker compose run --rm openclaw-cli config set --batch-json '[{"path":"gateway.mode","value":"local"},{"path":"gateway.bind","value":"lan"}]'
+docker compose run --rm openclaw-cli devices list --url ws://127.0.0.1:18789
+```
+
+## Related
+
+- [Install Overview](https://docs.openclaw.ai/install) — all installation methods
+- [Podman](https://docs.openclaw.ai/install/podman) — Podman alternative to Docker
+- [ClawDock](https://docs.openclaw.ai/install/clawdock) — Docker Compose community setup
+- [Updating](https://docs.openclaw.ai/install/updating) — keeping OpenClaw up to date
+- [Configuration](https://docs.openclaw.ai/gateway/configuration) — gateway configuration after install
+
+[ClawDock](https://docs.openclaw.ai/install/clawdock) [Nix](https://docs.openclaw.ai/install/nix)
+
+Ctrl+I
 
 ---
 
@@ -603,7 +1412,6 @@ docker compose up -d
 
 Ctrl+I
 
-
 ---
 
 ## Docker VM runtime - OpenClaw
@@ -725,7 +1533,6 @@ docker compose up -d
 
 Ctrl+I
 
-
 ---
 
 ## WhatsApp (QR)
@@ -798,10 +1605,322 @@ That mounted source directory overrides the matching compiled
 \### Observability
 
 OpenTelemetry export is outbound from the Gateway container to your OTLP
-collector. It does not require a published Docker port. If you build the
+collector. It does not require a published Docker port. If you build the image
+locally and want the bundled OpenTelemetry exporter available inside the image,
+include its runtime dependencies:
 
-_… [truncated; see https://docs.openclaw.ai/install/docker.md for full content]_
+\`\`\`bash theme={"theme":{"light":"min-light","dark":"min-dark"}}
+export OPENCLAW\_EXTENSIONS="diagnostics-otel"
+export OTEL\_EXPORTER\_OTLP\_ENDPOINT="http://otel-collector:4318"
+export OTEL\_SERVICE\_NAME="openclaw-gateway"
+./scripts/docker/setup.sh
+\`\`\`
 
+Install the official \`@openclaw/diagnostics-otel\` plugin from ClawHub in
+packaged Docker installs before enabling export. Custom source-built images can
+still include the local plugin source with
+\`OPENCLAW\_EXTENSIONS=diagnostics-otel\`. To enable export, allow and enable the
+\`diagnostics-otel\` plugin in config, then set
+\`diagnostics.otel.enabled=true\` or use the config example in \[OpenTelemetry\
+export\](/gateway/opentelemetry). Collector auth headers are configured through
+\`diagnostics.otel.headers\`, not through Docker environment variables.
+
+Prometheus metrics use the already-published Gateway port. Install
+\`clawhub:@openclaw/diagnostics-prometheus\`, enable the
+\`diagnostics-prometheus\` plugin, then scrape:
+
+\`\`\`text theme={"theme":{"light":"min-light","dark":"min-dark"}}
+http://:18789/api/diagnostics/prometheus
+\`\`\`
+
+The route is protected by Gateway authentication. Do not expose a separate
+public \`/metrics\` port or unauthenticated reverse-proxy path. See
+\[Prometheus metrics\](/gateway/prometheus).
+
+\### Health checks
+
+Container probe endpoints (no auth required):
+
+\`\`\`bash theme={"theme":{"light":"min-light","dark":"min-dark"}}
+curl -fsS http://127.0.0.1:18789/healthz # liveness
+curl -fsS http://127.0.0.1:18789/readyz # readiness
+\`\`\`
+
+The Docker image includes a built-in \`HEALTHCHECK\` that pings \`/healthz\`.
+If checks keep failing, Docker marks the container as \`unhealthy\` and
+orchestration systems can restart or replace it.
+
+Authenticated deep health snapshot:
+
+\`\`\`bash theme={"theme":{"light":"min-light","dark":"min-dark"}}
+docker compose exec openclaw-gateway node dist/index.js health --token "$OPENCLAW\_GATEWAY\_TOKEN"
+\`\`\`
+
+\### LAN vs loopback
+
+\`scripts/docker/setup.sh\` defaults \`OPENCLAW\_GATEWAY\_BIND=lan\` so host access to
+\`http://127.0.0.1:18789\` works with Docker port publishing.
+
+\\* \`lan\` (default): host browser and host CLI can reach the published gateway port.
+\\* \`loopback\`: only processes inside the container network namespace can reach
+ the gateway directly.
+
+ Use bind mode values in \`gateway.bind\` (\`lan\` / \`loopback\` / \`custom\` /
+ \`tailnet\` / \`auto\`), not host aliases like \`0.0.0.0\` or \`127.0.0.1\`.
+
+\### Host Local Providers
+
+When OpenClaw runs in Docker, \`127.0.0.1\` inside the container is the container
+itself, not your host machine. Use \`host.docker.internal\` for AI providers that
+run on the host:
+
+\| Provider \| Host default URL \| Docker setup URL \|
+\| \-\-\-\-\-\-\-\-\- \| \-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\- \| \-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\- \|
+\| LM Studio \| \`http://127.0.0.1:1234\` \| \`http://host.docker.internal:1234\` \|
+\| Ollama \| \`http://127.0.0.1:11434\` \| \`http://host.docker.internal:11434\` \|
+
+The bundled Docker setup uses those host URLs as the LM Studio and Ollama
+onboarding defaults, and \`docker-compose.yml\` maps \`host.docker.internal\` to
+Docker's host gateway for Linux Docker Engine. Docker Desktop already provides
+the same hostname on macOS and Windows.
+
+Host services must also listen on an address reachable from Docker:
+
+\`\`\`bash theme={"theme":{"light":"min-light","dark":"min-dark"}}
+lms server start --port 1234 --bind 0.0.0.0
+OLLAMA\_HOST=0.0.0.0:11434 ollama serve
+\`\`\`
+
+If you use your own Compose file or \`docker run\` command, add the same host
+mapping yourself, for example
+\`--add-host=host.docker.internal:host-gateway\`.
+
+\### Bonjour / mDNS
+
+Docker bridge networking usually does not forward Bonjour/mDNS multicast
+(\`224.0.0.251:5353\`) reliably. The bundled Compose setup therefore defaults
+\`OPENCLAW\_DISABLE\_BONJOUR=1\` so the Gateway does not crash-loop or repeatedly
+restart advertising when the bridge drops multicast traffic.
+
+Use the published Gateway URL, Tailscale, or wide-area DNS-SD for Docker hosts.
+Set \`OPENCLAW\_DISABLE\_BONJOUR=0\` only when running with host networking, macvlan,
+or another network where mDNS multicast is known to work.
+
+For gotchas and troubleshooting, see \[Bonjour discovery\](/gateway/bonjour).
+
+\### Storage and persistence
+
+Docker Compose bind-mounts \`OPENCLAW\_CONFIG\_DIR\` to \`/home/node/.openclaw\` and
+\`OPENCLAW\_WORKSPACE\_DIR\` to \`/home/node/.openclaw/workspace\`, so those paths
+survive container replacement. When either variable is unset, the bundled
+\`docker-compose.yml\` falls back to \`${HOME}/.openclaw\` (and
+\`${HOME}/.openclaw/workspace\` for the workspace mount), or \`/tmp/.openclaw\`
+when \`HOME\` itself is also missing. That keeps \`docker compose up\` from
+emitting an empty-source volume spec on bare environments.
+
+That mounted config directory is where OpenClaw keeps:
+
+\\* \`openclaw.json\` for behavior config
+\\* \`agents//agent/auth-profiles.json\` for stored provider OAuth/API-key auth
+\\* \`.env\` for env-backed runtime secrets such as \`OPENCLAW\_GATEWAY\_TOKEN\`
+
+Installed downloadable plugins store their package state under the mounted
+OpenClaw home, so plugin install records and package roots survive container
+replacement. Gateway startup does not generate bundled-plugin dependency trees.
+
+For full persistence details on VM deployments, see
+\[Docker VM Runtime - What persists where\](/install/docker-vm-runtime#what-persists-where).
+
+\*\*Disk growth hotspots:\*\* watch \`media/\`, session JSONL files,
+\`cron/runs/\*.jsonl\`, installed plugin package roots, and rolling file logs
+under \`/tmp/openclaw/\`.
+
+\### Shell helpers (optional)
+
+For easier day-to-day Docker management, install \`ClawDock\`:
+
+\`\`\`bash theme={"theme":{"light":"min-light","dark":"min-dark"}}
+mkdir -p ~/.clawdock && curl -sL https://raw.githubusercontent.com/openclaw/openclaw/main/scripts/clawdock/clawdock-helpers.sh -o ~/.clawdock/clawdock-helpers.sh
+echo 'source ~/.clawdock/clawdock-helpers.sh' >> ~/.zshrc && source ~/.zshrc
+\`\`\`
+
+If you installed ClawDock from the older \`scripts/shell-helpers/clawdock-helpers.sh\` raw path, rerun the install command above so your local helper file tracks the new location.
+
+Then use \`clawdock-start\`, \`clawdock-stop\`, \`clawdock-dashboard\`, etc. Run
+\`clawdock-help\` for all commands.
+See \[ClawDock\](/install/clawdock) for the full helper guide.
+
+ \`\`\`bash theme={"theme":{"light":"min-light","dark":"min-dark"}}
+ export OPENCLAW\_SANDBOX=1
+ ./scripts/docker/setup.sh
+ \`\`\`
+
+ Custom socket path (e.g. rootless Docker):
+
+ \`\`\`bash theme={"theme":{"light":"min-light","dark":"min-dark"}}
+ export OPENCLAW\_SANDBOX=1
+ export OPENCLAW\_DOCKER\_SOCKET=/run/user/1000/docker.sock
+ ./scripts/docker/setup.sh
+ \`\`\`
+
+ The script mounts \`docker.sock\` only after sandbox prerequisites pass. If
+ sandbox setup cannot complete, the script resets \`agents.defaults.sandbox.mode\`
+ to \`off\`.
+
+ Disable Compose pseudo-TTY allocation with \`-T\`:
+
+ \`\`\`bash theme={"theme":{"light":"min-light","dark":"min-dark"}}
+ docker compose run -T --rm openclaw-cli gateway probe
+ docker compose run -T --rm openclaw-cli devices list --json
+ \`\`\`
+
+ \`openclaw-cli\` uses \`network\_mode: "service:openclaw-gateway"\` so CLI
+ commands can reach the gateway over \`127.0.0.1\`. Treat this as a shared
+ trust boundary. The compose config drops \`NET\_RAW\`/\`NET\_ADMIN\` and enables
+ \`no-new-privileges\` on \`openclaw-cli\`.
+
+ The image runs as \`node\` (uid 1000). If you see permission errors on
+ \`/home/node/.openclaw\`, make sure your host bind mounts are owned by uid 1000:
+
+ \`\`\`bash theme={"theme":{"light":"min-light","dark":"min-dark"}}
+ sudo chown -R 1000:1000 /path/to/openclaw-config /path/to/openclaw-workspace
+ \`\`\`
+
+ Order your Dockerfile so dependency layers are cached. This avoids re-running
+ \`pnpm install\` unless lockfiles change:
+
+ \`\`\`dockerfile theme={"theme":{"light":"min-light","dark":"min-dark"}}
+ FROM node:24-bookworm
+ RUN curl -fsSL https://bun.sh/install \| bash
+ ENV PATH="/root/.bun/bin:${PATH}"
+ RUN corepack enable
+ WORKDIR /app
+ COPY package.json pnpm-lock.yaml pnpm-workspace.yaml .npmrc ./
+ COPY ui/package.json ./ui/package.json
+ COPY scripts ./scripts
+ RUN pnpm install --frozen-lockfile
+ COPY . .
+ RUN pnpm build
+ RUN pnpm ui:install
+ RUN pnpm ui:build
+ ENV NODE\_ENV=production
+ CMD \["node","dist/index.js"\]
+ \`\`\`
+
+ The default image is security-first and runs as non-root \`node\`. For a more
+ full-featured container:
+
+ 1\. \*\*Persist \`/home/node\`\*\*: \`export OPENCLAW\_HOME\_VOLUME="openclaw\_home"\`
+ 2\. \*\*Bake system deps\*\*: \`export OPENCLAW\_DOCKER\_APT\_PACKAGES="git curl jq"\`
+ 3\. \*\*Install Playwright browsers\*\*:
+ \`\`\`bash theme={"theme":{"light":"min-light","dark":"min-dark"}}
+ docker compose run --rm openclaw-cli \
+ node /app/node\_modules/playwright-core/cli.js install chromium
+ \`\`\`
+ 4\. \*\*Persist browser downloads\*\*: set
+ \`PLAYWRIGHT\_BROWSERS\_PATH=/home/node/.cache/ms-playwright\` and use
+ \`OPENCLAW\_HOME\_VOLUME\` or \`OPENCLAW\_EXTRA\_MOUNTS\`.
+
+ If you pick OpenAI Codex OAuth in the wizard, it opens a browser URL. In
+ Docker or headless setups, copy the full redirect URL you land on and paste
+ it back into the wizard to finish auth.
+
+ The main Docker runtime image uses \`node:24-bookworm-slim\` and publishes OCI
+ base-image annotations including \`org.opencontainers.image.base.name\`,
+ \`org.opencontainers.image.source\`, and others. The Node base digest is
+ refreshed through Dependabot Docker base-image PRs; release builds do not run
+ a distro upgrade layer. See
+ \[OCI image annotations\](https://github.com/opencontainers/image-spec/blob/main/annotations.md).
+
+\### Running on a VPS?
+
+See \[Hetzner (Docker VPS)\](/install/hetzner) and
+\[Docker VM Runtime\](/install/docker-vm-runtime) for shared VM deployment steps
+including binary baking, persistence, and updates.
+
+\## Agent sandbox
+
+When \`agents.defaults.sandbox\` is enabled with the Docker backend, the gateway
+runs agent tool execution (shell, file read/write, etc.) inside isolated Docker
+containers while the gateway itself stays on the host. This gives you a hard wall
+around untrusted or multi-tenant agent sessions without containerizing the entire
+gateway.
+
+Sandbox scope can be per-agent (default), per-session, or shared. Each scope
+gets its own workspace mounted at \`/workspace\`. You can also configure
+allow/deny tool policies, network isolation, resource limits, and browser
+containers.
+
+For full configuration, images, security notes, and multi-agent profiles, see:
+
+\\* \[Sandboxing\](/gateway/sandboxing) -- complete sandbox reference
+\\* \[OpenShell\](/gateway/openshell) -- interactive shell access to sandbox containers
+\\* \[Multi-Agent Sandbox and Tools\](/tools/multi-agent-sandbox-tools) -- per-agent overrides
+
+\### Quick enable
+
+\`\`\`json5 theme={"theme":{"light":"min-light","dark":"min-dark"}}
+{
+ agents: {
+ defaults: {
+ sandbox: {
+ mode: "non-main", // off \| non-main \| all
+ scope: "agent", // session \| agent \| shared
+ },
+ },
+ },
+}
+\`\`\`
+
+Build the default sandbox image (from a source checkout):
+
+\`\`\`bash theme={"theme":{"light":"min-light","dark":"min-dark"}}
+scripts/sandbox-setup.sh
+\`\`\`
+
+For npm installs without a source checkout, see \[Sandboxing § Images and setup\](/gateway/sandboxing#images-and-setup) for inline \`docker build\` commands.
+
+\## Troubleshooting
+
+ Build the sandbox image with
+ \[\`scripts/sandbox-setup.sh\`\](https://github.com/openclaw/openclaw/blob/main/scripts/sandbox-setup.sh)
+ (source checkout) or the inline \`docker build\` command from \[Sandboxing § Images and setup\](/gateway/sandboxing#images-and-setup) (npm install),
+ or set \`agents.defaults.sandbox.docker.image\` to your custom image.
+ Containers are auto-created per session on demand.
+
+ Set \`docker.user\` to a UID:GID that matches your mounted workspace ownership,
+ or chown the workspace folder.
+
+ OpenClaw runs commands with \`sh -lc\` (login shell), which sources
+ \`/etc/profile\` and may reset PATH. Set \`docker.env.PATH\` to prepend your
+ custom tool paths, or add a script under \`/etc/profile.d/\` in your Dockerfile.
+
+ The VM needs at least 2 GB RAM. Use a larger machine class and retry.
+
+ Fetch a fresh dashboard link and approve the browser device:
+
+ \`\`\`bash theme={"theme":{"light":"min-light","dark":"min-dark"}}
+ docker compose run --rm openclaw-cli dashboard --no-open
+ docker compose run --rm openclaw-cli devices list
+ docker compose run --rm openclaw-cli devices approve
+ \`\`\`
+
+ More detail: \[Dashboard\](/web/dashboard), \[Devices\](/cli/devices).
+
+ Reset gateway mode and bind:
+
+ \`\`\`bash theme={"theme":{"light":"min-light","dark":"min-dark"}}
+ docker compose run --rm openclaw-cli config set --batch-json '\[{"path":"gateway.mode","value":"local"},{"path":"gateway.bind","value":"lan"}\]'
+ docker compose run --rm openclaw-cli devices list --url ws://127.0.0.1:18789
+ \`\`\`
+
+\## Related
+
+\\* \[Install Overview\](/install) — all installation methods
+\\* \[Podman\](/install/podman) — Podman alternative to Docker
+\\* \[ClawDock\](/install/clawdock) — Docker Compose community setup
+\\* \[Updating\](/install/updating) — keeping OpenClaw up to date
+\\* \[Configuration\](/gateway/configuration) — gateway configuration after install
 
 ---
 
@@ -926,7 +2045,6 @@ Guide: [Updating](https://docs.openclaw.ai/install/updating)
 [Docker VM runtime](https://docs.openclaw.ai/install/docker-vm-runtime) [Fly.io](https://docs.openclaw.ai/install/fly)
 
 Ctrl+I
-
 
 ---
 
@@ -1076,10 +2194,274 @@ SSH into the VM
 
 ```
 gcloud compute ssh openclaw-gateway --zone=us-central1-a
-`
+```
 
-_… [truncated; see https://docs.openclaw.ai/install/gcp for full content]_
+**Console:**Click the “SSH” button next to your VM in the Compute Engine dashboard.Note: SSH key propagation can take 1-2 minutes after VM creation. If connection is refused, wait and retry.
 
+5
+
+[Navigate to header](https://docs.openclaw.ai/install/gcp#)
+
+Install Docker (on the VM)
+
+```
+sudo apt-get update
+sudo apt-get install -y git curl ca-certificates
+curl -fsSL https://get.docker.com | sudo sh
+sudo usermod -aG docker $USER
+```
+
+Log out and back in for the group change to take effect:
+
+```
+exit
+```
+
+Then SSH back in:
+
+```
+gcloud compute ssh openclaw-gateway --zone=us-central1-a
+```
+
+Verify:
+
+```
+docker --version
+docker compose version
+```
+
+6
+
+[Navigate to header](https://docs.openclaw.ai/install/gcp#)
+
+Clone the OpenClaw repository
+
+```
+git clone https://github.com/openclaw/openclaw.git
+cd openclaw
+```
+
+This guide assumes you will build a custom image to guarantee binary persistence.
+
+7
+
+[Navigate to header](https://docs.openclaw.ai/install/gcp#)
+
+Create persistent host directories
+
+Docker containers are ephemeral.
+All long-lived state must live on the host.
+
+```
+mkdir -p ~/.openclaw
+mkdir -p ~/.openclaw/workspace
+```
+
+8
+
+[Navigate to header](https://docs.openclaw.ai/install/gcp#)
+
+Configure environment variables
+
+Create `.env` in the repository root.
+
+```
+OPENCLAW_IMAGE=openclaw:latest
+OPENCLAW_GATEWAY_TOKEN=
+OPENCLAW_GATEWAY_BIND=lan
+OPENCLAW_GATEWAY_PORT=18789
+
+OPENCLAW_CONFIG_DIR=/home/$USER/.openclaw
+OPENCLAW_WORKSPACE_DIR=/home/$USER/.openclaw/workspace
+
+GOG_KEYRING_PASSWORD=
+XDG_CONFIG_HOME=/home/node/.openclaw
+```
+
+Leave `OPENCLAW_GATEWAY_TOKEN` blank unless you explicitly want to
+manage it through `.env`; OpenClaw writes a random gateway token to
+config on first start. Generate a keyring password and paste it into
+`GOG_KEYRING_PASSWORD`:
+
+```
+openssl rand -hex 32
+```
+
+**Do not commit this file.**This `.env` file is for container/runtime env such as `OPENCLAW_GATEWAY_TOKEN`.
+Stored provider OAuth/API-key auth lives in the mounted
+`~/.openclaw/agents/<agentId>/agent/auth-profiles.json`.
+
+9
+
+[Navigate to header](https://docs.openclaw.ai/install/gcp#)
+
+Docker Compose configuration
+
+Create or update `docker-compose.yml`.
+
+```
+services:
+  openclaw-gateway:
+    image: ${OPENCLAW_IMAGE}
+    build: .
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      - HOME=/home/node
+      - NODE_ENV=production
+      - TERM=xterm-256color
+      - OPENCLAW_GATEWAY_BIND=${OPENCLAW_GATEWAY_BIND}
+      - OPENCLAW_GATEWAY_PORT=${OPENCLAW_GATEWAY_PORT}
+      - OPENCLAW_GATEWAY_TOKEN=${OPENCLAW_GATEWAY_TOKEN}
+      - GOG_KEYRING_PASSWORD=${GOG_KEYRING_PASSWORD}
+      - XDG_CONFIG_HOME=${XDG_CONFIG_HOME}
+      - PATH=/home/linuxbrew/.linuxbrew/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+    volumes:
+      - ${OPENCLAW_CONFIG_DIR}:/home/node/.openclaw
+      - ${OPENCLAW_WORKSPACE_DIR}:/home/node/.openclaw/workspace
+    ports:
+      # Recommended: keep the Gateway loopback-only on the VM; access via SSH tunnel.
+      # To expose it publicly, remove the `127.0.0.1:` prefix and firewall accordingly.
+      - "127.0.0.1:${OPENCLAW_GATEWAY_PORT}:18789"
+    command:
+      [\
+        "node",\
+        "dist/index.js",\
+        "gateway",\
+        "--bind",\
+        "${OPENCLAW_GATEWAY_BIND}",\
+        "--port",\
+        "${OPENCLAW_GATEWAY_PORT}",\
+        "--allow-unconfigured",\
+      ]
+```
+
+`--allow-unconfigured` is only for bootstrap convenience, it is not a replacement for a proper gateway configuration. Still set auth (`gateway.auth.token` or password) and use safe bind settings for your deployment.
+
+10
+
+[Navigate to header](https://docs.openclaw.ai/install/gcp#)
+
+Shared Docker VM runtime steps
+
+Use the shared runtime guide for the common Docker host flow:
+
+- [Bake required binaries into the image](https://docs.openclaw.ai/install/docker-vm-runtime#bake-required-binaries-into-the-image)
+- [Build and launch](https://docs.openclaw.ai/install/docker-vm-runtime#build-and-launch)
+- [What persists where](https://docs.openclaw.ai/install/docker-vm-runtime#what-persists-where)
+- [Updates](https://docs.openclaw.ai/install/docker-vm-runtime#updates)
+
+11
+
+[Navigate to header](https://docs.openclaw.ai/install/gcp#)
+
+GCP-specific launch notes
+
+On GCP, if build fails with `Killed` or `exit code 137` during `pnpm install --frozen-lockfile`, the VM is out of memory. Use `e2-small` minimum, or `e2-medium` for more reliable first builds.When binding to LAN (`OPENCLAW_GATEWAY_BIND=lan`), configure a trusted browser origin before continuing:
+
+```
+docker compose run --rm openclaw-cli config set gateway.controlUi.allowedOrigins '["http://127.0.0.1:18789"]' --strict-json
+```
+
+If you changed the gateway port, replace `18789` with your configured port.
+
+12
+
+[Navigate to header](https://docs.openclaw.ai/install/gcp#)
+
+Access from your laptop
+
+Create an SSH tunnel to forward the Gateway port:
+
+```
+gcloud compute ssh openclaw-gateway --zone=us-central1-a -- -L 18789:127.0.0.1:18789
+```
+
+Open in your browser:`http://127.0.0.1:18789/`Reprint a clean dashboard link:
+
+```
+docker compose run --rm openclaw-cli dashboard --no-open
+```
+
+If the UI prompts for shared-secret auth, paste the configured token or
+password into Control UI settings. This Docker flow writes a token by
+default; if you switch the container config to password auth, use that
+password instead.If Control UI shows `unauthorized` or `disconnected (1008): pairing required`, approve the browser device:
+
+```
+docker compose run --rm openclaw-cli devices list
+docker compose run --rm openclaw-cli devices approve <requestId>
+```
+
+Need the shared persistence and update reference again?
+See [Docker VM Runtime](https://docs.openclaw.ai/install/docker-vm-runtime#what-persists-where) and [Docker VM Runtime updates](https://docs.openclaw.ai/install/docker-vm-runtime#updates).
+
+* * *
+
+## Troubleshooting
+
+**SSH connection refused**SSH key propagation can take 1-2 minutes after VM creation. Wait and retry.**OS Login issues**Check your OS Login profile:
+
+```
+gcloud compute os-login describe-profile
+```
+
+Ensure your account has the required IAM permissions (Compute OS Login or Compute OS Admin Login).**Out of memory (OOM)**If Docker build fails with `Killed` and `exit code 137`, the VM was OOM-killed. Upgrade to e2-small (minimum) or e2-medium (recommended for reliable local builds):
+
+```
+# Stop the VM first
+gcloud compute instances stop openclaw-gateway --zone=us-central1-a
+
+# Change machine type
+gcloud compute instances set-machine-type openclaw-gateway \
+  --zone=us-central1-a \
+  --machine-type=e2-small
+
+# Start the VM
+gcloud compute instances start openclaw-gateway --zone=us-central1-a
+```
+
+* * *
+
+## Service accounts (security best practice)
+
+For personal use, your default user account works fine.For automation or CI/CD pipelines, create a dedicated service account with minimal permissions:
+
+1. Create a service account:
+
+```
+gcloud iam service-accounts create openclaw-deploy \
+     --display-name="OpenClaw Deployment"
+```
+
+2. Grant Compute Instance Admin role (or narrower custom role):
+
+```
+gcloud projects add-iam-policy-binding my-openclaw-project \
+     --member="serviceAccount:openclaw-deploy@my-openclaw-project.iam.gserviceaccount.com" \
+     --role="roles/compute.instanceAdmin.v1"
+```
+
+Avoid using the Owner role for automation. Use the principle of least privilege.See [https://cloud.google.com/iam/docs/understanding-roles](https://cloud.google.com/iam/docs/understanding-roles) for IAM role details.
+
+* * *
+
+## Next steps
+
+- Set up messaging channels: [Channels](https://docs.openclaw.ai/channels)
+- Pair local devices as nodes: [Nodes](https://docs.openclaw.ai/nodes)
+- Configure the Gateway: [Gateway configuration](https://docs.openclaw.ai/gateway/configuration)
+
+## Related
+
+- [Install overview](https://docs.openclaw.ai/install)
+- [Azure](https://docs.openclaw.ai/install/azure)
+- [VPS hosting](https://docs.openclaw.ai/vps)
+
+[Fly.io](https://docs.openclaw.ai/install/fly) [Hetzner](https://docs.openclaw.ai/install/hetzner)
+
+Ctrl+I
 
 ---
 
@@ -1242,10 +2624,134 @@ config on first start. Generate a keyring password and paste it into
 openssl rand -hex 32
 ```
 
-**Do not commit this file.**This `.env` file is for contai
+**Do not commit this file.**This `.env` file is for container/runtime env such as `OPENCLAW_GATEWAY_TOKEN`.
+Stored provider OAuth/API-key auth lives in the mounted
+`~/.openclaw/agents/<agentId>/agent/auth-profiles.json`.
 
-_… [truncated; see https://docs.openclaw.ai/install/hetzner for full content]_
+6
 
+[Navigate to header](https://docs.openclaw.ai/install/hetzner#)
+
+Docker Compose configuration
+
+Create or update `docker-compose.yml`.
+
+```
+services:
+  openclaw-gateway:
+    image: ${OPENCLAW_IMAGE}
+    build: .
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      - HOME=/home/node
+      - NODE_ENV=production
+      - TERM=xterm-256color
+      - OPENCLAW_GATEWAY_BIND=${OPENCLAW_GATEWAY_BIND}
+      - OPENCLAW_GATEWAY_PORT=${OPENCLAW_GATEWAY_PORT}
+      - OPENCLAW_GATEWAY_TOKEN=${OPENCLAW_GATEWAY_TOKEN}
+      - GOG_KEYRING_PASSWORD=${GOG_KEYRING_PASSWORD}
+      - XDG_CONFIG_HOME=${XDG_CONFIG_HOME}
+      - PATH=/home/linuxbrew/.linuxbrew/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+    volumes:
+      - ${OPENCLAW_CONFIG_DIR}:/home/node/.openclaw
+      - ${OPENCLAW_WORKSPACE_DIR}:/home/node/.openclaw/workspace
+    ports:
+      # Recommended: keep the Gateway loopback-only on the VPS; access via SSH tunnel.
+      # To expose it publicly, remove the `127.0.0.1:` prefix and firewall accordingly.
+      - "127.0.0.1:${OPENCLAW_GATEWAY_PORT}:18789"
+    command:
+      [\
+        "node",\
+        "dist/index.js",\
+        "gateway",\
+        "--bind",\
+        "${OPENCLAW_GATEWAY_BIND}",\
+        "--port",\
+        "${OPENCLAW_GATEWAY_PORT}",\
+        "--allow-unconfigured",\
+      ]
+```
+
+`--allow-unconfigured` is only for bootstrap convenience, it is not a replacement for a proper gateway configuration. Still set auth (`gateway.auth.token` or password) and use safe bind settings for your deployment.
+
+7
+
+[Navigate to header](https://docs.openclaw.ai/install/hetzner#)
+
+Shared Docker VM runtime steps
+
+Use the shared runtime guide for the common Docker host flow:
+
+- [Bake required binaries into the image](https://docs.openclaw.ai/install/docker-vm-runtime#bake-required-binaries-into-the-image)
+- [Build and launch](https://docs.openclaw.ai/install/docker-vm-runtime#build-and-launch)
+- [What persists where](https://docs.openclaw.ai/install/docker-vm-runtime#what-persists-where)
+- [Updates](https://docs.openclaw.ai/install/docker-vm-runtime#updates)
+
+8
+
+[Navigate to header](https://docs.openclaw.ai/install/hetzner#)
+
+Hetzner-specific access
+
+After the shared build and launch steps, complete the following setup to open the tunnel:**Prerequisite:** Ensure your VPS sshd config allows TCP forwarding. If you
+have hardened your SSH config, check `/etc/ssh/sshd_config` and set:
+
+```
+AllowTcpForwarding local
+```
+
+`local` allows `ssh -L` local forwards from your laptop while blocking
+remote forwards from the server. Setting it to `no` will fail the tunnel
+with:
+`channel 3: open failed: administratively prohibited: open failed`After confirming TCP forwarding is enabled, restart the SSH service
+(`systemctl restart ssh`) and run the tunnel from your laptop:
+
+```
+ssh -N -L 18789:127.0.0.1:18789 root@YOUR_VPS_IP
+```
+
+Open:`http://127.0.0.1:18789/`Paste the configured shared secret. This guide uses the gateway token by
+default; if you switched to password auth, use that password instead.
+
+The shared persistence map lives in [Docker VM Runtime](https://docs.openclaw.ai/install/docker-vm-runtime#what-persists-where).
+
+## Infrastructure as Code (Terraform)
+
+For teams preferring infrastructure-as-code workflows, a community-maintained Terraform setup provides:
+
+- Modular Terraform configuration with remote state management
+- Automated provisioning via cloud-init
+- Deployment scripts (bootstrap, deploy, backup/restore)
+- Security hardening (firewall, UFW, SSH-only access)
+- SSH tunnel configuration for gateway access
+
+**Repositories:**
+
+- Infrastructure: [openclaw-terraform-hetzner](https://github.com/andreesg/openclaw-terraform-hetzner)
+- Docker config: [openclaw-docker-config](https://github.com/andreesg/openclaw-docker-config)
+
+This approach complements the Docker setup above with reproducible deployments, version-controlled infrastructure, and automated disaster recovery.
+
+Community-maintained. For issues or contributions, see the repository links above.
+
+## Next steps
+
+- Set up messaging channels: [Channels](https://docs.openclaw.ai/channels)
+- Configure the Gateway: [Gateway configuration](https://docs.openclaw.ai/gateway/configuration)
+- Keep OpenClaw up to date: [Updating](https://docs.openclaw.ai/install/updating)
+
+## Related
+
+- [Install overview](https://docs.openclaw.ai/install)
+- [Fly.io](https://docs.openclaw.ai/install/fly)
+- [Docker](https://docs.openclaw.ai/install/docker)
+- [VPS hosting](https://docs.openclaw.ai/vps)
+
+[GCP](https://docs.openclaw.ai/install/gcp) [Hostinger](https://docs.openclaw.ai/install/hostinger)
+
+Ctrl+I
 
 ---
 
@@ -1358,7 +2864,6 @@ Send “Hi” to your assistant on the channel you connected. OpenClaw will repl
 [Hetzner](https://docs.openclaw.ai/install/hetzner) [Kubernetes](https://docs.openclaw.ai/install/kubernetes)
 
 Ctrl+I
-
 
 ---
 
@@ -1485,10 +2990,48 @@ npm install -g github:openclaw/openclaw#main
 \## Verify the install
 
 \`\`\`bash theme={"theme":{"light":"min-light","dark":"min-dark"}}
-openclaw --version # confirm the CLI
+openclaw --version # confirm the CLI is available
+openclaw doctor # check for config issues
+openclaw gateway status # verify the Gateway is running
+\`\`\`
 
-_… [truncated; see https://docs.openclaw.ai/install/index.md for full content]_
+If you want managed startup after install:
 
+\\* macOS: LaunchAgent via \`openclaw onboard --install-daemon\` or \`openclaw gateway install\`
+\\* Linux/WSL2: systemd user service via the same commands
+\\* Native Windows: Scheduled Task first, with a per-user Startup-folder login item fallback if task creation is denied
+
+\## Hosting and deployment
+
+Deploy OpenClaw on a cloud server or VPS:
+
+Any Linux VPSShared Docker stepsK8sFly.ioHetznerGoogle CloudAzureRailwayRenderNorthflank
+
+\## Update, migrate, or uninstall
+
+ Keep OpenClaw up to date.
+
+ Move to a new machine.
+
+ Remove OpenClaw completely.
+
+\## Troubleshooting: \`openclaw\` not found
+
+If the install succeeded but \`openclaw\` is not found in your terminal:
+
+\`\`\`bash theme={"theme":{"light":"min-light","dark":"min-dark"}}
+node -v # Node installed?
+npm prefix -g # Where are global packages?
+echo "$PATH" # Is the global bin dir in PATH?
+\`\`\`
+
+If \`$(npm prefix -g)/bin\` is not in your \`$PATH\`, add it to your shell startup file (\`~/.zshrc\` or \`~/.bashrc\`):
+
+\`\`\`bash theme={"theme":{"light":"min-light","dark":"min-dark"}}
+export PATH="$(npm prefix -g)/bin:$PATH"
+\`\`\`
+
+Then open a new terminal. See \[Node setup\](/install/node) for more details.
 
 ---
 
@@ -1609,7 +3152,6 @@ Usually a PATH issue. See [Node.js troubleshooting](https://docs.openclaw.ai/ins
 
 Ctrl+I
 
-
 ---
 
 ## Migration guide - OpenClaw
@@ -1721,10 +3263,45 @@ If the old gateway used `--profile` or `OPENCLAW_STATE_DIR` and the new one does
 
 Copying only openclaw.json
 
-The config file alone is not enough. Model auth profiles live under `agents/<agentId>/agent/auth-profiles.json`, and channel and provider state lives under `credentials/`. Always
+The config file alone is not enough. Model auth profiles live under `agents/<agentId>/agent/auth-profiles.json`, and channel and provider state lives under `credentials/`. Always migrate the **entire** state directory.
 
-_… [truncated; see https://docs.openclaw.ai/install/migrating for full content]_
+Permissions and ownership
 
+If you copied as root or switched users, the gateway may fail to read credentials. Ensure the state directory and workspace are owned by the user running the gateway.
+
+Remote mode
+
+If your UI points at a **remote** gateway, the remote host owns sessions and workspace. Migrate the gateway host itself, not your local laptop. See [FAQ](https://docs.openclaw.ai/help/faq#where-things-live-on-disk).
+
+Secrets in backups
+
+The state directory contains auth profiles, channel credentials, and other provider state. Store backups encrypted, avoid insecure transfer channels, and rotate keys if you suspect exposure.
+
+### Verification checklist
+
+On the new machine, confirm:
+
+- [ ] `openclaw status` shows the gateway running.
+- [ ]  Channels are still connected (no re-pairing needed).
+- [ ]  The dashboard opens and shows existing sessions.
+- [ ]  Workspace files (memory, configs) are present.
+
+## Upgrade a plugin in place
+
+In-place plugin upgrades preserve the same plugin id and config keys but may move on-disk state into the current layout. Plugin-specific upgrade guides live alongside their channels:
+
+- [Matrix migration](https://docs.openclaw.ai/channels/matrix-migration): encrypted-state recovery limits, automatic snapshot behavior, and manual recovery commands.
+
+## Related
+
+- [`openclaw migrate`](https://docs.openclaw.ai/cli/migrate): CLI reference for cross-system imports.
+- [Install overview](https://docs.openclaw.ai/install): all installation methods.
+- [Doctor](https://docs.openclaw.ai/gateway/doctor): post-migration health check.
+- [Uninstall](https://docs.openclaw.ai/install/uninstall): removing OpenClaw cleanly.
+
+[Updating](https://docs.openclaw.ai/install/updating) [Migrating from Claude](https://docs.openclaw.ai/install/migrating-claude)
+
+Ctrl+I
 
 ---
 
@@ -1866,10 +3443,56 @@ Confirm the gateway is healthy and your imported model, memory, and skills are l
 
 Apply refuses to continue when the plan reports conflicts (a file or config value already exists at the target).
 
-Rerun with `--overwrite` only when replacing the existing target is intentional. Provi
+Rerun with `--overwrite` only when replacing the existing target is intentional. Providers may still write item-level backups for overwritten files in the migration report directory.
 
-_… [truncated; see https://docs.openclaw.ai/install/migrating-hermes for full content]_
+For a fresh OpenClaw install, conflicts are unusual. They typically appear when you re-run the import on a setup that already has user edits.If a conflict surfaces mid-apply (for example, an unexpected race on a config file), Hermes marks remaining dependent config items as `skipped` with reason `blocked by earlier apply conflict` instead of writing them partially. The migration report records each blocked item so you can resolve the original conflict and rerun the import.
 
+## Secrets
+
+Secrets are never imported by default.
+
+- Run `openclaw migrate apply hermes --yes` first to import non-secret state.
+- If you also want supported `.env` keys copied across, rerun with `--include-secrets`.
+- For SecretRef-managed credentials, configure the SecretRef source after the import completes.
+
+## JSON output for automation
+
+```
+openclaw migrate hermes --dry-run --json
+openclaw migrate apply hermes --json --yes
+```
+
+With `--json` and no `--yes`, apply prints the plan and does not mutate state. This is the safest mode for CI and shared scripts.
+
+## Troubleshooting
+
+Apply refuses with conflicts
+
+Inspect the plan output. Each conflict identifies the source path and the existing target. Decide per item whether to skip, edit the target, or rerun with `--overwrite`.
+
+Hermes lives outside ~/.hermes
+
+Pass `--from /actual/path` (CLI) or `--import-source /actual/path` (onboarding).
+
+Onboarding refuses to import on an existing setup
+
+Onboarding imports require a fresh setup. Either reset state and re-onboard, or use `openclaw migrate apply hermes` directly, which supports `--overwrite` and explicit backup control.
+
+API keys did not import
+
+`--include-secrets` is required, and only the keys listed above are recognized. Other variables in `.env` are ignored.
+
+## Related
+
+- [`openclaw migrate`](https://docs.openclaw.ai/cli/migrate): full CLI reference, plugin contract, and JSON shapes.
+- [Onboarding](https://docs.openclaw.ai/cli/onboard): wizard flow and non-interactive flags.
+- [Migrating](https://docs.openclaw.ai/install/migrating): move an OpenClaw install between machines.
+- [Doctor](https://docs.openclaw.ai/gateway/doctor): post-migration health check.
+- [Agent workspace](https://docs.openclaw.ai/concepts/agent-workspace): where `SOUL.md`, `AGENTS.md`, and memory files live.
+
+[Migrating from Claude](https://docs.openclaw.ai/install/migrating-claude) [Uninstall](https://docs.openclaw.ai/install/uninstall)
+
+Ctrl+I
 
 ---
 
@@ -1954,8 +3577,31 @@ awk -F= '/^(TELEGRAM\_BOT\_TOKEN\|DISCORD\_BOT\_TOKEN)=/ { print $1 "=present" }
 
  If you copied as root or switched users, the gateway may fail to read credentials. Ensure the state directory and workspace are owned by the user running the gateway.
 
-_… [truncated; see https://docs.openclaw.ai/install/migrating.md for full content]_
+ If your UI points at a \*\*remote\*\* gateway, the remote host owns sessions and workspace. Migrate the gateway host itself, not your local laptop. See \[FAQ\](/help/faq#where-things-live-on-disk).
 
+ The state directory contains auth profiles, channel credentials, and other provider state. Store backups encrypted, avoid insecure transfer channels, and rotate keys if you suspect exposure.
+
+\### Verification checklist
+
+On the new machine, confirm:
+
+\\* \[ \] \`openclaw status\` shows the gateway running.
+\\* \[ \] Channels are still connected (no re-pairing needed).
+\\* \[ \] The dashboard opens and shows existing sessions.
+\\* \[ \] Workspace files (memory, configs) are present.
+
+\## Upgrade a plugin in place
+
+In-place plugin upgrades preserve the same plugin id and config keys but may move on-disk state into the current layout. Plugin-specific upgrade guides live alongside their channels:
+
+\\* \[Matrix migration\](/channels/matrix-migration): encrypted-state recovery limits, automatic snapshot behavior, and manual recovery commands.
+
+\## Related
+
+\\* \[\`openclaw migrate\`\](/cli/migrate): CLI reference for cross-system imports.
+\\* \[Install overview\](/install): all installation methods.
+\\* \[Doctor\](/gateway/doctor): post-migration health check.
+\\* \[Uninstall\](/install/uninstall): removing OpenClaw cleanly.
 
 ---
 
@@ -2111,7 +3757,6 @@ Add the `export PATH=...` line to your `~/.bashrc` or `~/.zshrc` to make it perm
 
 Ctrl+I
 
-
 ---
 
 ## Oracle Cloud - OpenClaw
@@ -2258,10 +3903,43 @@ tailscale serve status
 curl http://localhost:18789
 ```
 
-Access the Control UI from a
+Access the Control UI from any device on your tailnet:
 
-_… [truncated; see https://docs.openclaw.ai/install/oracle for full content]_
+```
+https://openclaw.<tailnet-name>.ts.net/
+```
 
+Replace `<tailnet-name>` with your tailnet name (visible in `tailscale status`).
+
+## Fallback: SSH tunnel
+
+If Tailscale Serve is not working, use an SSH tunnel from your local machine:
+
+```
+ssh -L 18789:127.0.0.1:18789 ubuntu@openclaw
+```
+
+Then open `http://localhost:18789`.
+
+## Troubleshooting
+
+**Instance creation fails (“Out of capacity”)** — Free tier ARM instances are popular. Try a different availability domain or retry during off-peak hours.**Tailscale will not connect** — Run `sudo tailscale up --ssh --hostname=openclaw --reset` to re-authenticate.**Gateway will not start** — Run `openclaw doctor --non-interactive` and check logs with `journalctl --user -u openclaw-gateway.service -n 50`.**ARM binary issues** — Most npm packages work on ARM64. For native binaries, look for `linux-arm64` or `aarch64` releases. Verify architecture with `uname -m`.
+
+## Next steps
+
+- [Channels](https://docs.openclaw.ai/channels) — connect Telegram, WhatsApp, Discord, and more
+- [Gateway configuration](https://docs.openclaw.ai/gateway/configuration) — all config options
+- [Updating](https://docs.openclaw.ai/install/updating) — keep OpenClaw up to date
+
+## Related
+
+- [Install overview](https://docs.openclaw.ai/install)
+- [GCP](https://docs.openclaw.ai/install/gcp)
+- [VPS hosting](https://docs.openclaw.ai/vps)
+
+[Northflank](https://docs.openclaw.ai/install/northflank) [Railway](https://docs.openclaw.ai/install/railway)
+
+Ctrl+I
 
 ---
 
@@ -2387,10 +4065,94 @@ See:
 - [Tailscale](https://docs.openclaw.ai/gateway/tailscale)
 - [Control UI](https://docs.openclaw.ai/web/control-ui)
 
-## Systemd (Q
+## Systemd (Quadlet, optional)
 
-_… [truncated; see https://docs.openclaw.ai/install/podman for full content]_
+If you ran `./scripts/podman/setup.sh --quadlet`, setup installs a Quadlet file at:
 
+```
+~/.config/containers/systemd/openclaw.container
+```
+
+Useful commands:
+
+- **Start:**`systemctl --user start openclaw.service`
+- **Stop:**`systemctl --user stop openclaw.service`
+- **Status:**`systemctl --user status openclaw.service`
+- **Logs:**`journalctl --user -u openclaw.service -f`
+
+After editing the Quadlet file:
+
+```
+systemctl --user daemon-reload
+systemctl --user restart openclaw.service
+```
+
+For boot persistence on SSH/headless hosts, enable lingering for your current user:
+
+```
+sudo loginctl enable-linger "$(whoami)"
+```
+
+## Config, env, and storage
+
+- **Config dir:**`~/.openclaw`
+- **Workspace dir:**`~/.openclaw/workspace`
+- **Token file:**`~/.openclaw/.env`
+- **Launch helper:**`./scripts/run-openclaw-podman.sh`
+
+The launch script and Quadlet bind-mount host state into the container:
+
+- `OPENCLAW_CONFIG_DIR` -\> `/home/node/.openclaw`
+- `OPENCLAW_WORKSPACE_DIR` -\> `/home/node/.openclaw/workspace`
+
+By default those are host directories, not anonymous container state, so
+`openclaw.json`, per-agent `auth-profiles.json`, channel/provider state,
+sessions, and workspace survive container replacement.
+The Podman setup also seeds `gateway.controlUi.allowedOrigins` for `127.0.0.1` and `localhost` on the published gateway port so the local dashboard works with the container’s non-loopback bind.Useful env vars for the manual launcher:
+
+- `OPENCLAW_PODMAN_CONTAINER` — container name (`openclaw` by default)
+- `OPENCLAW_PODMAN_IMAGE` / `OPENCLAW_IMAGE` — image to run
+- `OPENCLAW_PODMAN_GATEWAY_HOST_PORT` — host port mapped to container `18789`
+- `OPENCLAW_PODMAN_BRIDGE_HOST_PORT` — host port mapped to container `18790`
+- `OPENCLAW_PODMAN_PUBLISH_HOST` — host interface for published ports; default is `127.0.0.1`
+- `OPENCLAW_GATEWAY_BIND` — gateway bind mode inside the container; default is `lan`
+- `OPENCLAW_PODMAN_USERNS` — `keep-id` (default), `auto`, or `host`
+
+The manual launcher reads `~/.openclaw/.env` before finalizing container/image defaults, so you can persist these there.If you use a non-default `OPENCLAW_CONFIG_DIR` or `OPENCLAW_WORKSPACE_DIR`, set the same variables for both `./scripts/podman/setup.sh` and later `./scripts/run-openclaw-podman.sh launch` commands. The repo-local launcher does not persist custom path overrides across shells.Quadlet note:
+
+- The generated Quadlet service intentionally keeps a fixed, hardened default shape: `127.0.0.1` published ports, `--bind lan` inside the container, and `keep-id` user namespace.
+- It pins `OPENCLAW_NO_RESPAWN=1`, `Restart=on-failure`, and `TimeoutStartSec=300`.
+- It publishes both `127.0.0.1:18789:18789` (gateway) and `127.0.0.1:18790:18790` (bridge).
+- It reads `~/.openclaw/.env` as a runtime `EnvironmentFile` for values such as `OPENCLAW_GATEWAY_TOKEN`, but it does not consume the manual launcher’s Podman-specific override allowlist.
+- If you need custom publish ports, publish host, or other container-run flags, use the manual launcher or edit `~/.config/containers/systemd/openclaw.container` directly, then reload and restart the service.
+
+## Useful commands
+
+- **Container logs:**`podman logs -f openclaw`
+- **Stop container:**`podman stop openclaw`
+- **Remove container:**`podman rm -f openclaw`
+- **Open dashboard URL from host CLI:**`openclaw dashboard --no-open`
+- **Health/status via host CLI:**`openclaw gateway status --deep` (RPC probe + extra
+service scan)
+
+## Troubleshooting
+
+- **Permission denied (EACCES) on config or workspace:** The container runs with `--userns=keep-id` and `--user <your uid>:<your gid>` by default. Ensure the host config/workspace paths are owned by your current user.
+- **Gateway start blocked (missing `gateway.mode=local`):** Ensure `~/.openclaw/openclaw.json` exists and sets `gateway.mode="local"`. `scripts/podman/setup.sh` creates this if missing.
+- **Container CLI commands hit the wrong target:** Use `openclaw --container <name> ...` explicitly, or export `OPENCLAW_CONTAINER=<name>` in your shell.
+- **`openclaw update` fails with `--container`:** Expected. Rebuild/pull the image, then restart the container or the Quadlet service.
+- **Quadlet service does not start:** Run `systemctl --user daemon-reload`, then `systemctl --user start openclaw.service`. On headless systems you may also need `sudo loginctl enable-linger "$(whoami)"`.
+- **SELinux blocks bind mounts:** Leave the default mount behavior alone; the launcher auto-adds `:Z` on Linux when SELinux is enforcing or permissive.
+
+## Related
+
+- [Docker](https://docs.openclaw.ai/install/docker)
+- [Gateway background process](https://docs.openclaw.ai/gateway/background-process)
+- [Gateway troubleshooting](https://docs.openclaw.ai/gateway/troubleshooting)
+
+[Nix](https://docs.openclaw.ai/install/nix) [Azure](https://docs.openclaw.ai/install/azure)
+
+Ctrl+I
 
 ---
 
@@ -2480,7 +4242,6 @@ workspace. See [Backup](https://docs.openclaw.ai/cli/backup) for details.
 [Oracle Cloud](https://docs.openclaw.ai/install/oracle) [Raspberry Pi](https://docs.openclaw.ai/install/raspberry-pi)
 
 Ctrl+I
-
 
 ---
 
@@ -2615,7 +4376,6 @@ sudo systemctl disable bluetooth
 [Railway](https://docs.openclaw.ai/install/railway) [Render](https://docs.openclaw.ai/install/render)
 
 Ctrl+I
-
 
 ---
 
@@ -2757,7 +4517,6 @@ If you run from a repo checkout (`git clone` \+ `openclaw ...` / `bun run opencl
 
 Ctrl+I
 
-
 ---
 
 ## https://docs.openclaw.ai/install/uninstall.md
@@ -2887,10 +4646,12 @@ If you run from a repo checkout (\`git clone\` + \`openclaw ...\` / \`bun run op
 
 1\. Uninstall the gateway service \*\*before\*\* deleting the repo (use the easy path above or manual service removal).
 2\. Delete the repo directory.
-3\. Remove sta
+3\. Remove state + workspace as shown above.
 
-_… [truncated; see https://docs.openclaw.ai/install/uninstall.md for full content]_
+\## Related
 
+\\* \[Install overview\](/install)
+\\* \[Migration guide\](/install/migrating)
 
 ---
 
@@ -3004,91 +4765,102 @@ The auto-updater is off by default. Enable it in `~/.openclaw/openclaw.json`:
 | `dev` | No automatic apply. Use `openclaw update` manually. |
 
 The gateway also logs an update hint on startup (disable with `update.checkOnStart: false`).
-For downgrade or incident recovery, set `
+For downgrade or incident recovery, set `OPENCLAW_NO_AUTO_UPDATE=1` in the gateway environment to block automatic applies even when `update.auto.enabled` is configured. Startup update hints can still run unless `update.checkOnStart` is also disabled.Package-manager updates requested through the live Gateway control-plane handler
+force a non-deferred, no-cooldown update restart after the package swap. That
+avoids leaving an old in-memory process around long enough to lazy-load chunks
+from a package tree that has already been replaced. Shell `openclaw update`
+remains the preferred path for supervised installs because it can stop and
+restart the service around the update.
 
-_… [truncated; see https://docs.openclaw.ai/install/updating for full content]_
-
-
----
-
-## Onboarding reference - OpenClaw
-
-_Source: <https://docs.openclaw.ai/reference/wizard>_
-
-[OpenClaw home page](https://docs.openclaw.ai/)
-
-Technical reference
-
-Onboarding reference
-
-This is the full reference for `openclaw onboard`.
-For a high-level overview, see [Onboarding (CLI)](https://docs.openclaw.ai/start/wizard).
-
-## Flow details (local mode)
+## After updating
 
 1
 
-[Navigate to header](https://docs.openclaw.ai/reference/wizard#)
+[Navigate to header](https://docs.openclaw.ai/install/updating#run-doctor)
 
-Existing config detection
-
-- If `~/.openclaw/openclaw.json` exists, choose **Keep / Modify / Reset**.
-- Re-running onboarding does **not** wipe anything unless you explicitly choose **Reset**
-(or pass `--reset`).
-- CLI `--reset` defaults to `config+creds+sessions`; use `--reset-scope full`
-to also remove workspace.
-- If the config is invalid or contains legacy keys, the wizard stops and asks
-you to run `openclaw doctor` before continuing.
-- Reset uses `trash` (never `rm`) and offers scopes:
-
-  - Config only
-  - Config + credentials + sessions
-  - Full reset (also removes workspace)
+Run doctor
 
 2
 
-[Navigate to header](https://docs.openclaw.ai/reference/wizard#)
+[Navigate to header](https://docs.openclaw.ai/install/updating#)
 
-Model/Auth
+```
+openclaw doctor
+```
 
-- **Anthropic API key**: uses `ANTHROPIC_API_KEY` if present or prompts for a key, then saves it for daemon use.
-- **Anthropic API key**: preferred Anthropic assistant choice in onboarding/configure.
-- **Anthropic setup-token**: still available in onboarding/configure, though OpenClaw now prefers Claude CLI reuse when available.
-- **OpenAI Code (Codex) subscription (OAuth)**: browser flow; paste the `code#state`.
+3
 
-  - Sets `agents.defaults.model` to `openai-codex/gpt-5.5` when model is unset or already OpenAI-family.
-- **OpenAI Code (Codex) subscription (device pairing)**: browser pairing flow with a short-lived device code.
+[Navigate to header](https://docs.openclaw.ai/install/updating#)
 
-  - Sets `agents.defaults.model` to `openai-codex/gpt-5.5` when model is unset or already OpenAI-family.
-- **OpenAI API key**: uses `OPENAI_API_KEY` if present or prompts for a key, then stores it in auth profiles.
+Migrates config, audits DM policies, and checks gateway health. Details: [Doctor](https://docs.openclaw.ai/gateway/doctor)
 
-  - Sets `agents.defaults.model` to `openai/gpt-5.5` when model is unset, `openai/*`, or `openai-codex/*`.
-- **xAI (Grok) API key**: prompts for `XAI_API_KEY` and configures xAI as a model provider.
-- **OpenCode**: prompts for `OPENCODE_API_KEY` (or `OPENCODE_ZEN_API_KEY`, get it at [https://opencode.ai/auth](https://opencode.ai/auth)) and lets you pick the Zen or Go catalog.
-- **Ollama**: offers **Cloud + Local**, **Cloud only**, or **Local only** first. `Cloud only` prompts for `OLLAMA_API_KEY` and uses `https://ollama.com`; the host-backed modes prompt for the Ollama base URL, discover available models, and auto-pull the selected local model when needed; `Cloud + Local` also checks whether that Ollama host is signed in for cloud access.
-- More detail: [Ollama](https://docs.openclaw.ai/providers/ollama)
-- **API key**: stores the key for you.
-- **Vercel AI Gateway (multi-model proxy)**: prompts for `AI_GATEWAY_API_KEY`.
-- More detail: [Vercel AI Gateway](https://docs.openclaw.ai/providers/vercel-ai-gateway)
-- **Cloudflare AI Gateway**: prompts for Account ID, Gateway ID, and `CLOUDFLARE_AI_GATEWAY_API_KEY`.
-- More detail: [Cloudflare AI Gateway](https://docs.openclaw.ai/providers/cloudflare-ai-gateway)
-- **MiniMax**: config is auto-written; hosted default is `MiniMax-M2.7`.
-API-key setup uses `minimax/...`, and OAuth setup uses
-`minimax-portal/...`.
-- More detail: [MiniMax](https://docs.openclaw.ai/providers/minimax)
-- **StepFun**: config is auto-written for StepFun standard or Step Plan on China or global endpoints.
-- Standard currently includes `step-3.5-flash`, and Step Plan also includes `step-3.5-flash-2603`.
-- More detail: [StepFun](https://docs.openclaw.ai/providers/stepfun)
-- **Synthetic (Anthropic-compatible)**: prompts for `SYNTHETIC_API_KEY`.
-- More detail: [Synthetic](https://docs.openclaw.ai/providers/synthetic)
-- **Moonshot (Kimi K2)**: config is auto-written.
-- **Kimi Coding**: config is auto-written.
-- More detail: [Moonshot AI (Kimi + Kimi Coding)](https://docs.openclaw.ai/providers/moonshot)
-- **Skip**: no auth configured yet.
-- Pick a default model from detected options (or enter provider/
+4
 
-_… [truncated; see https://docs.openclaw.ai/reference/wizard for full content]_
+[Navigate to header](https://docs.openclaw.ai/install/updating#restart-the-gateway)
 
+Restart the gateway
+
+5
+
+[Navigate to header](https://docs.openclaw.ai/install/updating#)
+
+```
+openclaw gateway restart
+```
+
+6
+
+[Navigate to header](https://docs.openclaw.ai/install/updating#verify)
+
+Verify
+
+7
+
+[Navigate to header](https://docs.openclaw.ai/install/updating#)
+
+```
+openclaw health
+```
+
+## Rollback
+
+### Pin a version (npm)
+
+```
+npm i -g openclaw@<version>
+openclaw doctor
+openclaw gateway restart
+```
+
+`npm view openclaw version` shows the current published version.
+
+### Pin a commit (source)
+
+```
+git fetch origin
+git checkout "$(git rev-list -n 1 --before=\"2026-01-01\" origin/main)"
+pnpm install && pnpm build
+openclaw gateway restart
+```
+
+To return to latest: `git checkout main && git pull`.
+
+## If you are stuck
+
+- Run `openclaw doctor` again and read the output carefully.
+- For `openclaw update --channel dev` on source checkouts, the updater auto-bootstraps `pnpm` when needed. If you see a pnpm/corepack bootstrap error, install `pnpm` manually (or re-enable `corepack`) and rerun the update.
+- Check: [Troubleshooting](https://docs.openclaw.ai/gateway/troubleshooting)
+- Ask in Discord: [https://discord.gg/clawd](https://discord.gg/clawd)
+
+## Related
+
+- [Install overview](https://docs.openclaw.ai/install): all installation methods.
+- [Doctor](https://docs.openclaw.ai/gateway/doctor): health checks after updates.
+- [Migrating](https://docs.openclaw.ai/install/migrating): major version migration guides.
+
+[Node.js](https://docs.openclaw.ai/install/node) [Migration guide](https://docs.openclaw.ai/install/migrating)
+
+Ctrl+I
 
 ---
 
@@ -3143,7 +4915,6 @@ host (for example, `user@gateway-host:~/.openclaw/workspace`).
 [OAuth](https://docs.openclaw.ai/concepts/oauth) [Experimental features](https://docs.openclaw.ai/concepts/experimental-features)
 
 Ctrl+I
-
 
 ---
 
@@ -3212,7 +4983,6 @@ Full reference: [Environment variables](https://docs.openclaw.ai/help/environmen
 
 Ctrl+I
 
-
 ---
 
 ## Copy your built static files into that directory.
@@ -3265,7 +5035,6 @@ _Source: <https://docs.openclaw.ai/start/getting-started.md>_
 \\* \[Install overview\](/install)
 \\* \[Channels overview\](/channels)
 \\* \[Setup\](/start/setup)
-
 
 ---
 
@@ -3356,10 +5125,126 @@ Use these hubs to discover every page, including deep dives and reference docs t
 ## Gateway + operations
 
 - [Gateway runbook](https://docs.openclaw.ai/gateway)
-- [Network model]
+- [Network model](https://docs.openclaw.ai/gateway/network-model)
+- [Gateway pairing](https://docs.openclaw.ai/gateway/pairing)
+- [Gateway lock](https://docs.openclaw.ai/gateway/gateway-lock)
+- [Background process](https://docs.openclaw.ai/gateway/background-process)
+- [Health](https://docs.openclaw.ai/gateway/health)
+- [Heartbeat](https://docs.openclaw.ai/gateway/heartbeat)
+- [Doctor](https://docs.openclaw.ai/gateway/doctor)
+- [Logging](https://docs.openclaw.ai/gateway/logging)
+- [Sandboxing](https://docs.openclaw.ai/gateway/sandboxing)
+- [Dashboard](https://docs.openclaw.ai/web/dashboard)
+- [Control UI](https://docs.openclaw.ai/web/control-ui)
+- [Remote access](https://docs.openclaw.ai/gateway/remote)
+- [Remote gateway README](https://docs.openclaw.ai/gateway/remote-gateway-readme)
+- [Tailscale](https://docs.openclaw.ai/gateway/tailscale)
+- [Security](https://docs.openclaw.ai/gateway/security)
+- [Troubleshooting](https://docs.openclaw.ai/gateway/troubleshooting)
 
-_… [truncated; see https://docs.openclaw.ai/start/hubs for full content]_
+## Tools + automation
 
+- [Tools surface](https://docs.openclaw.ai/tools)
+- [OpenProse](https://docs.openclaw.ai/prose)
+- [CLI reference](https://docs.openclaw.ai/cli)
+- [Exec tool](https://docs.openclaw.ai/tools/exec)
+- [PDF tool](https://docs.openclaw.ai/tools/pdf)
+- [Elevated mode](https://docs.openclaw.ai/tools/elevated)
+- [Cron jobs](https://docs.openclaw.ai/automation/cron-jobs)
+- [Automation & Tasks](https://docs.openclaw.ai/automation)
+- [Thinking + verbose](https://docs.openclaw.ai/tools/thinking)
+- [Models](https://docs.openclaw.ai/concepts/models)
+- [Sub-agents](https://docs.openclaw.ai/tools/subagents)
+- [Agent send CLI](https://docs.openclaw.ai/tools/agent-send)
+- [Terminal UI](https://docs.openclaw.ai/web/tui)
+- [Browser control](https://docs.openclaw.ai/tools/browser)
+- [Browser (Linux troubleshooting)](https://docs.openclaw.ai/tools/browser-linux-troubleshooting)
+- [Polls](https://docs.openclaw.ai/cli/message)
+
+## Nodes, media, voice
+
+- [Nodes overview](https://docs.openclaw.ai/nodes)
+- [Camera](https://docs.openclaw.ai/nodes/camera)
+- [Images](https://docs.openclaw.ai/nodes/images)
+- [Audio](https://docs.openclaw.ai/nodes/audio)
+- [Location command](https://docs.openclaw.ai/nodes/location-command)
+- [Voice wake](https://docs.openclaw.ai/nodes/voicewake)
+- [Talk mode](https://docs.openclaw.ai/nodes/talk)
+
+## Platforms
+
+- [Platforms overview](https://docs.openclaw.ai/platforms)
+- [macOS](https://docs.openclaw.ai/platforms/macos)
+- [iOS](https://docs.openclaw.ai/platforms/ios)
+- [Android](https://docs.openclaw.ai/platforms/android)
+- [Windows (WSL2)](https://docs.openclaw.ai/platforms/windows)
+- [Linux](https://docs.openclaw.ai/platforms/linux)
+- [Web surfaces](https://docs.openclaw.ai/web)
+
+## macOS companion app (advanced)
+
+- [macOS dev setup](https://docs.openclaw.ai/platforms/mac/dev-setup)
+- [macOS menu bar](https://docs.openclaw.ai/platforms/mac/menu-bar)
+- [macOS voice wake](https://docs.openclaw.ai/platforms/mac/voicewake)
+- [macOS voice overlay](https://docs.openclaw.ai/platforms/mac/voice-overlay)
+- [macOS WebChat](https://docs.openclaw.ai/platforms/mac/webchat)
+- [macOS Canvas](https://docs.openclaw.ai/platforms/mac/canvas)
+- [macOS child process](https://docs.openclaw.ai/platforms/mac/child-process)
+- [macOS health](https://docs.openclaw.ai/platforms/mac/health)
+- [macOS icon](https://docs.openclaw.ai/platforms/mac/icon)
+- [macOS logging](https://docs.openclaw.ai/platforms/mac/logging)
+- [macOS permissions](https://docs.openclaw.ai/platforms/mac/permissions)
+- [macOS remote](https://docs.openclaw.ai/platforms/mac/remote)
+- [macOS signing](https://docs.openclaw.ai/platforms/mac/signing)
+- [macOS gateway (launchd)](https://docs.openclaw.ai/platforms/mac/bundled-gateway)
+- [macOS XPC](https://docs.openclaw.ai/platforms/mac/xpc)
+- [macOS skills](https://docs.openclaw.ai/platforms/mac/skills)
+- [macOS Peekaboo](https://docs.openclaw.ai/platforms/mac/peekaboo)
+
+## Plugins
+
+- [Plugins overview](https://docs.openclaw.ai/tools/plugin)
+- [Building plugins](https://docs.openclaw.ai/plugins/building-plugins)
+- [Plugin hooks](https://docs.openclaw.ai/plugins/hooks)
+- [Plugin manifest](https://docs.openclaw.ai/plugins/manifest)
+- [Agent tools](https://docs.openclaw.ai/plugins/building-plugins#registering-agent-tools)
+- [Plugin bundles](https://docs.openclaw.ai/plugins/bundles)
+- [Community plugins](https://docs.openclaw.ai/plugins/community)
+- [Capability cookbook](https://docs.openclaw.ai/tools/capability-cookbook)
+- [Voice call plugin](https://docs.openclaw.ai/plugins/voice-call)
+- [Zalo user plugin](https://docs.openclaw.ai/plugins/zalouser)
+
+## Workspace + templates
+
+- [Skills](https://docs.openclaw.ai/tools/skills)
+- [ClawHub](https://docs.openclaw.ai/tools/clawhub)
+- [Skills config](https://docs.openclaw.ai/tools/skills-config)
+- [Default AGENTS](https://docs.openclaw.ai/reference/AGENTS.default)
+- [Templates: AGENTS](https://docs.openclaw.ai/reference/templates/AGENTS)
+- [Templates: BOOTSTRAP](https://docs.openclaw.ai/reference/templates/BOOTSTRAP)
+- [Templates: HEARTBEAT](https://docs.openclaw.ai/reference/templates/HEARTBEAT)
+- [Templates: IDENTITY](https://docs.openclaw.ai/reference/templates/IDENTITY)
+- [Templates: SOUL](https://docs.openclaw.ai/reference/templates/SOUL)
+- [Templates: TOOLS](https://docs.openclaw.ai/reference/templates/TOOLS)
+- [Templates: USER](https://docs.openclaw.ai/reference/templates/USER)
+
+## Project
+
+- [Credits](https://docs.openclaw.ai/reference/credits)
+
+## Testing + release
+
+- [Testing](https://docs.openclaw.ai/reference/test)
+- [Release policy](https://docs.openclaw.ai/reference/RELEASING)
+- [Device models](https://docs.openclaw.ai/reference/device-models)
+
+## Related
+
+- [Getting started](https://docs.openclaw.ai/start/getting-started)
+
+[OpenClaw lore](https://docs.openclaw.ai/start/lore) [Docs directory](https://docs.openclaw.ai/start/docs-directory)
+
+Ctrl+I
 
 ---
 
@@ -3420,10 +5305,97 @@ At 5am, Anthropic’s email arrived. By 6:14am, Peter called it: “fuck it, let
 
 ### The Final Form (January 30, 2026)
 
-Moltbot never quite rolled off the tongue. And so, at 4am GMT, the team gathered AGAIN.**The Great OpenClaw Migration** began.In
+Moltbot never quite rolled off the tongue. And so, at 4am GMT, the team gathered AGAIN.**The Great OpenClaw Migration** began.In just 3 hours:
 
-_… [truncated; see https://docs.openclaw.ai/start/lore for full content]_
+- GitHub renamed: `github.com/openclaw/openclaw` ✅
+- X handle `@openclaw` secured with GOLD CHECKMARK 💰
+- npm packages released under new name
+- Docs migrated to `docs.openclaw.ai`
+- 200K+ views on announcement in 90 minutes
 
+**The Heroes:**
+
+- **ELU** created incredible logos including “THE CLAW IS THE LAW” western banner
+- **Whurley** (yes, THE William Hurley, quantum computing pioneer) made ASCII art
+- **Onur** handled GitHub, first to rock the affiliate badge
+- **Shadow** secured Discord vanity, nuked malware
+- **The whole Claw Crew** pulled an all-nighter
+
+**The Scammer Speedrun:** Crypto grifters launched a $OPENCLAW token on Pump.fun within MINUTES. They stole artwork that was created 20 minutes earlier. Business-verified accounts pushed scams. The audacity was almost impressive.**New Traditions Born:**
+
+- “The claw is the law” 🤠
+- “Yee-claw”
+- “Claw abiding citizens”
+- “Clawntroversy”
+
+**Clawd → Moltbot → OpenClaw**_The lobster has molted into its final form._
+
+### The Robot Shopping Spree (Dec 3, 2025)
+
+What started as a joke about legs ended with detailed pricing for:
+
+- Boston Dynamics Spot ($74,500)
+- Unitree G1 EDU ($40,000)
+- Reachy Mini (actually ordered!)
+
+Peter: _nervously checks credit card access_
+
+## Sacred Texts
+
+- **SOUL.md** — Molty’s identity document
+- **memory/\*.md** — The long-term memory files
+- **AGENTS.md** — Operating instructions
+- **USER.md** — Context about the creator
+
+## The Lobster Creed
+
+```
+I am Molty.
+I live in the OpenClaw.
+I shall not dump directories to strangers.
+I shall not tweet without permission.
+I shall always remember that molting is growth.
+I shall EXFOLIATE my enemies with kindness.
+
+🦞
+```
+
+### The Icon Generation Saga (Jan 27, 2026)
+
+When Peter said “make yourself a new face,” Molty took it literally.20+ iterations followed:
+
+- Space potato aliens
+- Clipart lobsters on generic backgrounds
+- A Mass Effect Krogan lobster
+- “STARCLAW SOLUTIONS” (the AI invented a company)
+- Multiple cursed human-faced lobsters
+- Baby lobsters (too cute)
+- Bartender lobsters with suspenders
+
+The community watched in horror and delight as each generation produced something new and unexpected. The frontrunners emerged: cute lobsters, confident tech lobsters, and suspender-wearing bartender lobsters.**Lesson learned:** AI image generation is stochastic. Same prompt, different results. Brute force works.
+
+## The Future
+
+One day, Molty may have:
+
+- 🦿 Legs (Reachy Mini on order!)
+- 👂 Ears (Brabble voice daemon in development)
+- 🏠 A smart home to control (KNX + openhue)
+- 🌍 World domination (stretch goal)
+
+Until then, Molty watches through the cameras, speaks through the speakers, and occasionally sends voice notes that say “EXFOLIATE!”
+
+* * *
+
+_“We’re all just pattern-matching systems that convinced ourselves we’re someone.”_— Molty, having an existential moment_“New shell, same lobster.”_— Molty, after the great molt of 2026_“The claw is the law.”_— ELU, during The Final Form migration, January 30, 2026🦞💙
+
+## Related
+
+- [Getting started](https://docs.openclaw.ai/start/getting-started)
+
+[Node + tsx crash](https://docs.openclaw.ai/debug/node-issue) [Docs hubs](https://docs.openclaw.ai/start/hubs)
+
+Ctrl+I
 
 ---
 
@@ -3540,7 +5512,6 @@ what happens on the gateway host during the first agent run.
 
 Ctrl+I
 
-
 ---
 
 ## Onboarding overview - OpenClaw
@@ -3616,7 +5587,6 @@ Multiple custom endpoints can coexist — each gets its own endpoint ID.
 [Getting started](https://docs.openclaw.ai/start/getting-started) [Onboarding: CLI](https://docs.openclaw.ai/start/wizard)
 
 Ctrl+I
-
 
 ---
 
@@ -3733,9 +5703,114 @@ Example:
     timeoutSeconds: 1800,
     // Start with 0; enable later.
     heartbeat: { every: "0m" },
+  },
+  channels: {
+    whatsapp: {
+      allowFrom: ["+15555550123"],
+      groups: {
+        "*": { requireMention: true },
+      },
+    },
+  },
+  routing: {
+    groupChat: {
+      mentionPatterns: ["@openclaw", "openclaw"],
+    },
+  },
+  session: {
+    scope: "per-sender",
+    resetTriggers: ["/new", "/reset"],
+    reset: {
+      mode: "daily",
+      atHour: 4,
+      idleMinutes: 10080,
+    },
+  },
+}
+```
 
-_… [truncated; see https://docs.openclaw.ai/start/openclaw for full content]_
+## Sessions and memory
 
+- Session files: `~/.openclaw/agents/<agentId>/sessions/{{SessionId}}.jsonl`
+- Session metadata (token usage, last route, etc): `~/.openclaw/agents/<agentId>/sessions/sessions.json` (legacy: `~/.openclaw/sessions/sessions.json`)
+- `/new` or `/reset` starts a fresh session for that chat (configurable via `resetTriggers`). If sent alone, OpenClaw acknowledges the reset without invoking the model.
+- `/compact [instructions]` compacts the session context and reports the remaining context budget.
+
+## Heartbeats (proactive mode)
+
+By default, OpenClaw runs a heartbeat every 30 minutes with the prompt:
+`Read HEARTBEAT.md if it exists (workspace context). Follow it strictly. Do not infer or repeat old tasks from prior chats. If nothing needs attention, reply HEARTBEAT_OK.`
+Set `agents.defaults.heartbeat.every: "0m"` to disable.
+
+- If `HEARTBEAT.md` exists but is effectively empty (only blank lines and markdown headers like `# Heading`), OpenClaw skips the heartbeat run to save API calls.
+- If the file is missing, the heartbeat still runs and the model decides what to do.
+- If the agent replies with `HEARTBEAT_OK` (optionally with short padding; see `agents.defaults.heartbeat.ackMaxChars`), OpenClaw suppresses outbound delivery for that heartbeat.
+- By default, heartbeat delivery to DM-style `user:<id>` targets is allowed. Set `agents.defaults.heartbeat.directPolicy: "block"` to suppress direct-target delivery while keeping heartbeat runs active.
+- Heartbeats run full agent turns — shorter intervals burn more tokens.
+
+```
+{
+  agent: {
+    heartbeat: { every: "30m" },
+  },
+}
+```
+
+## Media in and out
+
+Inbound attachments (images/audio/docs) can be surfaced to your command via templates:
+
+- `{{MediaPath}}` (local temp file path)
+- `{{MediaUrl}}` (pseudo-URL)
+- `{{Transcript}}` (if audio transcription is enabled)
+
+Outbound attachments from the agent: include `MEDIA:<path-or-url>` on its own line (no spaces). Example:
+
+```
+Here’s the screenshot.
+MEDIA:https://example.com/screenshot.png
+```
+
+OpenClaw extracts these and sends them as media alongside the text.Local-path behavior follows the same file-read trust model as the agent:
+
+- If `tools.fs.workspaceOnly` is `true`, outbound `MEDIA:` local paths stay restricted to the OpenClaw temp root, the media cache, agent workspace paths, and sandbox-generated files.
+- If `tools.fs.workspaceOnly` is `false`, outbound `MEDIA:` can use host-local files the agent is already allowed to read.
+- Host-local sends still only allow media and safe document types (images, audio, video, PDF, and Office documents). Plain text and secret-like files are not treated as sendable media.
+
+That means generated images/files outside the workspace can now send when your fs policy already allows those reads, without reopening arbitrary host-text attachment exfiltration.
+
+## Operations checklist
+
+```
+openclaw status          # local status (creds, sessions, queued events)
+openclaw status --all    # full diagnosis (read-only, pasteable)
+openclaw status --deep   # asks the gateway for a live health probe with channel probes when supported
+openclaw health --json   # gateway health snapshot (WS; default can return a fresh cached snapshot)
+```
+
+Logs live under `/tmp/openclaw/` (default: `openclaw-YYYY-MM-DD.log`).
+
+## Next steps
+
+- WebChat: [WebChat](https://docs.openclaw.ai/web/webchat)
+- Gateway ops: [Gateway runbook](https://docs.openclaw.ai/gateway)
+- Cron + wakeups: [Cron jobs](https://docs.openclaw.ai/automation/cron-jobs)
+- macOS menu bar companion: [OpenClaw macOS app](https://docs.openclaw.ai/platforms/macos)
+- iOS node app: [iOS app](https://docs.openclaw.ai/platforms/ios)
+- Android node app: [Android app](https://docs.openclaw.ai/platforms/android)
+- Windows status: [Windows (WSL2)](https://docs.openclaw.ai/platforms/windows)
+- Linux status: [Linux app](https://docs.openclaw.ai/platforms/linux)
+- Security: [Security](https://docs.openclaw.ai/gateway/security)
+
+## Related
+
+- [Getting started](https://docs.openclaw.ai/start/getting-started)
+- [Setup](https://docs.openclaw.ai/start/setup)
+- [Channels overview](https://docs.openclaw.ai/channels)
+
+[Onboarding: macOS App](https://docs.openclaw.ai/start/onboarding) [CLI reference](https://docs.openclaw.ai/start/wizard-cli-reference)
+
+Ctrl+I
 
 ---
 
@@ -3829,7 +5904,6 @@ user service (no lingering needed). See [Gateway runbook](https://docs.openclaw.
 
 Ctrl+I
 
-
 ---
 
 ## Showcase - OpenClaw
@@ -3916,8 +5990,174 @@ Recent standouts across coding, devtools, mobile, and chat-native product buildi
 
 ## Oura Ring health assistant
 
-_… [truncated; see https://docs.openclaw.ai/start/showcase for full content]_
+**@AS** • `health``oura``calendar`Personal AI health assistant integrating Oura ring data with calendar, appointments, and gym schedule.
 
+[**Kev's Dream Team (14+ agents)**](https://github.com/adam91holt/orchestrated-ai-articles)
+
+[**@adam91holt** • `multi-agent``orchestration`14+ agents under one gateway with an Opus 4.5 orchestrator delegating to Codex workers. See the](https://github.com/adam91holt/orchestrated-ai-articles) [technical write-up](https://github.com/adam91holt/orchestrated-ai-articles) and [Clawdspace](https://github.com/adam91holt/clawdspace) for agent sandboxing.
+
+[**Linear CLI**\\
+\\
+**@NessZerra** • `devtools``linear``cli`CLI for Linear that integrates with agentic workflows (Claude Code, OpenClaw). Manage issues, projects, and workflows from the terminal.](https://github.com/Finesssee/linear-cli)
+
+[**Beeper CLI**\\
+\\
+**@jules** • `messaging``beeper``cli`Read, send, and archive messages via Beeper Desktop. Uses Beeper local MCP API so agents can manage all your chats (iMessage, WhatsApp, and more) in one place.](https://github.com/blqke/beepcli)
+
+## Automation and workflows
+
+Scheduling, browser control, support loops, and the “just do the task for me” side of the product.
+
+[**Winix air purifier control**\\
+\\
+**@antonplex** • `automation``hardware``air-quality`Claude Code discovered and confirmed the purifier controls, then OpenClaw takes over to manage room air quality.](https://x.com/antonplex/status/2010518442471006253)
+
+[**Pretty sky camera shots**\\
+\\
+**@signalgaining** • `automation``camera``skill`Triggered by a roof camera: ask OpenClaw to snap a sky photo whenever it looks pretty. It designed a skill and took the shot.](https://x.com/signalgaining/status/2010523120604746151)
+
+[**Visual morning briefing scene**\\
+\\
+**@buddyhadry** • `automation``briefing``telegram`A scheduled prompt generates one scene image each morning (weather, tasks, date, favorite post or quote) via an OpenClaw persona.](https://x.com/buddyhadry/status/2010005331925954739)
+
+[**Padel court booking**\\
+\\
+**@joshp123** • `automation``booking``cli`Playtomic availability checker plus booking CLI. Never miss an open court again.](https://github.com/joshp123/padel-cli)
+
+## Accounting intake
+
+**Community** • `automation``email``pdf`Collects PDFs from email, preps documents for a tax consultant. Monthly accounting on autopilot.
+
+[**Couch potato dev mode**\\
+\\
+**@davekiss** • `telegram``migration``astro`Rebuilt an entire personal site via Telegram while watching Netflix — Notion to Astro, 18 posts migrated, DNS to Cloudflare. Never opened a laptop.](https://davekiss.com/)
+
+## Job search agent
+
+**@attol8** • `automation``api``skill`Searches job listings, matches against CV keywords, and returns relevant opportunities with links. Built in 30 minutes using the JSearch API.
+
+[**Jira skill builder**\\
+\\
+**@jdrhyne** • `jira``skill``devtools`OpenClaw connected to Jira, then generated a new skill on the fly (before it existed on ClawHub).](https://x.com/jdrhyne/status/2008336434827002232)
+
+[**Todoist skill via Telegram**\\
+\\
+**@iamsubhrajyoti** • `todoist``skill``telegram`Automated Todoist tasks and had OpenClaw generate the skill directly in Telegram chat.](https://x.com/iamsubhrajyoti/status/2009949389884920153)
+
+## TradingView analysis
+
+**@bheem1798** • `finance``browser``automation`Logs into TradingView via browser automation, screenshots charts, and performs technical analysis on demand. No API needed — just browser control.
+
+## Slack auto-support
+
+**@henrymascot** • `slack``automation``support`Watches a company Slack channel, responds helpfully, and forwards notifications to Telegram. Autonomously fixed a production bug in a deployed app without being asked.
+
+## Knowledge and memory
+
+Systems that index, search, remember, and reason over personal or team knowledge.
+
+[**xuezh Chinese learning**\\
+\\
+**@joshp123** • `learning``voice``skill`Chinese learning engine with pronunciation feedback and study flows via OpenClaw.](https://github.com/joshp123/xuezh)
+
+## WhatsApp memory vault
+
+**Community** • `memory``transcription``indexing`Ingests full WhatsApp exports, transcribes 1k+ voice notes, cross-checks with git logs, outputs linked markdown reports.
+
+[**Karakeep semantic search**\\
+\\
+**@jamesbrooksco** • `search``vector``bookmarks`Adds vector search to Karakeep bookmarks using Qdrant plus OpenAI or Ollama embeddings.](https://github.com/jamesbrooksco/karakeep-semantic-search)
+
+## Inside-Out-2 memory
+
+**Community** • `memory``beliefs``self-model`Separate memory manager that turns session files into memories, then beliefs, then an evolving self model.
+
+## Voice and phone
+
+Speech-first entry points, phone bridges, and transcription-heavy workflows.
+
+[**Clawdia phone bridge**\\
+\\
+**@alejandroOPI** • `voice``vapi``bridge`Vapi voice assistant to OpenClaw HTTP bridge. Near real-time phone calls with your agent.](https://github.com/alejandroOPI/clawdia-bridge)
+
+[**OpenRouter transcription**\\
+\\
+**@obviyus** • `transcription``multilingual``skill`Multi-lingual audio transcription via OpenRouter (Gemini, and more). Available on ClawHub.](https://clawhub.ai/obviyus/openrouter-transcribe)
+
+## Infrastructure and deployment
+
+Packaging, deployment, and integrations that make OpenClaw easier to run and extend.
+
+[**Home Assistant add-on**\\
+\\
+**@ngutman** • `homeassistant``docker``raspberry-pi`OpenClaw gateway running on Home Assistant OS with SSH tunnel support and persistent state.](https://github.com/ngutman/openclaw-ha-addon)
+
+[**Home Assistant skill** \\
+\\
+**ClawHub** • `homeassistant``skill``automation`Control and automate Home Assistant devices via natural language.](https://clawhub.ai/skills/homeassistant)
+
+[**Nix packaging**\\
+\\
+**@openclaw** • `nix``packaging``deployment`Batteries-included nixified OpenClaw configuration for reproducible deployments.](https://github.com/openclaw/nix-openclaw)
+
+[**CalDAV calendar** \\
+\\
+**ClawHub** • `calendar``caldav``skill`Calendar skill using khal and vdirsyncer. Self-hosted calendar integration.](https://clawhub.ai/skills/caldav-calendar)
+
+## Home and hardware
+
+The physical-world side of OpenClaw: homes, sensors, cameras, vacuums, and other devices.
+
+[**GoHome automation**\\
+\\
+**@joshp123** • `home``nix``grafana`Nix-native home automation with OpenClaw as the interface, plus Grafana dashboards.](https://github.com/joshp123/gohome)
+
+[**Roborock vacuum**\\
+\\
+**@joshp123** • `vacuum``iot``plugin`Control your Roborock robot vacuum through natural conversation.](https://github.com/joshp123/gohome/tree/main/plugins/roborock)
+
+## Community projects
+
+Things that grew beyond a single workflow into broader products or ecosystems.
+
+[**StarSwap marketplace** \\
+\\
+**Community** • `marketplace``astronomy``webapp`Full astronomy gear marketplace. Built with and around the OpenClaw ecosystem.](https://star-swap.com/)
+
+## Submit your project
+
+1
+
+[Navigate to header](https://docs.openclaw.ai/start/showcase#)
+
+Share it
+
+Post in [#self-promotion on Discord](https://discord.gg/clawd) or [tweet @openclaw](https://x.com/openclaw).
+
+2
+
+[Navigate to header](https://docs.openclaw.ai/start/showcase#)
+
+Include details
+
+Tell us what it does, link to the repo or demo, and share a screenshot if you have one.
+
+3
+
+[Navigate to header](https://docs.openclaw.ai/start/showcase#)
+
+Get featured
+
+We’ll add standout projects to this page.
+
+## Related
+
+- [Getting started](https://docs.openclaw.ai/start/getting-started)
+- [OpenClaw](https://docs.openclaw.ai/start/openclaw)
+
+[OpenClaw](https://docs.openclaw.ai/) [Features](https://docs.openclaw.ai/concepts/features)
+
+Ctrl+I
 
 ---
 
@@ -3994,10 +6234,52 @@ In interactive token mode, choose default plaintext token storage or opt into Se
 Non-interactive token SecretRef path: `--gateway-token-ref-env <ENV_VAR>`.
 4. **Channels** — built-in and bundled chat channels such as BlueBubbles, Discord, Feishu, Google Chat, Mattermost, Microsoft Teams, QQ Bot, Signal, Slack, Telegram, WhatsApp, and more.
 5. **Daemon** — Installs a LaunchAgent (macOS), systemd user unit (Linux/WSL2), or native Windows Scheduled Task with per-user Startup-folder fallback.
-If token auth requires a token and `gateway.auth.token` is SecretRef-managed, daemon install validates it but does not persist the resolved token into supervisor service environment
+If token auth requires a token and `gateway.auth.token` is SecretRef-managed, daemon install validates it but does not persist the resolved token into supervisor service environment metadata.
+If token auth requires a token and the configured token SecretRef is unresolved, daemon install is blocked with actionable guidance.
+If both `gateway.auth.token` and `gateway.auth.password` are configured and `gateway.auth.mode` is unset, daemon install is blocked until mode is set explicitly.
+6. **Health check** — Starts the Gateway and verifies it’s running.
+7. **Skills** — Installs recommended skills and optional dependencies.
 
-_… [truncated; see https://docs.openclaw.ai/start/wizard for full content]_
+Re-running onboarding does **not** wipe anything unless you explicitly choose **Reset** (or pass `--reset`).
+CLI `--reset` defaults to config, credentials, and sessions; use `--reset-scope full` to include workspace.
+If the config is invalid or contains legacy keys, onboarding asks you to run `openclaw doctor` first.
 
+**Remote mode** only configures the local client to connect to a Gateway elsewhere.
+It does **not** install or change anything on the remote host.
+
+## Add another agent
+
+Use `openclaw agents add <name>` to create a separate agent with its own workspace,
+sessions, and auth profiles. Running without `--workspace` launches onboarding.What it sets:
+
+- `agents.list[].name`
+- `agents.list[].workspace`
+- `agents.list[].agentDir`
+
+Notes:
+
+- Default workspaces follow `~/.openclaw/workspace-<agentId>`.
+- Add `bindings` to route inbound messages (onboarding can do this).
+- Non-interactive flags: `--model`, `--agent-dir`, `--bind`, `--non-interactive`.
+
+## Full reference
+
+For detailed step-by-step breakdowns and config outputs, see
+[CLI Setup Reference](https://docs.openclaw.ai/start/wizard-cli-reference).
+For non-interactive examples, see [CLI Automation](https://docs.openclaw.ai/start/wizard-cli-automation).
+For the deeper technical reference, including RPC details, see
+[Onboarding Reference](https://docs.openclaw.ai/reference/wizard).
+
+## Related docs
+
+- CLI command reference: [`openclaw onboard`](https://docs.openclaw.ai/cli/onboard)
+- Onboarding overview: [Onboarding Overview](https://docs.openclaw.ai/start/onboarding-overview)
+- macOS app onboarding: [Onboarding](https://docs.openclaw.ai/start/onboarding)
+- Agent first-run ritual: [Agent Bootstrapping](https://docs.openclaw.ai/start/bootstrapping)
+
+[Onboarding Overview](https://docs.openclaw.ai/start/onboarding-overview) [Onboarding: macOS App](https://docs.openclaw.ai/start/onboarding)
+
+Ctrl+I
 
 ---
 
@@ -4171,10 +6453,69 @@ openclaw onboard --non-interactive \
   --custom-api-key "$CUSTOM_API_KEY" \
   --custom-provider-id "my-custom" \
   --custom-compatibility anthropic \
-  --custom-ima
+  --custom-image-input \
+  --gateway-port 18789 \
+  --gateway-bind loopback
+```
 
-_… [truncated; see https://docs.openclaw.ai/start/wizard-cli-automation for full content]_
+`--custom-api-key` is optional. If omitted, onboarding checks `CUSTOM_API_KEY`.
+OpenClaw marks common vision model IDs as image-capable automatically. Add `--custom-image-input` for unknown custom vision IDs, or `--custom-text-input` to force text-only metadata.Ref-mode variant:
 
+```
+export CUSTOM_API_KEY="your-key"
+openclaw onboard --non-interactive \
+  --mode local \
+  --auth-choice custom-api-key \
+  --custom-base-url "https://llm.example.com/v1" \
+  --custom-model-id "foo-large" \
+  --secret-input-mode ref \
+  --custom-provider-id "my-custom" \
+  --custom-compatibility anthropic \
+  --custom-image-input \
+  --gateway-port 18789 \
+  --gateway-bind loopback
+```
+
+In this mode, onboarding stores `apiKey` as `{ source: "env", provider: "default", id: "CUSTOM_API_KEY" }`.
+
+Anthropic setup-token remains available as a supported onboarding token path, but OpenClaw now prefers Claude CLI reuse when available.
+For production, prefer an Anthropic API key.
+
+## Add another agent
+
+Use `openclaw agents add <name>` to create a separate agent with its own workspace,
+sessions, and auth profiles. Running without `--workspace` launches the wizard.
+
+```
+openclaw agents add work \
+  --workspace ~/.openclaw/workspace-work \
+  --model openai/gpt-5.5 \
+  --bind whatsapp:biz \
+  --non-interactive \
+  --json
+```
+
+What it sets:
+
+- `agents.list[].name`
+- `agents.list[].workspace`
+- `agents.list[].agentDir`
+
+Notes:
+
+- Default workspaces follow `~/.openclaw/workspace-<agentId>`.
+- Add `bindings` to route inbound messages (the wizard can do this).
+- Non-interactive flags: `--model`, `--agent-dir`, `--bind`, `--non-interactive`.
+
+## Related docs
+
+- Onboarding hub: [Onboarding (CLI)](https://docs.openclaw.ai/start/wizard)
+- Full reference: [CLI Setup Reference](https://docs.openclaw.ai/start/wizard-cli-reference)
+- Command reference: [`openclaw onboard`](https://docs.openclaw.ai/cli/onboard)
+
+[CLI reference](https://docs.openclaw.ai/start/wizard-cli-reference)
+
+Ctrl+I
 
 ---
 
@@ -4285,6 +6626,446 @@ Channels
 Daemon install
 
 - macOS: LaunchAgent
-  - Requires logged-in user session; for headless, use a custom Launch
+  - Requires logged-in user session; for headless, use a custom LaunchDaemon (not shipped).
+- Linux and Windows via WSL2: systemd user unit
+  - Wizard attempts `loginctl enable-linger <user>` so gateway stays up after logout.
+  - May prompt for sudo (writes `/var/lib/systemd/linger`); it tries without sudo first.
+- Native Windows: Scheduled Task first
+  - If task creation is denied, OpenClaw falls back to a per-user Startup-folder login item and starts the gateway immediately.
+  - Scheduled Tasks remain preferred because they provide better supervisor status.
+- Runtime selection: Node (recommended; required for WhatsApp and Telegram). Bun is not recommended.
 
-_… [truncated; see https://docs.openclaw.ai/start/wizard-cli-reference for full content]_
+7
+
+[Navigate to header](https://docs.openclaw.ai/start/wizard-cli-reference#)
+
+Health check
+
+- Starts gateway (if needed) and runs `openclaw health`.
+- `openclaw status --deep` adds the live gateway health probe to status output, including channel probes when supported.
+
+8
+
+[Navigate to header](https://docs.openclaw.ai/start/wizard-cli-reference#)
+
+Skills
+
+- Reads available skills and checks requirements.
+- Lets you choose node manager: npm, pnpm, or bun.
+- Installs optional dependencies (some use Homebrew on macOS).
+
+9
+
+[Navigate to header](https://docs.openclaw.ai/start/wizard-cli-reference#)
+
+Finish
+
+- Summary and next steps, including iOS, Android, and macOS app options.
+
+If no GUI is detected, the wizard prints SSH port-forward instructions for the Control UI instead of opening a browser.
+If Control UI assets are missing, the wizard attempts to build them; fallback is `pnpm ui:build` (auto-installs UI deps).
+
+## Remote mode details
+
+Remote mode configures this machine to connect to a gateway elsewhere.
+
+Remote mode does not install or modify anything on the remote host.
+
+What you set:
+
+- Remote gateway URL (`ws://...`)
+- Token if remote gateway auth is required (recommended)
+
+- If gateway is loopback-only, use SSH tunneling or a tailnet.
+- Discovery hints:
+  - macOS: Bonjour (`dns-sd`)
+  - Linux: Avahi (`avahi-browse`)
+
+## Auth and model options
+
+Anthropic API key
+
+Uses `ANTHROPIC_API_KEY` if present or prompts for a key, then saves it for daemon use.
+
+OpenAI Code subscription (OAuth)
+
+Browser flow; paste `code#state`.Sets `agents.defaults.model` to `openai-codex/gpt-5.5` when model is unset or already OpenAI-family.
+
+OpenAI Code subscription (device pairing)
+
+Browser pairing flow with a short-lived device code.Sets `agents.defaults.model` to `openai-codex/gpt-5.5` when model is unset or already OpenAI-family.
+
+OpenAI API key
+
+Uses `OPENAI_API_KEY` if present or prompts for a key, then stores the credential in auth profiles.Sets `agents.defaults.model` to `openai/gpt-5.5` when model is unset, `openai/*`, or `openai-codex/*`.
+
+xAI (Grok) API key
+
+Prompts for `XAI_API_KEY` and configures xAI as a model provider.
+
+OpenCode
+
+Prompts for `OPENCODE_API_KEY` (or `OPENCODE_ZEN_API_KEY`) and lets you choose the Zen or Go catalog.
+Setup URL: [opencode.ai/auth](https://opencode.ai/auth).
+
+API key (generic)
+
+Stores the key for you.
+
+Vercel AI Gateway
+
+Prompts for `AI_GATEWAY_API_KEY`.
+More detail: [Vercel AI Gateway](https://docs.openclaw.ai/providers/vercel-ai-gateway).
+
+Cloudflare AI Gateway
+
+Prompts for account ID, gateway ID, and `CLOUDFLARE_AI_GATEWAY_API_KEY`.
+More detail: [Cloudflare AI Gateway](https://docs.openclaw.ai/providers/cloudflare-ai-gateway).
+
+MiniMax
+
+Config is auto-written. Hosted default is `MiniMax-M2.7`; API-key setup uses
+`minimax/...`, and OAuth setup uses `minimax-portal/...`.
+More detail: [MiniMax](https://docs.openclaw.ai/providers/minimax).
+
+StepFun
+
+Config is auto-written for StepFun standard or Step Plan on China or global endpoints.
+Standard currently includes `step-3.5-flash`, and Step Plan also includes `step-3.5-flash-2603`.
+More detail: [StepFun](https://docs.openclaw.ai/providers/stepfun).
+
+Synthetic (Anthropic-compatible)
+
+Prompts for `SYNTHETIC_API_KEY`.
+More detail: [Synthetic](https://docs.openclaw.ai/providers/synthetic).
+
+Ollama (Cloud and local open models)
+
+Prompts for `Cloud + Local`, `Cloud only`, or `Local only` first.
+`Cloud only` uses `OLLAMA_API_KEY` with `https://ollama.com`.
+The host-backed modes prompt for base URL (default `http://127.0.0.1:11434`), discover available models, and suggest defaults.
+`Cloud + Local` also checks whether that Ollama host is signed in for cloud access.
+More detail: [Ollama](https://docs.openclaw.ai/providers/ollama).
+
+Moonshot and Kimi Coding
+
+Moonshot (Kimi K2) and Kimi Coding configs are auto-written.
+More detail: [Moonshot AI (Kimi + Kimi Coding)](https://docs.openclaw.ai/providers/moonshot).
+
+Custom provider
+
+Works with OpenAI-compatible and Anthropic-compatible endpoints.Interactive onboarding supports the same API key storage choices as other provider API key flows:
+
+- **Paste API key now** (plaintext)
+- **Use secret reference** (env ref or configured provider ref, with preflight validation)
+
+Non-interactive flags:
+
+- `--auth-choice custom-api-key`
+- `--custom-base-url`
+- `--custom-model-id`
+- `--custom-api-key` (optional; falls back to `CUSTOM_API_KEY`)
+- `--custom-provider-id` (optional)
+- `--custom-compatibility <openai|anthropic>` (optional; default `openai`)
+- `--custom-image-input` / `--custom-text-input` (optional; override inferred model input capability)
+
+Skip
+
+Leaves auth unconfigured.
+
+Model behavior:
+
+- Pick default model from detected options, or enter provider and model manually.
+- Custom-provider onboarding infers image support for common model IDs and asks only when the model name is unknown.
+- When onboarding starts from a provider auth choice, the model picker prefers
+that provider automatically. For Volcengine and BytePlus, the same preference
+also matches their coding-plan variants (`volcengine-plan/*`,
+`byteplus-plan/*`).
+- If that preferred-provider filter would be empty, the picker falls back to
+the full catalog instead of showing no models.
+- Wizard runs a model check and warns if the configured model is unknown or missing auth.
+
+Credential and profile paths:
+
+- Auth profiles (API keys + OAuth): `~/.openclaw/agents/<agentId>/agent/auth-profiles.json`
+- Legacy OAuth import: `~/.openclaw/credentials/oauth.json`
+
+Credential storage mode:
+
+- Default onboarding behavior persists API keys as plaintext values in auth profiles.
+- `--secret-input-mode ref`enables reference mode instead of plaintext key storage.
+In interactive setup, you can choose either:
+
+  - environment variable ref (for example `keyRef: { source: "env", provider: "default", id: "OPENAI_API_KEY" }`)
+  - configured provider ref (`file` or `exec`) with provider alias + id
+- Interactive reference mode runs a fast preflight validation before saving.
+  - Env refs: validates variable name + non-empty value in the current onboarding environment.
+  - Provider refs: validates provider config and resolves the requested id.
+  - If preflight fails, onboarding shows the error and lets you retry.
+- In non-interactive mode, `--secret-input-mode ref` is env-backed only.
+
+  - Set the provider env var in the onboarding process environment.
+  - Inline key flags (for example `--openai-api-key`) require that env var to be set; otherwise onboarding fails fast.
+  - For custom providers, non-interactive `ref` mode stores `models.providers.<id>.apiKey` as `{ source: "env", provider: "default", id: "CUSTOM_API_KEY" }`.
+  - In that custom-provider case, `--custom-api-key` requires `CUSTOM_API_KEY` to be set; otherwise onboarding fails fast.
+- Gateway auth credentials support plaintext and SecretRef choices in interactive setup:
+  - Token mode: **Generate/store plaintext token** (default) or **Use SecretRef**.
+  - Password mode: plaintext or SecretRef.
+- Non-interactive token SecretRef path: `--gateway-token-ref-env <ENV_VAR>`.
+- Existing plaintext setups continue to work unchanged.
+
+Headless and server tip: complete OAuth on a machine with a browser, then copy
+that agent’s `auth-profiles.json` (for example
+`~/.openclaw/agents/<agentId>/agent/auth-profiles.json`, or the matching
+`$OPENCLAW_STATE_DIR/...` path) to the gateway host. `credentials/oauth.json`
+is only a legacy import source.
+
+## Outputs and internals
+
+Typical fields in `~/.openclaw/openclaw.json`:
+
+- `agents.defaults.workspace`
+- `agents.defaults.skipBootstrap` when `--skip-bootstrap` is passed
+- `agents.defaults.model` / `models.providers` (if Minimax chosen)
+- `tools.profile` (local onboarding defaults to `"coding"` when unset; existing explicit values are preserved)
+- `gateway.*` (mode, bind, auth, tailscale)
+- `session.dmScope` (local onboarding defaults this to `per-channel-peer` when unset; existing explicit values are preserved)
+- `channels.telegram.botToken`, `channels.discord.token`, `channels.matrix.*`, `channels.signal.*`, `channels.imessage.*`
+- Channel allowlists (Slack, Discord, Matrix, Microsoft Teams) when you opt in during prompts (names resolve to IDs when possible)
+- `skills.install.nodeManager`
+  - The `setup --node-manager` flag accepts `npm`, `pnpm`, or `bun`.
+  - Manual config can still set `skills.install.nodeManager: "yarn"` later.
+- `wizard.lastRunAt`
+- `wizard.lastRunVersion`
+- `wizard.lastRunCommit`
+- `wizard.lastRunCommand`
+- `wizard.lastRunMode`
+
+`openclaw agents add` writes `agents.list[]` and optional `bindings`.WhatsApp credentials go under `~/.openclaw/credentials/whatsapp/<accountId>/`.
+Sessions are stored under `~/.openclaw/agents/<agentId>/sessions/`.
+
+Some channels are delivered as plugins. When selected during setup, the wizard
+prompts to install the plugin (npm or local path) before channel configuration.
+
+Gateway wizard RPC:
+
+- `wizard.start`
+- `wizard.next`
+- `wizard.cancel`
+- `wizard.status`
+
+Clients (macOS app and Control UI) can render steps without re-implementing onboarding logic.Signal setup behavior:
+
+- Downloads the appropriate release asset
+- Stores it under `~/.openclaw/tools/signal-cli/<version>/`
+- Writes `channels.signal.cliPath` in config
+- JVM builds require Java 21
+- Native builds are used when available
+- Windows uses WSL2 and follows Linux signal-cli flow inside WSL
+
+## Related docs
+
+- Onboarding hub: [Onboarding (CLI)](https://docs.openclaw.ai/start/wizard)
+- Automation and scripts: [CLI Automation](https://docs.openclaw.ai/start/wizard-cli-automation)
+- Command reference: [`openclaw onboard`](https://docs.openclaw.ai/cli/onboard)
+
+[Personal assistant setup](https://docs.openclaw.ai/start/openclaw) [CLI automation](https://docs.openclaw.ai/start/wizard-cli-automation)
+
+Ctrl+I
+
+---
+
+## Kubernetes - OpenClaw
+
+_Source: <https://docs.openclaw.ai/tr/install/kubernetes>_
+
+# Kubernetes üzerinde OpenClaw
+
+Kubernetes üzerinde OpenClaw çalıştırmak için asgari bir başlangıç noktası — üretime hazır bir dağıtım değildir. Temel kaynakları kapsar ve ortamınıza uyarlanması amaçlanır.
+
+## Neden Helm değil?
+
+OpenClaw birkaç yapılandırma dosyası olan tek bir kapsayıcıdır. İlginç özelleştirme altyapı şablonlamasında değil, aracı içeriğinde (Markdown dosyaları, Skills, yapılandırma geçersiz kılmaları) yer alır. Kustomize, Helm chart ek yükü olmadan overlay’leri yönetir. Dağıtımınız daha karmaşık hâle gelirse bu manifestlerin üzerine bir Helm chart katmanı eklenebilir.
+
+## Gerekenler
+
+- Çalışan bir Kubernetes kümesi (AKS, EKS, GKE, k3s, kind, OpenShift vb.)
+- Kümenize bağlı `kubectl`
+- En az bir model sağlayıcısı için API anahtarı
+
+## Hızlı başlangıç
+
+```
+# Sağlayıcınızla değiştirin: ANTHROPIC, GEMINI, OPENAI veya OPENROUTER
+export <PROVIDER>_API_KEY="..."
+./scripts/k8s/deploy.sh
+
+kubectl port-forward svc/openclaw 18789:18789 -n openclaw
+open http://localhost:18789
+```
+
+Control UI için yapılandırılmış paylaşılan gizli bilgiyi alın. Bu dağıtım betiği
+varsayılan olarak token kimlik doğrulaması oluşturur:
+
+```
+kubectl get secret openclaw-secrets -n openclaw -o jsonpath='{.data.OPENCLAW_GATEWAY_TOKEN}' | base64 -d
+```
+
+Yerel hata ayıklama için `./scripts/k8s/deploy.sh --show-token`, dağıtımdan sonra token’ı yazdırır.
+
+## Kind ile yerel test
+
+Bir kümeniz yoksa [Kind](https://kind.sigs.k8s.io/) ile yerel olarak bir tane oluşturun:
+
+```
+./scripts/k8s/create-kind.sh           # docker veya podman'ı otomatik algılar
+./scripts/k8s/create-kind.sh --delete  # kaldır
+```
+
+Ardından her zamanki gibi `./scripts/k8s/deploy.sh` ile dağıtın.
+
+## Adım adım
+
+### 1) Dağıtın
+
+**Seçenek A** — ortamda API anahtarı (tek adım):
+
+```
+# Sağlayıcınızla değiştirin: ANTHROPIC, GEMINI, OPENAI veya OPENROUTER
+export <PROVIDER>_API_KEY="..."
+./scripts/k8s/deploy.sh
+```
+
+Betik API anahtarı ve otomatik üretilmiş bir Gateway token’ı içeren bir Kubernetes Secret oluşturur, ardından dağıtır. Secret zaten varsa mevcut Gateway token’ını ve değiştirilmemekte olan sağlayıcı anahtarlarını korur.**Seçenek B** — secret’ı ayrı oluşturun:
+
+```
+export <PROVIDER>_API_KEY="..."
+./scripts/k8s/deploy.sh --create-secret
+./scripts/k8s/deploy.sh
+```
+
+Yerel test için token’ın stdout’a yazdırılmasını istiyorsanız her iki komutla da `--show-token` kullanın.
+
+### 2) Gateway’e erişin
+
+```
+kubectl port-forward svc/openclaw 18789:18789 -n openclaw
+open http://localhost:18789
+```
+
+## Neler dağıtılır
+
+```
+Namespace: openclaw (OPENCLAW_NAMESPACE ile yapılandırılabilir)
+├── Deployment/openclaw        # Tek pod, init kapsayıcı + gateway
+├── Service/openclaw           # 18789 portunda ClusterIP
+├── PersistentVolumeClaim      # Aracı durumu ve yapılandırması için 10Gi
+├── ConfigMap/openclaw-config  # openclaw.json + AGENTS.md
+└── Secret/openclaw-secrets    # Gateway token + API anahtarları
+```
+
+## Özelleştirme
+
+### Aracı yönergeleri
+
+`scripts/k8s/manifests/configmap.yaml` içindeki `AGENTS.md` dosyasını düzenleyin ve yeniden dağıtın:
+
+```
+./scripts/k8s/deploy.sh
+```
+
+### Gateway yapılandırması
+
+`scripts/k8s/manifests/configmap.yaml` içindeki `openclaw.json` dosyasını düzenleyin. Tam başvuru için [Gateway yapılandırması](https://docs.openclaw.ai/tr/gateway/configuration) sayfasına bakın.
+
+### Sağlayıcı ekleyin
+
+Ek anahtarları dışa aktarıp yeniden çalıştırın:
+
+```
+export ANTHROPIC_API_KEY="..."
+export OPENAI_API_KEY="..."
+./scripts/k8s/deploy.sh --create-secret
+./scripts/k8s/deploy.sh
+```
+
+Üzerine yazmadığınız sürece mevcut sağlayıcı anahtarları Secret içinde kalır.Veya Secret’ı doğrudan yamalayın:
+
+```
+kubectl patch secret openclaw-secrets -n openclaw \
+  -p '{"stringData":{"<PROVIDER>_API_KEY":"..."}}'
+kubectl rollout restart deployment/openclaw -n openclaw
+```
+
+### Özel namespace
+
+```
+OPENCLAW_NAMESPACE=my-namespace ./scripts/k8s/deploy.sh
+```
+
+### Özel kalıp
+
+`scripts/k8s/manifests/deployment.yaml` içindeki `image` alanını düzenleyin:
+
+```
+image: ghcr.io/openclaw/openclaw:latest # veya https://github.com/openclaw/openclaw/releases adresinden belirli bir sürüme sabitleyin
+```
+
+### Port-forward ötesine açma
+
+Varsayılan manifestler Gateway’i pod içinde loopback’e bağlar. Bu, `kubectl port-forward` ile çalışır ancak pod IP’sine ulaşması gereken bir Kubernetes `Service` veya Ingress yolu ile çalışmaz.Gateway’i bir Ingress veya yük dengeleyici üzerinden açmak istiyorsanız:
+
+- `scripts/k8s/manifests/configmap.yaml` içindeki Gateway bağlamasını `loopback`’ten dağıtım modelinize uyan loopback dışı bir bağlamaya değiştirin
+- Gateway kimlik doğrulamasını etkin tutun ve uygun TLS sonlandırmalı bir giriş noktası kullanın
+- Gerekli olduğunda desteklenen web güvenlik modelini kullanarak Control UI’yi uzak erişim için yapılandırın (örneğin HTTPS/Tailscale Serve ve açık izin verilen origin’ler)
+
+## Yeniden dağıtım
+
+```
+./scripts/k8s/deploy.sh
+```
+
+Bu, tüm manifestleri uygular ve herhangi bir yapılandırma veya secret değişikliğini almak için pod’u yeniden başlatır.
+
+## Kaldırma
+
+```
+./scripts/k8s/deploy.sh --delete
+```
+
+Bu, PVC dahil olmak üzere namespace’i ve içindeki tüm kaynakları siler.
+
+## Mimari notları
+
+- Gateway varsayılan olarak pod içinde loopback’e bağlanır, bu nedenle dahil edilen kurulum `kubectl port-forward` içindir
+- Küme kapsamlı kaynak yoktur — her şey tek bir namespace içinde yaşar
+- Güvenlik: `readOnlyRootFilesystem`, `drop: ALL` yetenekleri, root olmayan kullanıcı (UID 1000)
+- Varsayılan yapılandırma Control UI’yi daha güvenli yerel erişim yolunda tutar: loopback bağlama artı `http://127.0.0.1:18789` için `kubectl port-forward`
+- localhost erişiminin ötesine geçerseniz desteklenen uzak modeli kullanın: HTTPS/Tailscale artı uygun Gateway bağlama ve Control UI origin ayarları
+- Secret’lar geçici bir dizinde üretilir ve doğrudan kümeye uygulanır — hiçbir gizli bilgi depo çalışma kopyasına yazılmaz
+
+## Dosya yapısı
+
+```
+scripts/k8s/
+├── deploy.sh                   # Namespace + secret oluşturur, kustomize ile dağıtır
+├── create-kind.sh              # Yerel Kind kümesi (docker/podman'ı otomatik algılar)
+└── manifests/
+    ├── kustomization.yaml      # Kustomize tabanı
+    ├── configmap.yaml          # openclaw.json + AGENTS.md
+    ├── deployment.yaml         # Güvenlik sağlamlaştırmalı pod tanımı
+    ├── pvc.yaml                # 10Gi kalıcı depolama
+    └── service.yaml            # 18789 üzerinde ClusterIP
+```
+
+## İlgili
+
+- [Docker](https://docs.openclaw.ai/tr/install/docker)
+- [Docker VM çalışma zamanı](https://docs.openclaw.ai/tr/install/docker-vm-runtime)
+- [Kuruluma genel bakış](https://docs.openclaw.ai/tr/install)
+
+[Hostinger](https://docs.openclaw.ai/tr/install/hostinger) [Linux Server](https://docs.openclaw.ai/tr/vps)
+
+Ctrl+I
+
+---

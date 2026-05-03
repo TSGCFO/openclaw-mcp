@@ -1,13 +1,13 @@
 {
-  "timestamp": "2026-05-03T21:28:40.621895",
+  "timestamp": "2026-05-03T21:38:48.531692",
   "skill_name": "openclaw",
   "overall_score": {
-    "total_score": 89.0,
+    "total_score": 83.0,
     "completeness": 80.0,
     "accuracy": 100.0,
     "coverage": 80.0,
-    "health": 100.0,
-    "grade": "A-"
+    "health": 70.0,
+    "grade": "B+"
   },
   "metrics": [
     {
@@ -37,20 +37,26 @@
     },
     {
       "name": "Health",
-      "value": 100.0,
-      "level": "MetricLevel.INFO",
-      "description": "Skill health: 100.0%",
-      "suggestions": []
+      "value": 70.0,
+      "level": "MetricLevel.WARNING",
+      "description": "Skill health: 70.0%",
+      "suggestions": [
+        "Very large file: tools_plugins.md",
+        "Very large file: gateway_ops.md",
+        "Very large file: other.md"
+      ]
     }
   ],
   "statistics": {
-    "total_files": 18,
-    "total_size_bytes": 1204490,
-    "markdown_files": 18,
-    "reference_files": 17,
-    "total_characters": 1201197,
-    "total_words": 149254
+    "total_files": 17,
+    "total_size_bytes": 5448961,
+    "markdown_files": 17,
+    "reference_files": 16,
+    "total_characters": 5297664,
+    "total_words": 580947
   },
-  "recommendations": [],
+  "recommendations": [
+    "\ud83d\udfe1 Fix health issues (empty files, structure)"
+  ],
   "history": []
 }

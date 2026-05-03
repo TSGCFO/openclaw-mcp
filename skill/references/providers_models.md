@@ -1,132 +1,343 @@
 # Providers Models
 
-_44 pages from docs.openclaw.ai_
+_46 pages from docs.openclaw.ai — full content preserved._
 
+## Contents
 
----
-
-## Models - OpenClaw
-
-_Source: <https://docs.openclaw.ai/cli/models>_
-
-# `openclaw models`
-
-Model discovery, scanning, and configuration (default model, fallbacks, auth profiles).Related:
-
-- Providers + models: [Models](https://docs.openclaw.ai/providers/models)
-- Model selection concepts + `/models` slash command: [Models concept](https://docs.openclaw.ai/concepts/models)
-- Provider auth setup: [Getting started](https://docs.openclaw.ai/start/getting-started)
-
-## Common commands
-
-```
-openclaw models status
-openclaw models list
-openclaw models set <model-or-alias>
-openclaw models scan
-```
-
-`openclaw models status` shows the resolved default/fallbacks plus an auth overview.
-When provider usage snapshots are available, the OAuth/API-key status section includes
-provider usage windows and quota snapshots.
-Current usage-window providers: Anthropic, GitHub Copilot, Gemini CLI, OpenAI
-Codex, MiniMax, Xiaomi, and z.ai. Usage auth comes from provider-specific hooks
-when available; otherwise OpenClaw falls back to matching OAuth/API-key
-credentials from auth profiles, env, or config.
-In `--json` output, `auth.providers` is the env/config/store-aware provider
-overview, while `auth.oauth` is auth-store profile health only.
-Add `--probe` to run live auth probes against each configured provider profile.
-Probes are real requests (may consume tokens and trigger rate limits).
-Use `--agent <id>` to inspect a configured agent’s model/auth state. When omitted,
-the command uses `OPENCLAW_AGENT_DIR`/`PI_CODING_AGENT_DIR` if set, otherwise the
-configured default agent.
-Probe rows can come from auth profiles, env credentials, or `models.json`.Notes:
-
-- `models set <model-or-alias>` accepts `provider/model` or an alias.
-- `models list` is read-only: it reads config, auth profiles, existing catalog
-state, and provider-owned catalog rows, but it does not rewrite
-`models.json`.
-- The `Auth` column is provider-level and read-only. It is computed from local
-auth profile metadata, env markers, configured provider keys, local-provider
-markers, AWS Bedrock env/profile markers, and plugin synthetic-auth metadata;
-it does not load provider runtime, read keychain secrets, call provider
-APIs, or prove exact per-model execution readiness.
-- `models list --all --provider <id>` can include provider-owned static catalog
-rows from plugin manifests or bundled provider catalog metadata even when you
-have not authenticated with that provider yet. Those rows still show as
-unavailable until matching auth is configured.
-- `models list` keeps the control plane responsive while provider catalog
-discovery is slow. The default and configured views fall back to configured or
-synthetic model rows after a short wait and let discovery finish in the
-background. Use `--all` when you need the exact full discovered catalog and
-are willing to wait for provider discovery.
-- Broad `models list --all` merges manifest catalog rows over registry rows
-without loading provider runtime supplement hooks. Provider-filtered manifest
-fast paths use only providers marked `static`; providers marked `refreshable`
-stay registry/cache-backed and append manifest rows as supplements, while
-providers marked `runtime` stay on registry/runtime discovery.
-- `models list` keeps native model metadata and runtime caps distinct. In table
-output, `Ctx` shows `contextTokens/contextWindow` when an effective runtime
-cap differs from the native context window; JSON rows include `contextTokens`
-when a provider exposes that cap.
-- `models list --provider <id>` filters by provider id, such as `moonshot` or
-`openai-codex`. It does not accept display labels from interactive provider
-pickers, such as `Moonshot AI`.
-- Model refs are parsed by splitting on the **first**`/`. If the model ID includes `/` (OpenRouter-style), include the provider prefix (example: `openrouter/moonshotai/kimi-k2`).
-- If you omit the provider, OpenClaw resolves the input as an alias first, then
-as a unique configured-provider match for that exact model id, and only then
-falls back to the configured default provider wit
-
-_… [truncated; see https://docs.openclaw.ai/cli/models for full content]_
-
+- [Arcee AI - OpenClaw](#arcee-ai---openclaw)
+- [Inferrs - OpenClaw](#inferrs---openclaw)
+- [Provider directory - OpenClaw](#provider-directory---openclaw)
+- [Alibaba Model Studio - OpenClaw](#alibaba-model-studio---openclaw)
+- [Anthropic - OpenClaw](#anthropic---openclaw)
+- [Amazon Bedrock - OpenClaw](#amazon-bedrock---openclaw)
+- [Cerebras - OpenClaw](#cerebras---openclaw)
+- [Claude Max API proxy - OpenClaw](#claude-max-api-proxy---openclaw)
+- [Cloudflare AI gateway - OpenClaw](#cloudflare-ai-gateway---openclaw)
+- [Deepgram - OpenClaw](#deepgram---openclaw)
+- [DeepSeek - OpenClaw](#deepseek---openclaw)
+- [GitHub Copilot - OpenClaw](#github-copilot---openclaw)
+- [GLM (Zhipu) - OpenClaw](#glm-zhipu---openclaw)
+- [Google (Gemini) - OpenClaw](#google-gemini---openclaw)
+- [Groq - OpenClaw](#groq---openclaw)
+- [Hugging Face (inference) - OpenClaw](#hugging-face-inference---openclaw)
+- [Kilocode - OpenClaw](#kilocode---openclaw)
+- [LiteLLM - OpenClaw](#litellm---openclaw)
+- [LM Studio - OpenClaw](#lm-studio---openclaw)
+- [https://docs.openclaw.ai/providers/lmstudio.md](#httpsdocsopenclawaiproviderslmstudiomd)
+- [MiniMax - OpenClaw](#minimax---openclaw)
+- [Config example](#config-example)
+- [Mistral - OpenClaw](#mistral---openclaw)
+- [Model provider quickstart - OpenClaw](#model-provider-quickstart---openclaw)
+- [Moonshot AI - OpenClaw](#moonshot-ai---openclaw)
+- [NVIDIA - OpenClaw](#nvidia---openclaw)
+- [Ollama - OpenClaw](#ollama---openclaw)
+- [OpenAI - OpenClaw](#openai---openclaw)
+- [OpenCode - OpenClaw](#opencode---openclaw)
+- [OpenCode Go - OpenClaw](#opencode-go---openclaw)
+- [OpenRouter - OpenClaw](#openrouter---openclaw)
+- [Qianfan - OpenClaw](#qianfan---openclaw)
+- [Qwen - OpenClaw](#qwen---openclaw)
+- [SenseAudio - OpenClaw](#senseaudio---openclaw)
+- [SGLang - OpenClaw](#sglang---openclaw)
+- [Synthetic - OpenClaw](#synthetic---openclaw)
+- [Together AI - OpenClaw](#together-ai---openclaw)
+- [Venice AI - OpenClaw](#venice-ai---openclaw)
+- [Vercel AI gateway - OpenClaw](#vercel-ai-gateway---openclaw)
+- [vLLM - OpenClaw](#vllm---openclaw)
+- [xAI - OpenClaw](#xai---openclaw)
+- [Xiaomi MiMo - OpenClaw](#xiaomi-mimo---openclaw)
+- [Z.AI - OpenClaw](#zai---openclaw)
+- [ElevenLabs - OpenClaw](#elevenlabs---openclaw)
+- [ElevenLabs - OpenClaw](#elevenlabs---openclaw)
+- [Deepinfra - OpenClaw](#deepinfra---openclaw)
 
 ---
 
-## Local models - OpenClaw
+## Arcee AI - OpenClaw
 
-_Source: <https://docs.openclaw.ai/gateway/local-models>_
+_Source: <https://docs.openclaw.ai/fr/providers/arcee>_
 
-[OpenClaw home page](https://docs.openclaw.ai/)
+[Passer au contenu principal](https://docs.openclaw.ai/fr/providers/arcee#content-area)
 
-Protocols and APIs
+[OpenClaw home page](https://docs.openclaw.ai/fr)
 
-Local models
+Français
 
-Local is doable, but OpenClaw expects large context + strong defenses against prompt injection. Small cards truncate context and leak safety. Aim high: **≥2 maxed-out Mac Studios or equivalent GPU rig (~$30k+)**. A single **24 GB** GPU works only for lighter prompts with higher latency. Use the **largest / full-size model variant you can run**; aggressively quantized or “small” checkpoints raise prompt-injection risk (see [Security](https://docs.openclaw.ai/gateway/security)).If you want the lowest-friction local setup, start with [LM Studio](https://docs.openclaw.ai/providers/lmstudio) or [Ollama](https://docs.openclaw.ai/providers/ollama) and `openclaw onboard`. This page is the opinionated guide for higher-end local stacks and custom OpenAI-compatible local servers.
+Rechercher...
 
-**WSL2 + Ollama + NVIDIA/CUDA users:** The official Ollama Linux installer enables a systemd service with `Restart=always`. On WSL2 GPU setups, autostart can reload the last model during boot and pin host memory. If your WSL2 VM repeatedly restarts after enabling Ollama, see [WSL2 crash loop](https://docs.openclaw.ai/providers/ollama#wsl2-crash-loop-repeated-reboots).
+Rechercher...
 
-## Recommended: LM Studio + large local model (Responses API)
+Providers
 
-Best current local stack. Load a large model in LM Studio (for example, a full-size Qwen, DeepSeek, or Llama build), enable the local server (default `http://127.0.0.1:1234`), and use Responses API to keep reasoning separate from final text.
+Arcee AI
+
+[Get started](https://docs.openclaw.ai/fr) [Install](https://docs.openclaw.ai/fr/install) [Channels](https://docs.openclaw.ai/fr/channels) [Agents](https://docs.openclaw.ai/fr/concepts/architecture) [Tools & Plugins](https://docs.openclaw.ai/fr/tools) [Models](https://docs.openclaw.ai/fr/providers) [Platforms](https://docs.openclaw.ai/fr/platforms) [Gateway & Ops](https://docs.openclaw.ai/fr/gateway) [Reference](https://docs.openclaw.ai/fr/cli) [Help](https://docs.openclaw.ai/fr/help)
+
+Sur cette page
+
+- [Premiers pas](https://docs.openclaw.ai/fr/providers/arcee#premiers-pas)
+- [Configuration non interactive](https://docs.openclaw.ai/fr/providers/arcee#configuration-non-interactive)
+- [Catalogue intégré](https://docs.openclaw.ai/fr/providers/arcee#catalogue-int%C3%A9gr%C3%A9)
+- [Fonctionnalités prises en charge](https://docs.openclaw.ai/fr/providers/arcee#fonctionnalit%C3%A9s-prises-en-charge)
+- [Connexe](https://docs.openclaw.ai/fr/providers/arcee#connexe)
+
+[Arcee AI](https://arcee.ai/) donne accès à la famille Trinity de modèles à mélange d’experts via une API compatible OpenAI. Tous les modèles Trinity sont sous licence Apache 2.0.Les modèles Arcee AI sont accessibles directement via la plateforme Arcee ou via [OpenRouter](https://docs.openclaw.ai/fr/providers/openrouter).
+
+| Propriété | Valeur |
+| --- | --- |
+| Fournisseur | `arcee` |
+| Authentification | `ARCEEAI_API_KEY` (direct) ou `OPENROUTER_API_KEY` (via OpenRouter) |
+| API | Compatible OpenAI |
+| URL de base | `https://api.arcee.ai/api/v1` (direct) ou `https://openrouter.ai/api/v1` (OpenRouter) |
+
+## Premiers pas
+
+- Direct (Arcee platform)
+
+- Via OpenRouter
+
+1
+
+[Navigate to header](https://docs.openclaw.ai/fr/providers/arcee#)
+
+Get an API key
+
+Créez une clé API sur [Arcee AI](https://chat.arcee.ai/).
+
+2
+
+[Navigate to header](https://docs.openclaw.ai/fr/providers/arcee#)
+
+Run onboarding
+
+```
+openclaw onboard --auth-choice arceeai-api-key
+```
+
+3
+
+[Navigate to header](https://docs.openclaw.ai/fr/providers/arcee#)
+
+Set a default model
 
 ```
 {
   agents: {
     defaults: {
-      model: { primary: "lmstudio/my-local-model" },
+      model: { primary: "arcee/trinity-large-thinking" },
+    },
+  },
+}
+```
+
+1
+
+[Navigate to header](https://docs.openclaw.ai/fr/providers/arcee#)
+
+Get an API key
+
+Créez une clé API sur [OpenRouter](https://openrouter.ai/keys).
+
+2
+
+[Navigate to header](https://docs.openclaw.ai/fr/providers/arcee#)
+
+Run onboarding
+
+```
+openclaw onboard --auth-choice arceeai-openrouter
+```
+
+3
+
+[Navigate to header](https://docs.openclaw.ai/fr/providers/arcee#)
+
+Set a default model
+
+```
+{
+  agents: {
+    defaults: {
+      model: { primary: "arcee/trinity-large-thinking" },
+    },
+  },
+}
+```
+
+Les mêmes références de modèle fonctionnent pour les configurations directes et OpenRouter (par exemple `arcee/trinity-large-thinking`).
+
+## Configuration non interactive
+
+- Direct (Arcee platform)
+
+- Via OpenRouter
+
+```
+openclaw onboard --non-interactive \
+  --mode local \
+  --auth-choice arceeai-api-key \
+  --arceeai-api-key "$ARCEEAI_API_KEY"
+```
+
+```
+openclaw onboard --non-interactive \
+  --mode local \
+  --auth-choice arceeai-openrouter \
+  --openrouter-api-key "$OPENROUTER_API_KEY"
+```
+
+## Catalogue intégré
+
+OpenClaw inclut actuellement ce catalogue Arcee groupé :
+
+| Réf. du modèle | Nom | Entrée | Contexte | Coût (entrée/sortie par 1 M) | Notes |
+| --- | --- | --- | --- | --- | --- |
+| `arcee/trinity-large-thinking` | Trinity Large Thinking | texte | 256K | 0,25 /0,90/ 0,90/0,90 | Modèle par défaut ; raisonnement activé |
+| `arcee/trinity-large-preview` | Trinity Large Preview | texte | 128K | 0,25 /1,00/ 1,00/1,00 | Usage général ; 400 Md de paramètres, 13 Md actifs |
+| `arcee/trinity-mini` | Trinity Mini 26B | texte | 128K | 0,045 /0,15/ 0,15/0,15 | Rapide et économique ; appel de fonction |
+
+Le préréglage d’onboarding définit `arcee/trinity-large-thinking` comme modèle par défaut.
+
+## Fonctionnalités prises en charge
+
+| Fonctionnalité | Pris en charge |
+| --- | --- |
+| Streaming | Oui |
+| Utilisation d’outils / appel de fonction | Oui |
+| Sortie structurée (mode JSON et schéma JSON) | Oui |
+| Réflexion étendue | Oui (Trinity Large Thinking) |
+
+Environment note
+
+Si le Gateway s’exécute comme un démon (launchd/systemd), assurez-vous que `ARCEEAI_API_KEY`
+(ou `OPENROUTER_API_KEY`) est disponible pour ce processus (par exemple, dans
+`~/.openclaw/.env` ou via `env.shellEnv`).
+
+OpenRouter routing
+
+Lorsque vous utilisez des modèles Arcee via OpenRouter, les mêmes références de modèle `arcee/*` s’appliquent.
+OpenClaw gère le routage de manière transparente selon votre choix d’authentification. Consultez la
+[documentation du fournisseur OpenRouter](https://docs.openclaw.ai/fr/providers/openrouter) pour les détails de configuration
+propres à OpenRouter.
+
+## Connexe
+
+[**OpenRouter** \\
+\\
+Accédez aux modèles Arcee et à de nombreux autres via une seule clé API.](https://docs.openclaw.ai/fr/providers/openrouter)
+
+[**Model selection** \\
+\\
+Choisir les fournisseurs, les références de modèle et le comportement de basculement.](https://docs.openclaw.ai/fr/concepts/model-providers)
+
+[Anthropic](https://docs.openclaw.ai/fr/providers/anthropic) [Azure Speech](https://docs.openclaw.ai/fr/providers/azure-speech)
+
+Ctrl+I
+
+---
+
+## Inferrs - OpenClaw
+
+_Source: <https://docs.openclaw.ai/fr/providers/inferrs>_
+
+[Passer au contenu principal](https://docs.openclaw.ai/fr/providers/inferrs#content-area)
+
+[OpenClaw home page](https://docs.openclaw.ai/fr)
+
+Français
+
+Rechercher...
+
+Rechercher...
+
+Providers
+
+Inferrs
+
+[Get started](https://docs.openclaw.ai/fr) [Install](https://docs.openclaw.ai/fr/install) [Channels](https://docs.openclaw.ai/fr/channels) [Agents](https://docs.openclaw.ai/fr/concepts/architecture) [Tools & Plugins](https://docs.openclaw.ai/fr/tools) [Models](https://docs.openclaw.ai/fr/providers) [Platforms](https://docs.openclaw.ai/fr/platforms) [Gateway & Ops](https://docs.openclaw.ai/fr/gateway) [Reference](https://docs.openclaw.ai/fr/cli) [Help](https://docs.openclaw.ai/fr/help)
+
+Sur cette page
+
+- [Bien démarrer](https://docs.openclaw.ai/fr/providers/inferrs#bien-d%C3%A9marrer)
+- [Exemple complet de configuration](https://docs.openclaw.ai/fr/providers/inferrs#exemple-complet-de-configuration)
+- [Configuration avancée](https://docs.openclaw.ai/fr/providers/inferrs#configuration-avanc%C3%A9e)
+- [Dépannage](https://docs.openclaw.ai/fr/providers/inferrs#d%C3%A9pannage)
+- [Associé](https://docs.openclaw.ai/fr/providers/inferrs#associ%C3%A9)
+
+[inferrs](https://github.com/ericcurtin/inferrs) peut servir des modèles locaux derrière une
+API `/v1` compatible OpenAI. OpenClaw fonctionne avec `inferrs` via le chemin générique
+`openai-completions`.`inferrs` est actuellement mieux traité comme un backend OpenAI-compatible auto-hébergé personnalisé,
+et non comme un plugin fournisseur OpenClaw dédié.
+
+## Bien démarrer
+
+1
+
+[Navigate to header](https://docs.openclaw.ai/fr/providers/inferrs#)
+
+Démarrer inferrs avec un modèle
+
+```
+inferrs serve google/gemma-4-E2B-it \
+  --host 127.0.0.1 \
+  --port 8080 \
+  --device metal
+```
+
+2
+
+[Navigate to header](https://docs.openclaw.ai/fr/providers/inferrs#)
+
+Vérifier que le serveur est joignable
+
+```
+curl http://127.0.0.1:8080/health
+curl http://127.0.0.1:8080/v1/models
+```
+
+3
+
+[Navigate to header](https://docs.openclaw.ai/fr/providers/inferrs#)
+
+Ajouter une entrée de fournisseur OpenClaw
+
+Ajoutez une entrée explicite de fournisseur et pointez votre modèle par défaut vers elle. Voir l’exemple de configuration complet ci-dessous.
+
+## Exemple complet de configuration
+
+Cet exemple utilise Gemma 4 sur un serveur local `inferrs`.
+
+```
+{
+  agents: {
+    defaults: {
+      model: { primary: "inferrs/google/gemma-4-E2B-it" },
       models: {
-        "anthropic/claude-opus-4-6": { alias: "Opus" },
-        "lmstudio/my-local-model": { alias: "Local" },
+        "inferrs/google/gemma-4-E2B-it": {
+          alias: "Gemma 4 (inferrs)",
+        },
       },
     },
   },
   models: {
     mode: "merge",
     providers: {
-      lmstudio: {
-        baseUrl: "http://127.0.0.1:1234/v1",
-        apiKey: "lmstudio",
-        api: "openai-responses",
+      inferrs: {
+        baseUrl: "http://127.0.0.1:8080/v1",
+        apiKey: "inferrs-local",
+        api: "openai-completions",
         models: [\
           {\
-            id: "my-local-model",\
-            name: "Local Model",\
+            id: "google/gemma-4-E2B-it",\
+            name: "Gemma 4 E2B (inferrs)",\
             reasoning: false,\
             input: ["text"],\
             cost: { input: 0, output: 0, cacheRead: 0, cacheWrite: 0 },\
-            contextWindow: 196608,\
-            maxTokens: 8192,\
+            contextWindow: 131072,\
+            maxTokens: 4096,\
+            compat: {\
+              requiresStringContent: true,\
+            },\
           },\
         ],
       },
@@ -135,64 +346,118 @@ Best current local stack. Load a large model in LM Studio (for example, a full-s
 }
 ```
 
-**Setup checklist**
+## Configuration avancée
 
-- Install LM Studio: [https://lmstudio.ai](https://lmstudio.ai/)
-- In LM Studio, download the **largest model build available** (avoid “small”/heavily quantized variants), start the server, confirm `http://127.0.0.1:1234/v1/models` lists it.
-- Replace `my-local-model` with the actual model ID shown in LM Studio.
-- Keep the model loaded; cold-load adds startup latency.
-- Adjust `contextWindow`/`maxTokens` if your LM Studio build differs.
-- For WhatsApp, stick to Responses API so only final text is sent.
+Pourquoi requiresStringContent est important
 
-Keep hosted models configured even when running local; use `models.mode: "merge"` so fallbacks stay available.
+Certaines routes Chat Completions de `inferrs` n’acceptent que des
+`messages[].content` de type chaîne, et non des tableaux structurés de content-part.
 
-### Hybrid config: hosted primary, local fallback
+Si les exécutions OpenClaw échouent avec une erreur du type :
 
 ```
-{
-  agents: {
-    defaults: {
-      model: {
-        primary: "anthropic/claude-sonnet-4-6",
-        fallbacks: ["lmstudio/my-local-model", "anthropic/claude-opus-4-6"],
-      },
-      models: {
-        "anthropic/claude-sonnet-4-6": { alias: "Sonnet" },
-        "lmstudio/my-local-model": { alias: "Local" },
-        "anthropic/claude-opus-4-6": { alias: "Opus" },
-      },
-    },
-  },
-  models: {
-    mode: "merge",
-    providers: {
-      lmstudio: {
-        baseUrl: "http://127.0.0.1:1234/v1",
-        apiKey: "lmstudio",
-        api: "openai-responses",
-        models: [\
-          {\
-            id: "my-local-model",\
-            name: "Local Model",\
-            reasoning: false,\
-            input: ["text"],\
-            cost: { input: 0, output: 0, cacheRead: 0, cacheWrite: 0 },\
-            contextWindow: 196608,\
-            maxTokens: 8192,\
-          },\
-        ],
-      },
-    },
-  },
+messages[1].content: invalid type: sequence, expected a string
+```
+
+définissez `compat.requiresStringContent: true` dans votre entrée de modèle.
+
+```
+compat: {
+  requiresStringContent: true
 }
 ```
 
-### Local-first with hosted safety net
+OpenClaw aplatira les content parts purement textuels en chaînes simples avant d’envoyer
+la requête.
 
-Swap the primary and fallback order; keep the s
+Limite Gemma et schéma d’outil
 
-_… [truncated; see https://docs.openclaw.ai/gateway/local-models for full content]_
+Certaines combinaisons actuelles `inferrs` \+ Gemma acceptent de petites requêtes directes
+`/v1/chat/completions` mais échouent encore sur des tours complets du runtime d’agent OpenClaw.Si cela arrive, essayez d’abord ceci :
 
+```
+compat: {
+  requiresStringContent: true,
+  supportsTools: false
+}
+```
+
+Cela désactive la surface de schéma d’outil d’OpenClaw pour le modèle et peut réduire la pression de prompt
+sur les backends locaux plus stricts.Si les petites requêtes directes fonctionnent toujours mais que les tours normaux d’agent OpenClaw continuent de
+planter dans `inferrs`, le problème restant provient généralement du comportement amont du modèle/serveur
+plutôt que de la couche de transport d’OpenClaw.
+
+Test rapide manuel
+
+Une fois configuré, testez les deux couches :
+
+```
+curl http://127.0.0.1:8080/v1/chat/completions \
+  -H 'content-type: application/json' \
+  -d '{"model":"google/gemma-4-E2B-it","messages":[{"role":"user","content":"What is 2 + 2?"}],"stream":false}'
+```
+
+```
+openclaw infer model run \
+  --model inferrs/google/gemma-4-E2B-it \
+  --prompt "What is 2 + 2? Reply with one short sentence." \
+  --json
+```
+
+Si la première commande fonctionne mais pas la seconde, consultez la section dépannage ci-dessous.
+
+Comportement de type proxy
+
+`inferrs` est traité comme un backend `/v1` compatible OpenAI de type proxy, pas comme un
+endpoint OpenAI natif.
+
+- La mise en forme de requête réservée à OpenAI natif ne s’applique pas ici
+- Pas de `service_tier`, pas de `store` Responses, pas d’indices de prompt-cache, et pas de mise en forme de charge utile de compatibilité reasoning OpenAI
+- Les en-têtes d’attribution OpenClaw cachés (`originator`, `version`, `User-Agent`) ne sont pas injectés sur des `baseUrl``inferrs` personnalisées
+
+## Dépannage
+
+curl /v1/models échoue
+
+`inferrs` n’est pas en cours d’exécution, n’est pas joignable, ou n’est pas lié au
+bon hôte/port. Assurez-vous que le serveur est démarré et écoute sur l’adresse que vous
+avez configurée.
+
+messages\[\].content expected a string
+
+Définissez `compat.requiresStringContent: true` dans l’entrée de modèle. Voir la
+section `requiresStringContent` ci-dessus pour les détails.
+
+Les appels directs /v1/chat/completions passent, mais openclaw infer model run échoue
+
+Essayez de définir `compat.supportsTools: false` pour désactiver la surface de schéma d’outil.
+Voir la remarque ci-dessus sur la limite Gemma liée au schéma d’outil.
+
+inferrs plante encore sur des tours d’agent plus gros
+
+Si OpenClaw n’obtient plus d’erreurs de schéma mais que `inferrs` plante encore sur des tours
+d’agent plus gros, traitez cela comme une limitation amont de `inferrs` ou du modèle. Réduisez
+la pression de prompt ou passez à un autre backend ou modèle local.
+
+Pour une aide générale, voir [Dépannage](https://docs.openclaw.ai/fr/help/troubleshooting) et [FAQ](https://docs.openclaw.ai/fr/help/faq).
+
+## Associé
+
+[**Modèles locaux** \\
+\\
+Exécuter OpenClaw sur des serveurs de modèles locaux.](https://docs.openclaw.ai/fr/gateway/local-models)
+
+[**Dépannage du Gateway** \\
+\\
+Déboguer les backends locaux compatibles OpenAI qui passent les sondes mais échouent lors des exécutions d’agent.](https://docs.openclaw.ai/fr/gateway/troubleshooting#local-openai-compatible-backend-passes-direct-probes-but-agent-runs-fail)
+
+[**Sélection de modèle** \\
+\\
+Vue d’ensemble de tous les fournisseurs, références de modèle et comportements de basculement.](https://docs.openclaw.ai/fr/concepts/model-providers)
+
+[Hugging Face (inférence)](https://docs.openclaw.ai/fr/providers/huggingface) [Inworld](https://docs.openclaw.ai/fr/providers/inworld)
+
+Ctrl+I
 
 ---
 
@@ -273,10 +538,30 @@ default model as `provider/model`.Looking for chat channel docs (WhatsApp/Telegr
 
 ## Shared overview pages
 
-- [Additional bundled variants](https://docs.openclaw.ai/providers/models#additional-bundled-provider
+- [Additional bundled variants](https://docs.openclaw.ai/providers/models#additional-bundled-provider-variants) \- Anthropic Vertex, Copilot Proxy, and Gemini CLI OAuth
+- [Image Generation](https://docs.openclaw.ai/tools/image-generation) \- Shared `image_generate` tool, provider selection, and failover
+- [Music Generation](https://docs.openclaw.ai/tools/music-generation) \- Shared `music_generate` tool, provider selection, and failover
+- [Video Generation](https://docs.openclaw.ai/tools/video-generation) \- Shared `video_generate` tool, provider selection, and failover
 
-_… [truncated; see https://docs.openclaw.ai/providers for full content]_
+## Transcription providers
 
+- [Deepgram (audio transcription)](https://docs.openclaw.ai/providers/deepgram)
+- [ElevenLabs](https://docs.openclaw.ai/providers/elevenlabs#speech-to-text)
+- [Mistral](https://docs.openclaw.ai/providers/mistral#audio-transcription-voxtral)
+- [OpenAI](https://docs.openclaw.ai/providers/openai#speech-to-text)
+- [SenseAudio](https://docs.openclaw.ai/providers/senseaudio)
+- [xAI](https://docs.openclaw.ai/providers/xai#speech-to-text)
+
+## Community tools
+
+- [Claude Max API Proxy](https://docs.openclaw.ai/providers/claude-max-api-proxy) \- Community proxy for Claude subscription credentials (verify Anthropic policy/terms before use)
+
+For the full provider catalog (xAI, Groq, Mistral, etc.) and advanced configuration,
+see [Model providers](https://docs.openclaw.ai/concepts/model-providers).
+
+[Model provider quickstart](https://docs.openclaw.ai/providers/models)
+
+Ctrl+I
 
 ---
 
@@ -404,7 +689,6 @@ Agent defaults and model configuration.](https://docs.openclaw.ai/gateway/config
 [Model failover](https://docs.openclaw.ai/concepts/model-failover) [Amazon Bedrock](https://docs.openclaw.ai/providers/bedrock)
 
 Ctrl+I
-
 
 ---
 
@@ -580,10 +864,122 @@ This lets one agent keep a long-lived cache while another agent on the same mode
 Bedrock Claude notes
 
 - Anthropic Claude models on Bedrock (`amazon-bedrock/*anthropic.claude*`) accept `cacheRetention` pass-through when configured.
-- Non-Anthropic Bedrock models are forced to `cacheRetention: "none"` at run
+- Non-Anthropic Bedrock models are forced to `cacheRetention: "none"` at runtime.
+- API-key smart defaults also seed `cacheRetention: "short"` for Claude-on-Bedrock refs when no explicit value is set.
 
-_… [truncated; see https://docs.openclaw.ai/providers/anthropic for full content]_
+## Advanced configuration
 
+Fast mode
+
+OpenClaw’s shared `/fast` toggle supports direct Anthropic traffic (API-key and OAuth to `api.anthropic.com`).
+
+| Command | Maps to |
+| --- | --- |
+| `/fast on` | `service_tier: "auto"` |
+| `/fast off` | `service_tier: "standard_only"` |
+
+```
+{
+  agents: {
+    defaults: {
+      models: {
+        "anthropic/claude-sonnet-4-6": {
+          params: { fastMode: true },
+        },
+      },
+    },
+  },
+}
+```
+
+- Only injected for direct `api.anthropic.com` requests. Proxy routes leave `service_tier` untouched.
+- Explicit `serviceTier` or `service_tier` params override `/fast` when both are set.
+- On accounts without Priority Tier capacity, `service_tier: "auto"` may resolve to `standard`.
+
+Media understanding (image and PDF)
+
+The bundled Anthropic plugin registers image and PDF understanding. OpenClaw
+auto-resolves media capabilities from the configured Anthropic auth — no
+additional config is needed.
+
+| Property | Value |
+| --- | --- |
+| Default model | `claude-opus-4-6` |
+| Supported input | Images, PDF documents |
+
+When an image or PDF is attached to a conversation, OpenClaw automatically
+routes it through the Anthropic media understanding provider.
+
+1M context window (beta)
+
+Anthropic’s 1M context window is beta-gated. Enable it per model:
+
+```
+{
+  agents: {
+    defaults: {
+      models: {
+        "anthropic/claude-opus-4-6": {
+          params: { context1m: true },
+        },
+      },
+    },
+  },
+}
+```
+
+OpenClaw maps this to `anthropic-beta: context-1m-2025-08-07` on requests.`params.context1m: true` also applies to the Claude CLI backend
+(`claude-cli/*`) for eligible Opus and Sonnet models, expanding the runtime
+context window for those CLI sessions to match the direct-API behavior.
+
+Requires long-context access on your Anthropic credential. Legacy token auth (`sk-ant-oat-*`) is rejected for 1M context requests — OpenClaw logs a warning and falls back to the standard context window.
+
+Claude Opus 4.7 1M context
+
+`anthropic/claude-opus-4.7` and its `claude-cli` variant have a 1M context
+window by default — no `params.context1m: true` needed.
+
+## Troubleshooting
+
+401 errors / token suddenly invalid
+
+Anthropic token auth expires and can be revoked. For new setups, use an Anthropic API key instead.
+
+No API key found for provider "anthropic"
+
+Anthropic auth is **per agent** — new agents do not inherit the main agent’s keys. Re-run onboarding for that agent (or configure an API key on the gateway host), then verify with `openclaw models status`.
+
+No credentials found for profile "anthropic:default"
+
+Run `openclaw models status` to see which auth profile is active. Re-run onboarding, or configure an API key for that profile path.
+
+No available auth profile (all in cooldown)
+
+Check `openclaw models status --json` for `auth.unusableProfiles`. Anthropic rate-limit cooldowns can be model-scoped, so a sibling Anthropic model may still be usable. Add another Anthropic profile or wait for cooldown.
+
+More help: [Troubleshooting](https://docs.openclaw.ai/help/troubleshooting) and [FAQ](https://docs.openclaw.ai/help/faq).
+
+## Related
+
+[**Model selection** \\
+\\
+Choosing providers, model refs, and failover behavior.](https://docs.openclaw.ai/concepts/model-providers)
+
+[**CLI backends** \\
+\\
+Claude CLI backend setup and runtime details.](https://docs.openclaw.ai/gateway/cli-backends)
+
+[**Prompt caching** \\
+\\
+How prompt caching works across providers.](https://docs.openclaw.ai/reference/prompt-caching)
+
+[**OAuth and auth** \\
+\\
+Auth details and credential reuse rules.](https://docs.openclaw.ai/gateway/authentication)
+
+[Amazon Bedrock Mantle](https://docs.openclaw.ai/providers/bedrock-mantle) [Arcee AI](https://docs.openclaw.ai/providers/arcee)
+
+Ctrl+I
 
 ---
 
@@ -716,10 +1112,212 @@ implicit Bedrock provider when it sees one of these AWS auth markers:
 shared config, SSO, and IMDS instance-role auth can work even when discovery
 needed `enabled: true` to opt in.
 
-For explicit `models.providers["amazon-bedrock"]` entries, OpenClaw can still resolve Bedrock env-marker auth early from AWS env markers such as `AWS_BEARER_TOKEN_BEDROCK` without forcing full runtime auth loading. The actual model
+For explicit `models.providers["amazon-bedrock"]` entries, OpenClaw can still resolve Bedrock env-marker auth early from AWS env markers such as `AWS_BEARER_TOKEN_BEDROCK` without forcing full runtime auth loading. The actual model-call auth path still uses the AWS SDK default chain.
 
-_… [truncated; see https://docs.openclaw.ai/providers/bedrock for full content]_
+Discovery config options
 
+Config options live under `plugins.entries.amazon-bedrock.config.discovery`:
+
+```
+{
+  plugins: {
+    entries: {
+      "amazon-bedrock": {
+        config: {
+          discovery: {
+            enabled: true,
+            region: "us-east-1",
+            providerFilter: ["anthropic", "amazon"],
+            refreshInterval: 3600,
+            defaultContextWindow: 32000,
+            defaultMaxTokens: 4096,
+          },
+        },
+      },
+    },
+  },
+}
+```
+
+| Option | Default | Description |
+| --- | --- | --- |
+| `enabled` | auto | In auto mode, OpenClaw only enables the implicit Bedrock provider when it sees a supported AWS env marker. Set `true` to force discovery. |
+| `region` | `AWS_REGION` / `AWS_DEFAULT_REGION` / `us-east-1` | AWS region used for discovery API calls. |
+| `providerFilter` | (all) | Matches Bedrock provider names (for example `anthropic`, `amazon`). |
+| `refreshInterval` | `3600` | Cache duration in seconds. Set to `0` to disable caching. |
+| `defaultContextWindow` | `32000` | Context window used for discovered models (override if you know your model limits). |
+| `defaultMaxTokens` | `4096` | Max output tokens used for discovered models (override if you know your model limits). |
+
+## Quick setup (AWS path)
+
+This walkthrough creates an IAM role, attaches Bedrock permissions, associates
+the instance profile, and enables OpenClaw discovery on the EC2 host.
+
+```
+# 1. Create IAM role and instance profile
+aws iam create-role --role-name EC2-Bedrock-Access \
+  --assume-role-policy-document '{
+    "Version": "2012-10-17",
+    "Statement": [{\
+      "Effect": "Allow",\
+      "Principal": {"Service": "ec2.amazonaws.com"},\
+      "Action": "sts:AssumeRole"\
+    }]
+  }'
+
+aws iam attach-role-policy --role-name EC2-Bedrock-Access \
+  --policy-arn arn:aws:iam::aws:policy/AmazonBedrockFullAccess
+
+aws iam create-instance-profile --instance-profile-name EC2-Bedrock-Access
+aws iam add-role-to-instance-profile \
+  --instance-profile-name EC2-Bedrock-Access \
+  --role-name EC2-Bedrock-Access
+
+# 2. Attach to your EC2 instance
+aws ec2 associate-iam-instance-profile \
+  --instance-id i-xxxxx \
+  --iam-instance-profile Name=EC2-Bedrock-Access
+
+# 3. On the EC2 instance, enable discovery explicitly
+openclaw config set plugins.entries.amazon-bedrock.config.discovery.enabled true
+openclaw config set plugins.entries.amazon-bedrock.config.discovery.region us-east-1
+
+# 4. Optional: add an env marker if you want auto mode without explicit enable
+echo 'export AWS_PROFILE=default' >> ~/.bashrc
+echo 'export AWS_REGION=us-east-1' >> ~/.bashrc
+source ~/.bashrc
+
+# 5. Verify models are discovered
+openclaw models list
+```
+
+## Advanced configuration
+
+Inference profiles
+
+OpenClaw discovers **regional and global inference profiles** alongside
+foundation models. When a profile maps to a known foundation model, the
+profile inherits that model’s capabilities (context window, max tokens,
+reasoning, vision) and the correct Bedrock request region is injected
+automatically. This means cross-region Claude profiles work without manual
+provider overrides.Inference profile IDs look like `us.anthropic.claude-opus-4-6-v1:0` (regional)
+or `anthropic.claude-opus-4-6-v1:0` (global). If the backing model is already
+in the discovery results, the profile inherits its full capability set;
+otherwise safe defaults apply.No extra configuration is needed. As long as discovery is enabled and the IAM
+principal has `bedrock:ListInferenceProfiles`, profiles appear alongside
+foundation models in `openclaw models list`.
+
+Claude Opus 4.7 temperature
+
+Bedrock rejects the `temperature` parameter for Claude Opus 4.7. OpenClaw
+omits `temperature` automatically for any Opus 4.7 Bedrock ref, including
+foundation model ids, named inference profiles, application inference
+profiles whose underlying model resolves to Opus 4.7 via
+`bedrock:GetInferenceProfile`, and dotted `opus-4.7` variants with
+optional region prefixes (`us.`, `eu.`, `ap.`, `apac.`, `au.`, `jp.`,
+`global.`). No config knob is required, and the omission applies to both
+the request options object and the `inferenceConfig` payload field.
+
+Guardrails
+
+You can apply [Amazon Bedrock Guardrails](https://docs.aws.amazon.com/bedrock/latest/userguide/guardrails.html)
+to all Bedrock model invocations by adding a `guardrail` object to the
+`amazon-bedrock` plugin config. Guardrails let you enforce content filtering,
+topic denial, word filters, sensitive information filters, and contextual
+grounding checks.
+
+```
+{
+  plugins: {
+    entries: {
+      "amazon-bedrock": {
+        config: {
+          guardrail: {
+            guardrailIdentifier: "abc123", // guardrail ID or full ARN
+            guardrailVersion: "1", // version number or "DRAFT"
+            streamProcessingMode: "sync", // optional: "sync" or "async"
+            trace: "enabled", // optional: "enabled", "disabled", or "enabled_full"
+          },
+        },
+      },
+    },
+  },
+}
+```
+
+| Option | Required | Description |
+| --- | --- | --- |
+| `guardrailIdentifier` | Yes | Guardrail ID (e.g. `abc123`) or full ARN (e.g. `arn:aws:bedrock:us-east-1:123456789012:guardrail/abc123`). |
+| `guardrailVersion` | Yes | Published version number, or `"DRAFT"` for the working draft. |
+| `streamProcessingMode` | No | `"sync"` or `"async"` for guardrail evaluation during streaming. If omitted, Bedrock uses its default. |
+| `trace` | No | `"enabled"` or `"enabled_full"` for debugging; omit or set `"disabled"` for production. |
+
+The IAM principal used by the gateway must have the `bedrock:ApplyGuardrail` permission in addition to the standard invoke permissions.
+
+Embeddings for memory search
+
+Bedrock can also serve as the embedding provider for
+[memory search](https://docs.openclaw.ai/concepts/memory-search). This is configured separately from the
+inference provider — set `agents.defaults.memorySearch.provider` to `"bedrock"`:
+
+```
+{
+  agents: {
+    defaults: {
+      memorySearch: {
+        provider: "bedrock",
+        model: "amazon.titan-embed-text-v2:0", // default
+      },
+    },
+  },
+}
+```
+
+Bedrock embeddings use the same AWS SDK credential chain as inference (instance
+roles, SSO, access keys, shared config, and web identity). No API key is
+needed. When `provider` is `"auto"`, Bedrock is auto-detected if that
+credential chain resolves successfully.Supported embedding models include Amazon Titan Embed (v1, v2), Amazon Nova
+Embed, Cohere Embed (v3, v4), and TwelveLabs Marengo. See
+[Memory configuration reference — Bedrock](https://docs.openclaw.ai/reference/memory-config#bedrock-embedding-config)
+for the full model list and dimension options.
+
+Notes and caveats
+
+- Bedrock requires **model access** enabled in your AWS account/region.
+- Automatic discovery needs the `bedrock:ListFoundationModels` and
+`bedrock:ListInferenceProfiles` permissions.
+- If you rely on auto mode, set one of the supported AWS auth env markers on the
+gateway host. If you prefer IMDS/shared-config auth without env markers, set
+`plugins.entries.amazon-bedrock.config.discovery.enabled: true`.
+- OpenClaw surfaces the credential source in this order: `AWS_BEARER_TOKEN_BEDROCK`,
+then `AWS_ACCESS_KEY_ID` \+ `AWS_SECRET_ACCESS_KEY`, then `AWS_PROFILE`, then the
+default AWS SDK chain.
+- Reasoning support depends on the model; check the Bedrock model card for
+current capabilities.
+- If you prefer a managed key flow, you can also place an OpenAI-compatible
+proxy in front of Bedrock and configure it as an OpenAI provider instead.
+
+## Related
+
+[**Model selection** \\
+\\
+Choosing providers, model refs, and failover behavior.](https://docs.openclaw.ai/concepts/model-providers)
+
+[**Memory search** \\
+\\
+Bedrock embeddings for memory search configuration.](https://docs.openclaw.ai/concepts/memory-search)
+
+[**Memory config reference** \\
+\\
+Full Bedrock embedding model list and dimension options.](https://docs.openclaw.ai/reference/memory-config#bedrock-embedding-config)
+
+[**Troubleshooting** \\
+\\
+General troubleshooting and FAQ.](https://docs.openclaw.ai/help/troubleshooting)
+
+[Alibaba Model Studio](https://docs.openclaw.ai/providers/alibaba) [Amazon Bedrock Mantle](https://docs.openclaw.ai/providers/bedrock-mantle)
+
+Ctrl+I
 
 ---
 
@@ -831,7 +1429,6 @@ is available to that process, for example in `~/.openclaw/.env` or through
 [Azure Speech](https://docs.openclaw.ai/providers/azure-speech) [Chutes](https://docs.openclaw.ai/providers/chutes)
 
 Ctrl+I
-
 
 ---
 
@@ -985,10 +1582,9 @@ Overview of all providers, model refs, and failover behavior.](https://docs.open
 \\
 Full config reference.](https://docs.openclaw.ai/gateway/configuration)
 
-[Chutes](https://docs.openclaw.ai/providers/chutes) [Cloudflare AI gateway](h
+[Chutes](https://docs.openclaw.ai/providers/chutes) [Cloudflare AI gateway](https://docs.openclaw.ai/providers/cloudflare-ai-gateway)
 
-_… [truncated; see https://docs.openclaw.ai/providers/claude-max-api-proxy for full content]_
-
+Ctrl+I
 
 ---
 
@@ -1116,7 +1712,6 @@ General troubleshooting and FAQ.](https://docs.openclaw.ai/help/troubleshooting)
 [Claude Max API proxy](https://docs.openclaw.ai/providers/claude-max-api-proxy) [ComfyUI](https://docs.openclaw.ai/providers/comfy)
 
 Ctrl+I
-
 
 ---
 
@@ -1282,10 +1877,40 @@ Twilio media frames can be forwarded directly.
 
 Authentication
 
-Authentication follows the standard provider auth
+Authentication follows the standard provider auth order. `DEEPGRAM_API_KEY` is
+the simplest path.
 
-_… [truncated; see https://docs.openclaw.ai/providers/deepgram for full content]_
+Proxy and custom endpoints
 
+Override endpoints or headers with `tools.media.audio.baseUrl` and
+`tools.media.audio.headers` when using a proxy.
+
+Output behavior
+
+Output follows the same audio rules as other providers (size caps, timeouts,
+transcript injection).
+
+## Related
+
+[**Media tools** \\
+\\
+Audio, image, and video processing pipeline overview.](https://docs.openclaw.ai/tools/media-overview)
+
+[**Configuration** \\
+\\
+Full config reference including media tool settings.](https://docs.openclaw.ai/gateway/configuration)
+
+[**Troubleshooting** \\
+\\
+Common issues and debugging steps.](https://docs.openclaw.ai/help/troubleshooting)
+
+[**FAQ** \\
+\\
+Frequently asked questions about OpenClaw setup.](https://docs.openclaw.ai/help/faq)
+
+[ComfyUI](https://docs.openclaw.ai/providers/comfy) [Deepinfra](https://docs.openclaw.ai/providers/deepinfra)
+
+Ctrl+I
 
 ---
 
@@ -1409,10 +2034,34 @@ pnpm test:live src/agents/models.profiles.live.test.ts
 ```
 
 That live check verifies both V4 models can complete and that thinking/tool
-follow-up turns preserve the replay payload DeepSeek r
+follow-up turns preserve the replay payload DeepSeek requires.
 
-_… [truncated; see https://docs.openclaw.ai/providers/deepseek for full content]_
+## Config example
 
+```
+{
+  env: { DEEPSEEK_API_KEY: "sk-..." },
+  agents: {
+    defaults: {
+      model: { primary: "deepseek/deepseek-v4-flash" },
+    },
+  },
+}
+```
+
+## Related
+
+[**Model selection** \\
+\\
+Choosing providers, model refs, and failover behavior.](https://docs.openclaw.ai/concepts/model-providers)
+
+[**Configuration reference** \\
+\\
+Full config reference for agents, models, and providers.](https://docs.openclaw.ai/gateway/configuration-reference)
+
+[Deepinfra](https://docs.openclaw.ai/providers/deepinfra) [ElevenLabs](https://docs.openclaw.ai/providers/elevenlabs)
+
+Ctrl+I
 
 ---
 
@@ -1535,10 +2184,17 @@ available, OpenClaw skips Copilot and tries the next provider.
 
 ## Related
 
-[**
+[**Model selection** \\
+\\
+Choosing providers, model refs, and failover behavior.](https://docs.openclaw.ai/concepts/model-providers)
 
-_… [truncated; see https://docs.openclaw.ai/providers/github-copilot for full content]_
+[**OAuth and auth** \\
+\\
+Auth details and credential reuse rules.](https://docs.openclaw.ai/gateway/authentication)
 
+[Fireworks](https://docs.openclaw.ai/providers/fireworks) [GLM (Zhipu)](https://docs.openclaw.ai/providers/glm)
+
+Ctrl+I
 
 ---
 
@@ -1656,7 +2312,6 @@ Choosing providers, model refs, and failover behavior.](https://docs.openclaw.ai
 [GitHub Copilot](https://docs.openclaw.ai/providers/github-copilot) [Google (Gemini)](https://docs.openclaw.ai/providers/google)
 
 Ctrl+I
-
 
 ---
 
@@ -1788,10 +2443,248 @@ To use Google as the default image provider:
 {
   agents: {
     defaults: {
-      imageGenerationModel:
+      imageGenerationModel: {
+        primary: "google/gemini-3.1-flash-image-preview",
+      },
+    },
+  },
+}
+```
 
-_… [truncated; see https://docs.openclaw.ai/providers/google for full content]_
+See [Image Generation](https://docs.openclaw.ai/tools/image-generation) for shared tool parameters, provider selection, and failover behavior.
 
+## Video generation
+
+The bundled `google` plugin also registers video generation through the shared
+`video_generate` tool.
+
+- Default video model: `google/veo-3.1-fast-generate-preview`
+- Modes: text-to-video, image-to-video, and single-video reference flows
+- Supports `aspectRatio`, `resolution`, and `audio`
+- Current duration clamp: **4 to 8 seconds**
+
+To use Google as the default video provider:
+
+```
+{
+  agents: {
+    defaults: {
+      videoGenerationModel: {
+        primary: "google/veo-3.1-fast-generate-preview",
+      },
+    },
+  },
+}
+```
+
+See [Video Generation](https://docs.openclaw.ai/tools/video-generation) for shared tool parameters, provider selection, and failover behavior.
+
+## Music generation
+
+The bundled `google` plugin also registers music generation through the shared
+`music_generate` tool.
+
+- Default music model: `google/lyria-3-clip-preview`
+- Also supports `google/lyria-3-pro-preview`
+- Prompt controls: `lyrics` and `instrumental`
+- Output format: `mp3` by default, plus `wav` on `google/lyria-3-pro-preview`
+- Reference inputs: up to 10 images
+- Session-backed runs detach through the shared task/status flow, including `action: "status"`
+
+To use Google as the default music provider:
+
+```
+{
+  agents: {
+    defaults: {
+      musicGenerationModel: {
+        primary: "google/lyria-3-clip-preview",
+      },
+    },
+  },
+}
+```
+
+See [Music Generation](https://docs.openclaw.ai/tools/music-generation) for shared tool parameters, provider selection, and failover behavior.
+
+## Text-to-speech
+
+The bundled `google` speech provider uses the Gemini API TTS path with
+`gemini-3.1-flash-tts-preview`.
+
+- Default voice: `Kore`
+- Auth: `messages.tts.providers.google.apiKey`, `models.providers.google.apiKey`, `GEMINI_API_KEY`, or `GOOGLE_API_KEY`
+- Output: WAV for regular TTS attachments, Opus for voice-note targets, PCM for Talk/telephony
+- Voice-note output: Google PCM is wrapped as WAV and transcoded to 48 kHz Opus with `ffmpeg`
+
+To use Google as the default TTS provider:
+
+```
+{
+  messages: {
+    tts: {
+      auto: "always",
+      provider: "google",
+      providers: {
+        google: {
+          model: "gemini-3.1-flash-tts-preview",
+          voiceName: "Kore",
+          audioProfile: "Speak professionally with a calm tone.",
+        },
+      },
+    },
+  },
+}
+```
+
+Gemini API TTS uses natural-language prompting for style control. Set
+`audioProfile` to prepend a reusable style prompt before the spoken text. Set
+`speakerName` when your prompt text refers to a named speaker.Gemini API TTS also accepts expressive square-bracket audio tags in the text,
+such as `[whispers]` or `[laughs]`. To keep tags out of the visible chat reply
+while sending them to TTS, put them inside a `[[tts:text]]...[[/tts:text]]`
+block:
+
+```
+Here is the clean reply text.
+
+[[tts:text]][whispers] Here is the spoken version.[[/tts:text]]
+```
+
+A Google Cloud Console API key restricted to the Gemini API is valid for this
+provider. This is not the separate Cloud Text-to-Speech API path.
+
+## Realtime voice
+
+The bundled `google` plugin registers a realtime voice provider backed by the
+Gemini Live API for backend audio bridges such as Voice Call and Google Meet.
+
+| Setting | Config path | Default |
+| --- | --- | --- |
+| Model | `plugins.entries.voice-call.config.realtime.providers.google.model` | `gemini-2.5-flash-native-audio-preview-12-2025` |
+| Voice | `...google.voice` | `Kore` |
+| Temperature | `...google.temperature` | (unset) |
+| VAD start sensitivity | `...google.startSensitivity` | (unset) |
+| VAD end sensitivity | `...google.endSensitivity` | (unset) |
+| Silence duration | `...google.silenceDurationMs` | (unset) |
+| Activity handling | `...google.activityHandling` | Google default, `start-of-activity-interrupts` |
+| Turn coverage | `...google.turnCoverage` | Google default, `only-activity` |
+| Disable auto VAD | `...google.automaticActivityDetectionDisabled` | `false` |
+| API key | `...google.apiKey` | Falls back to `models.providers.google.apiKey`, `GEMINI_API_KEY`, or `GOOGLE_API_KEY` |
+
+Example Voice Call realtime config:
+
+```
+{
+  plugins: {
+    entries: {
+      "voice-call": {
+        enabled: true,
+        config: {
+          realtime: {
+            enabled: true,
+            provider: "google",
+            providers: {
+              google: {
+                model: "gemini-2.5-flash-native-audio-preview-12-2025",
+                voice: "Kore",
+                activityHandling: "start-of-activity-interrupts",
+                turnCoverage: "only-activity",
+              },
+            },
+          },
+        },
+      },
+    },
+  },
+}
+```
+
+Google Live API uses bidirectional audio and function calling over a WebSocket.
+OpenClaw adapts telephony/Meet bridge audio to Gemini’s PCM Live API stream and
+keeps tool calls on the shared realtime voice contract. Leave `temperature`
+unset unless you need sampling changes; OpenClaw omits non-positive values
+because Google Live can return transcripts without audio for `temperature: 0`.
+Gemini API transcription is enabled without `languageCodes`; the current Google
+SDK rejects language-code hints on this API path.
+
+Control UI Talk supports Google Live browser sessions with constrained one-use
+tokens. Backend-only realtime voice providers can also run through the generic
+Gateway relay transport, which keeps provider credentials on the Gateway.
+
+For maintainer live verification, run
+`OPENAI_API_KEY=... GEMINI_API_KEY=... node --import tsx scripts/dev/realtime-talk-live-smoke.ts`.
+The Google leg mints the same constrained Live API token shape used by Control
+UI Talk, opens the browser WebSocket endpoint, sends the initial setup payload,
+and waits for `setupComplete`.
+
+## Advanced configuration
+
+Direct Gemini cache reuse
+
+For direct Gemini API runs (`api: "google-generative-ai"`), OpenClaw
+passes a configured `cachedContent` handle through to Gemini requests.
+
+- Configure per-model or global params with either
+`cachedContent` or legacy `cached_content`
+- If both are present, `cachedContent` wins
+- Example value: `cachedContents/prebuilt-context`
+- Gemini cache-hit usage is normalized into OpenClaw `cacheRead` from
+upstream `cachedContentTokenCount`
+
+```
+{
+  agents: {
+    defaults: {
+      models: {
+        "google/gemini-2.5-pro": {
+          params: {
+            cachedContent: "cachedContents/prebuilt-context",
+          },
+        },
+      },
+    },
+  },
+}
+```
+
+Gemini CLI JSON usage notes
+
+When using the `google-gemini-cli` OAuth provider, OpenClaw normalizes
+the CLI JSON output as follows:
+
+- Reply text comes from the CLI JSON `response` field.
+- Usage falls back to `stats` when the CLI leaves `usage` empty.
+- `stats.cached` is normalized into OpenClaw `cacheRead`.
+- If `stats.input` is missing, OpenClaw derives input tokens from
+`stats.input_tokens - stats.cached`.
+
+Environment and daemon setup
+
+If the Gateway runs as a daemon (launchd/systemd), make sure `GEMINI_API_KEY`
+is available to that process (for example, in `~/.openclaw/.env` or via
+`env.shellEnv`).
+
+## Related
+
+[**Model selection** \\
+\\
+Choosing providers, model refs, and failover behavior.](https://docs.openclaw.ai/concepts/model-providers)
+
+[**Image generation** \\
+\\
+Shared image tool parameters and provider selection.](https://docs.openclaw.ai/tools/image-generation)
+
+[**Video generation** \\
+\\
+Shared video tool parameters and provider selection.](https://docs.openclaw.ai/tools/video-generation)
+
+[**Music generation** \\
+\\
+Shared music tool parameters and provider selection.](https://docs.openclaw.ai/tools/music-generation)
+
+[GLM (Zhipu)](https://docs.openclaw.ai/providers/glm) [Gradium](https://docs.openclaw.ai/providers/gradium)
+
+Ctrl+I
 
 ---
 
@@ -1949,7 +2842,6 @@ Official Groq model catalog.](https://console.groq.com/docs/models)
 
 Ctrl+I
 
-
 ---
 
 ## Hugging Face (inference) - OpenClaw
@@ -2061,10 +2953,138 @@ OpenClaw discovers models by calling the **Inference endpoint directly**:
 GET https://router.huggingface.co/v1/models
 ```
 
-(Optional: send `Authorization: Bearer $HUGGINGFACE_HUB_TOKEN` or `$HF_TOKEN` for the full list; some endpoints return a subset without auth.) The response is OpenAI-style `{ "object": "list", "data": [ { "id": "Qwen/Qwen3-8B", "owned_by": "Qwen", ... }, ... ] }`.When you configure a Hugging Face API key (via onboarding, `HUGGINGFACE_HUB_TOKEN`, or `HF_TOKEN`), OpenClaw uses
+(Optional: send `Authorization: Bearer $HUGGINGFACE_HUB_TOKEN` or `$HF_TOKEN` for the full list; some endpoints return a subset without auth.) The response is OpenAI-style `{ "object": "list", "data": [ { "id": "Qwen/Qwen3-8B", "owned_by": "Qwen", ... }, ... ] }`.When you configure a Hugging Face API key (via onboarding, `HUGGINGFACE_HUB_TOKEN`, or `HF_TOKEN`), OpenClaw uses this GET to discover available chat-completion models. During **interactive setup**, after you enter your token you see a **Default Hugging Face model** dropdown populated from that list (or the built-in catalog if the request fails). At runtime (e.g. Gateway startup), when a key is present, OpenClaw again calls **GET**`https://router.huggingface.co/v1/models` to refresh the catalog. The list is merged with a built-in catalog (for metadata like context window and cost). If the request fails or no key is set, only the built-in catalog is used.
 
-_… [truncated; see https://docs.openclaw.ai/providers/huggingface for full content]_
+Model names, aliases, and policy suffixes
 
+- **Name from API:** The model display name is **hydrated from GET /v1/models** when the API returns `name`, `title`, or `display_name`; otherwise it is derived from the model id (e.g. `deepseek-ai/DeepSeek-R1` becomes “DeepSeek R1”).
+- **Override display name:** You can set a custom label per model in config so it appears the way you want in the CLI and UI:
+
+```
+{
+  agents: {
+    defaults: {
+      models: {
+        "huggingface/deepseek-ai/DeepSeek-R1": { alias: "DeepSeek R1 (fast)" },
+        "huggingface/deepseek-ai/DeepSeek-R1:cheapest": { alias: "DeepSeek R1 (cheap)" },
+      },
+    },
+  },
+}
+```
+
+- **Policy suffixes:** OpenClaw’s bundled Hugging Face docs and helpers currently treat these two suffixes as the built-in policy variants:
+
+  - **`:fastest`** — highest throughput.
+  - **`:cheapest`** — lowest cost per output token.
+
+You can add these as separate entries in `models.providers.huggingface.models` or set `model.primary` with the suffix. You can also set your default provider order in [Inference Provider settings](https://hf.co/settings/inference-providers) (no suffix = use that order).
+- **Config merge:** Existing entries in `models.providers.huggingface.models` (e.g. in `models.json`) are kept when config is merged. So any custom `name`, `alias`, or model options you set there are preserved.
+
+Environment and daemon setup
+
+If the Gateway runs as a daemon (launchd/systemd), make sure `HUGGINGFACE_HUB_TOKEN` or `HF_TOKEN` is available to that process (for example, in `~/.openclaw/.env` or via `env.shellEnv`).
+
+OpenClaw accepts both `HUGGINGFACE_HUB_TOKEN` and `HF_TOKEN` as env var aliases. Either one works; if both are set, `HUGGINGFACE_HUB_TOKEN` takes precedence.
+
+Config: DeepSeek R1 with Qwen fallback
+
+```
+{
+  agents: {
+    defaults: {
+      model: {
+        primary: "huggingface/deepseek-ai/DeepSeek-R1",
+        fallbacks: ["huggingface/Qwen/Qwen3-8B"],
+      },
+      models: {
+        "huggingface/deepseek-ai/DeepSeek-R1": { alias: "DeepSeek R1" },
+        "huggingface/Qwen/Qwen3-8B": { alias: "Qwen3 8B" },
+      },
+    },
+  },
+}
+```
+
+Config: Qwen with cheapest and fastest variants
+
+```
+{
+  agents: {
+    defaults: {
+      model: { primary: "huggingface/Qwen/Qwen3-8B" },
+      models: {
+        "huggingface/Qwen/Qwen3-8B": { alias: "Qwen3 8B" },
+        "huggingface/Qwen/Qwen3-8B:cheapest": { alias: "Qwen3 8B (cheapest)" },
+        "huggingface/Qwen/Qwen3-8B:fastest": { alias: "Qwen3 8B (fastest)" },
+      },
+    },
+  },
+}
+```
+
+Config: DeepSeek + Llama + GPT-OSS with aliases
+
+```
+{
+  agents: {
+    defaults: {
+      model: {
+        primary: "huggingface/deepseek-ai/DeepSeek-V3.2",
+        fallbacks: [\
+          "huggingface/meta-llama/Llama-3.3-70B-Instruct",\
+          "huggingface/openai/gpt-oss-120b",\
+        ],
+      },
+      models: {
+        "huggingface/deepseek-ai/DeepSeek-V3.2": { alias: "DeepSeek V3.2" },
+        "huggingface/meta-llama/Llama-3.3-70B-Instruct": { alias: "Llama 3.3 70B" },
+        "huggingface/openai/gpt-oss-120b": { alias: "GPT-OSS 120B" },
+      },
+    },
+  },
+}
+```
+
+Config: Multiple Qwen and DeepSeek with policy suffixes
+
+```
+{
+  agents: {
+    defaults: {
+      model: { primary: "huggingface/Qwen/Qwen2.5-7B-Instruct:cheapest" },
+      models: {
+        "huggingface/Qwen/Qwen2.5-7B-Instruct": { alias: "Qwen2.5 7B" },
+        "huggingface/Qwen/Qwen2.5-7B-Instruct:cheapest": { alias: "Qwen2.5 7B (cheap)" },
+        "huggingface/deepseek-ai/DeepSeek-R1:fastest": { alias: "DeepSeek R1 (fast)" },
+        "huggingface/meta-llama/Llama-3.1-8B-Instruct": { alias: "Llama 3.1 8B" },
+      },
+    },
+  },
+}
+```
+
+## Related
+
+[**Model selection** \\
+\\
+Overview of all providers, model refs, and failover behavior.](https://docs.openclaw.ai/concepts/model-providers)
+
+[**Model selection** \\
+\\
+How to choose and configure models.](https://docs.openclaw.ai/concepts/models)
+
+[**Inference Providers docs** \\
+\\
+Official Hugging Face Inference Providers documentation.](https://huggingface.co/docs/inference-providers)
+
+[**Configuration** \\
+\\
+Full config reference.](https://docs.openclaw.ai/gateway/configuration)
+
+[Groq](https://docs.openclaw.ai/providers/groq) [Inferrs](https://docs.openclaw.ai/providers/inferrs)
+
+Ctrl+I
 
 ---
 
@@ -2196,10 +3216,13 @@ Choosing providers, model refs, and failover behavior.](https://docs.openclaw.ai
 \\
 Full OpenClaw configuration reference.](https://docs.openclaw.ai/gateway/configuration-reference)
 
-[**Kilo Gateway**
+[**Kilo Gateway** \\
+\\
+Kilo Gateway dashboard, API keys, and account management.](https://app.kilo.ai/)
 
-_… [truncated; see https://docs.openclaw.ai/providers/kilocode for full content]_
+[Inworld](https://docs.openclaw.ai/providers/inworld) [LiteLLM](https://docs.openclaw.ai/providers/litellm)
 
+Ctrl+I
 
 ---
 
@@ -2250,7 +3273,6 @@ How to choose and configure models.](https://docs.openclaw.ai/concepts/models)
 [Kilocode](https://docs.openclaw.ai/providers/kilocode) [LM Studio](https://docs.openclaw.ai/providers/lmstudio)
 
 Ctrl+I
-
 
 ---
 
@@ -2325,7 +3347,6 @@ Unlike generic OpenAI-compatible providers, `lmstudio` automatically trusts its 
 [LiteLLM](https://docs.openclaw.ai/providers/litellm) [MiniMax](https://docs.openclaw.ai/providers/minimax)
 
 Ctrl+I
-
 
 ---
 
@@ -2433,10 +3454,125 @@ LM Studio plugin config trusts the configured LM Studio endpoint for model reque
 
 \### Streaming usage compatibility
 
-LM Studio is streaming-usage compatible. Wh
+LM Studio is streaming-usage compatible. When it does not emit an OpenAI-shaped
+\`usage\` object, OpenClaw recovers token counts from llama.cpp-style
+\`timings.prompt\_n\` / \`timings.predicted\_n\` metadata instead.
 
-_… [truncated; see https://docs.openclaw.ai/providers/lmstudio.md for full content]_
+Same streaming usage behavior applies to these OpenAI-compatible local backends:
 
+\\* vLLM
+\\* SGLang
+\\* llama.cpp
+\\* LocalAI
+\\* Jan
+\\* TabbyAPI
+\\* text-generation-webui
+
+\### Thinking compatibility
+
+When LM Studio's \`/api/v1/models\` discovery reports model-specific reasoning
+options, OpenClaw preserves those native values in model compat metadata. For
+binary thinking models that advertise \`allowed\_options: \["off", "on"\]\`,
+OpenClaw maps disabled thinking to \`off\` and enabled \`/think\` levels to \`on\`
+instead of sending OpenAI-only values such as \`low\` or \`medium\`.
+
+\### Explicit configuration
+
+\`\`\`json5 theme={"theme":{"light":"min-light","dark":"min-dark"}}
+{
+ models: {
+ providers: {
+ lmstudio: {
+ baseUrl: "http://localhost:1234/v1",
+ apiKey: "${LM\_API\_TOKEN}",
+ api: "openai-completions",
+ models: \[\
+ {\
+ id: "qwen/qwen3-coder-next",\
+ name: "Qwen 3 Coder Next",\
+ reasoning: false,\
+ input: \["text"\],\
+ cost: { input: 0, output: 0, cacheRead: 0, cacheWrite: 0 },\
+ contextWindow: 128000,\
+ maxTokens: 8192,\
+ },\
+ \],
+ },
+ },
+ },
+}
+\`\`\`
+
+\## Troubleshooting
+
+\### LM Studio not detected
+
+Make sure LM Studio is running. If authentication is enabled, also set \`LM\_API\_TOKEN\`:
+
+\`\`\`bash theme={"theme":{"light":"min-light","dark":"min-dark"}}
+\# Start via desktop app, or headless:
+lms server start --port 1234
+\`\`\`
+
+Verify the API is accessible:
+
+\`\`\`bash theme={"theme":{"light":"min-light","dark":"min-dark"}}
+curl http://localhost:1234/api/v1/models
+\`\`\`
+
+\### Authentication errors (HTTP 401)
+
+If setup reports HTTP 401, verify your API key:
+
+\\* Check that \`LM\_API\_TOKEN\` matches the key configured in LM Studio.
+\\* For LM Studio auth setup details, see \[LM Studio Authentication\](https://lmstudio.ai/docs/developer/core/authentication).
+\\* If your server does not require authentication, leave the key blank during setup.
+
+\### Just-in-time model loading
+
+LM Studio supports just-in-time (JIT) model loading, where models are loaded on first request. OpenClaw preloads models through LM Studio's native load endpoint by default, which helps when JIT is disabled. To let LM Studio's JIT, idle TTL, and auto-evict behavior own model lifecycle, disable OpenClaw's preload step:
+
+\`\`\`json5 theme={"theme":{"light":"min-light","dark":"min-dark"}}
+{
+ models: {
+ providers: {
+ lmstudio: {
+ baseUrl: "http://localhost:1234/v1",
+ api: "openai-completions",
+ params: { preload: false },
+ models: \[{ id: "qwen/qwen3.5-9b" }\],
+ },
+ },
+ },
+}
+\`\`\`
+
+\### LAN or tailnet LM Studio host
+
+Use the LM Studio host's reachable address, keep \`/v1\`, and make sure LM Studio is bound beyond loopback on that machine:
+
+\`\`\`json5 theme={"theme":{"light":"min-light","dark":"min-dark"}}
+{
+ models: {
+ providers: {
+ lmstudio: {
+ baseUrl: "http://gpu-box.local:1234/v1",
+ apiKey: "lmstudio",
+ api: "openai-completions",
+ models: \[{ id: "qwen/qwen3.5-9b" }\],
+ },
+ },
+ },
+}
+\`\`\`
+
+Unlike generic OpenAI-compatible providers, \`lmstudio\` automatically trusts its configured local/private endpoint for guarded model requests. Custom loopback provider IDs such as \`localhost\` or \`127.0.0.1\` are also trusted automatically; for LAN, tailnet, or private DNS custom provider IDs, set \`models.providers..request.allowPrivateNetwork: true\` explicitly.
+
+\## Related
+
+\\* \[Model selection\](/concepts/model-providers)
+\\* \[Ollama\](/providers/ollama)
+\\* \[Local models\](/gateway/local-models)
 
 ---
 
@@ -2614,10 +3750,344 @@ openclaw models list --provider minimax
           },\
           {\
             id: "MiniMax-M2.7-highspeed",\
-            name: "MiniMax M
+            name: "MiniMax M2.7 Highspeed",\
+            reasoning: true,\
+            input: ["text"],\
+            cost: { input: 0.6, output: 2.4, cacheRead: 0.06, cacheWrite: 0.375 },\
+            contextWindow: 204800,\
+            maxTokens: 131072,\
+          },\
+        ],
+      },
+    },
+  },
+}
+```
 
-_… [truncated; see https://docs.openclaw.ai/providers/minimax for full content]_
+On the Anthropic-compatible streaming path, OpenClaw disables MiniMax thinking by default unless you explicitly set `thinking` yourself. MiniMax’s streaming endpoint emits `reasoning_content` in OpenAI-style delta chunks instead of native Anthropic thinking blocks, which can leak internal reasoning into visible output if left enabled implicitly.
 
+API-key setups use the `minimax` provider id. Model refs follow the form `minimax/MiniMax-M2.7`.
+
+## Configure via `openclaw configure`
+
+Use the interactive config wizard to set MiniMax without editing JSON:
+
+1
+
+[Navigate to header](https://docs.openclaw.ai/providers/minimax#)
+
+Launch the wizard
+
+```
+openclaw configure
+```
+
+2
+
+[Navigate to header](https://docs.openclaw.ai/providers/minimax#)
+
+Select Model/auth
+
+Choose **Model/auth** from the menu.
+
+3
+
+[Navigate to header](https://docs.openclaw.ai/providers/minimax#)
+
+Choose a MiniMax auth option
+
+Pick one of the available MiniMax options:
+
+| Auth choice | Description |
+| --- | --- |
+| `minimax-global-oauth` | International OAuth (Coding Plan) |
+| `minimax-cn-oauth` | China OAuth (Coding Plan) |
+| `minimax-global-api` | International API key |
+| `minimax-cn-api` | China API key |
+
+4
+
+[Navigate to header](https://docs.openclaw.ai/providers/minimax#)
+
+Pick your default model
+
+Select your default model when prompted.
+
+## Capabilities
+
+### Image generation
+
+The MiniMax plugin registers the `image-01` model for the `image_generate` tool. It supports:
+
+- **Text-to-image generation** with aspect ratio control
+- **Image-to-image editing** (subject reference) with aspect ratio control
+- Up to **9 output images** per request
+- Up to **1 reference image** per edit request
+- Supported aspect ratios: `1:1`, `16:9`, `4:3`, `3:2`, `2:3`, `3:4`, `9:16`, `21:9`
+
+To use MiniMax for image generation, set it as the image generation provider:
+
+```
+{
+  agents: {
+    defaults: {
+      imageGenerationModel: { primary: "minimax/image-01" },
+    },
+  },
+}
+```
+
+The plugin uses the same `MINIMAX_API_KEY` or OAuth auth as the text models. No additional configuration is needed if MiniMax is already set up.Both `minimax` and `minimax-portal` register `image_generate` with the same
+`image-01` model. API-key setups use `MINIMAX_API_KEY`; OAuth setups can use
+the bundled `minimax-portal` auth path instead.Image generation always uses MiniMax’s dedicated image endpoint
+(`/v1/image_generation`) and ignores `models.providers.minimax.baseUrl`,
+since that field configures the chat/Anthropic-compatible base URL. Set
+`MINIMAX_API_HOST=https://api.minimaxi.com` to route image generation
+through the CN endpoint; the default global endpoint is
+`https://api.minimax.io`.When onboarding or API-key setup writes explicit `models.providers.minimax`
+entries, OpenClaw materializes `MiniMax-M2.7` and
+`MiniMax-M2.7-highspeed` as text-only chat models. Image understanding is
+exposed separately through the plugin-owned `MiniMax-VL-01` media provider.
+
+See [Image Generation](https://docs.openclaw.ai/tools/image-generation) for shared tool parameters, provider selection, and failover behavior.
+
+### Text-to-speech
+
+The bundled `minimax` plugin registers MiniMax T2A v2 as a speech provider for
+`messages.tts`.
+
+- Default TTS model: `speech-2.8-hd`
+- Default voice: `English_expressive_narrator`
+- Supported bundled model ids include `speech-2.8-hd`, `speech-2.8-turbo`,
+`speech-2.6-hd`, `speech-2.6-turbo`, `speech-02-hd`,
+`speech-02-turbo`, `speech-01-hd`, and `speech-01-turbo`.
+- Auth resolution is `messages.tts.providers.minimax.apiKey`, then
+`minimax-portal` OAuth/token auth profiles, then Token Plan environment
+keys (`MINIMAX_OAUTH_TOKEN`, `MINIMAX_CODE_PLAN_KEY`,
+`MINIMAX_CODING_API_KEY`), then `MINIMAX_API_KEY`.
+- If no TTS host is configured, OpenClaw reuses the configured
+`minimax-portal` OAuth host and strips Anthropic-compatible path suffixes
+such as `/anthropic`.
+- Normal audio attachments stay MP3.
+- Voice-note targets such as Feishu and Telegram are transcoded from MiniMax
+MP3 to 48kHz Opus with `ffmpeg`, because the Feishu/Lark file API only
+accepts `file_type: "opus"` for native audio messages.
+- MiniMax T2A accepts fractional `speed` and `vol`, but `pitch` is sent as an
+integer; OpenClaw truncates fractional `pitch` values before the API request.
+
+| Setting | Env var | Default | Description |
+| --- | --- | --- | --- |
+| `messages.tts.providers.minimax.baseUrl` | `MINIMAX_API_HOST` | `https://api.minimax.io` | MiniMax T2A API host. |
+| `messages.tts.providers.minimax.model` | `MINIMAX_TTS_MODEL` | `speech-2.8-hd` | TTS model id. |
+| `messages.tts.providers.minimax.voiceId` | `MINIMAX_TTS_VOICE_ID` | `English_expressive_narrator` | Voice id used for speech output. |
+| `messages.tts.providers.minimax.speed` |  | `1.0` | Playback speed, `0.5..2.0`. |
+| `messages.tts.providers.minimax.vol` |  | `1.0` | Volume, `(0, 10]`. |
+| `messages.tts.providers.minimax.pitch` |  | `0` | Integer pitch shift, `-12..12`. |
+
+### Music generation
+
+The bundled MiniMax plugin registers music generation through the shared
+`music_generate` tool for both `minimax` and `minimax-portal`.
+
+- Default music model: `minimax/music-2.6`
+- OAuth music model: `minimax-portal/music-2.6`
+- Also supports `minimax/music-2.5` and `minimax/music-2.0`
+- Prompt controls: `lyrics`, `instrumental`, `durationSeconds`
+- Output format: `mp3`
+- Session-backed runs detach through the shared task/status flow, including `action: "status"`
+
+To use MiniMax as the default music provider:
+
+```
+{
+  agents: {
+    defaults: {
+      musicGenerationModel: {
+        primary: "minimax/music-2.6",
+      },
+    },
+  },
+}
+```
+
+See [Music Generation](https://docs.openclaw.ai/tools/music-generation) for shared tool parameters, provider selection, and failover behavior.
+
+### Video generation
+
+The bundled MiniMax plugin registers video generation through the shared
+`video_generate` tool for both `minimax` and `minimax-portal`.
+
+- Default video model: `minimax/MiniMax-Hailuo-2.3`
+- OAuth video model: `minimax-portal/MiniMax-Hailuo-2.3`
+- Modes: text-to-video and single-image reference flows
+- Supports `aspectRatio` and `resolution`
+
+To use MiniMax as the default video provider:
+
+```
+{
+  agents: {
+    defaults: {
+      videoGenerationModel: {
+        primary: "minimax/MiniMax-Hailuo-2.3",
+      },
+    },
+  },
+}
+```
+
+See [Video Generation](https://docs.openclaw.ai/tools/video-generation) for shared tool parameters, provider selection, and failover behavior.
+
+### Image understanding
+
+The MiniMax plugin registers image understanding separately from the text
+catalog:
+
+| Provider ID | Default image model |
+| --- | --- |
+| `minimax` | `MiniMax-VL-01` |
+| `minimax-portal` | `MiniMax-VL-01` |
+
+That is why automatic media routing can use MiniMax image understanding even
+when the bundled text-provider catalog still shows text-only M2.7 chat refs.
+
+### Web search
+
+The MiniMax plugin also registers `web_search` through the MiniMax Token Plan
+search API.
+
+- Provider id: `minimax`
+- Structured results: titles, URLs, snippets, related queries
+- Preferred env var: `MINIMAX_CODE_PLAN_KEY`
+- Accepted env aliases: `MINIMAX_CODING_API_KEY`, `MINIMAX_OAUTH_TOKEN`
+- Compatibility fallback: `MINIMAX_API_KEY` when it already points at a token-plan credential
+- Region reuse: `plugins.entries.minimax.config.webSearch.region`, then `MINIMAX_API_HOST`, then MiniMax provider base URLs
+- Search stays on provider id `minimax`; OAuth CN/global setup can steer region indirectly through `models.providers.minimax-portal.baseUrl` and can provide bearer auth through `MINIMAX_OAUTH_TOKEN`
+
+Config lives under `plugins.entries.minimax.config.webSearch.*`.
+
+See [MiniMax Search](https://docs.openclaw.ai/tools/minimax-search) for full web search configuration and usage.
+
+## Advanced configuration
+
+Configuration options
+
+| Option | Description |
+| --- | --- |
+| `models.providers.minimax.baseUrl` | Prefer `https://api.minimax.io/anthropic` (Anthropic-compatible); `https://api.minimax.io/v1` is optional for OpenAI-compatible payloads |
+| `models.providers.minimax.api` | Prefer `anthropic-messages`; `openai-completions` is optional for OpenAI-compatible payloads |
+| `models.providers.minimax.apiKey` | MiniMax API key (`MINIMAX_API_KEY`) |
+| `models.providers.minimax.models` | Define `id`, `name`, `reasoning`, `contextWindow`, `maxTokens`, `cost` |
+| `agents.defaults.models` | Alias models you want in the allowlist |
+| `models.mode` | Keep `merge` if you want to add MiniMax alongside built-ins |
+
+Thinking defaults
+
+On `api: "anthropic-messages"`, OpenClaw injects `thinking: { type: "disabled" }` unless thinking is already explicitly set in params/config.This prevents MiniMax’s streaming endpoint from emitting `reasoning_content` in OpenAI-style delta chunks, which would leak internal reasoning into visible output.
+
+Fast mode
+
+`/fast on` or `params.fastMode: true` rewrites `MiniMax-M2.7` to `MiniMax-M2.7-highspeed` on the Anthropic-compatible stream path.
+
+Fallback example
+
+**Best for:** keep your strongest latest-generation model as primary, fail over to MiniMax M2.7. Example below uses Opus as a concrete primary; swap to your preferred latest-gen primary model.
+
+```
+{
+  env: { MINIMAX_API_KEY: "sk-..." },
+  agents: {
+    defaults: {
+      models: {
+        "anthropic/claude-opus-4-6": { alias: "primary" },
+        "minimax/MiniMax-M2.7": { alias: "minimax" },
+      },
+      model: {
+        primary: "anthropic/claude-opus-4-6",
+        fallbacks: ["minimax/MiniMax-M2.7"],
+      },
+    },
+  },
+}
+```
+
+Coding Plan usage details
+
+- Coding Plan usage API: `https://api.minimaxi.com/v1/token_plan/remains` or `https://api.minimax.io/v1/token_plan/remains` (requires a coding plan key).
+- Usage polling derives the host from `models.providers.minimax-portal.baseUrl` or `models.providers.minimax.baseUrl` when configured, so global setups using `https://api.minimax.io/anthropic` poll `api.minimax.io`. Missing or malformed base URLs keep the CN fallback for compatibility.
+- OpenClaw normalizes MiniMax coding-plan usage to the same `% left` display used by other providers. MiniMax’s raw `usage_percent` / `usagePercent` fields are remaining quota, not consumed quota, so OpenClaw inverts them. Count-based fields win when present.
+- When the API returns `model_remains`, OpenClaw prefers the chat-model entry, derives the window label from `start_time` / `end_time` when needed, and includes the selected model name in the plan label so coding-plan windows are easier to distinguish.
+- Usage snapshots treat `minimax`, `minimax-cn`, and `minimax-portal` as the same MiniMax quota surface, and prefer stored MiniMax OAuth before falling back to Coding Plan key env vars.
+
+## Notes
+
+- Model refs follow the auth path:
+  - API-key setup: `minimax/<model>`
+  - OAuth setup: `minimax-portal/<model>`
+- Default chat model: `MiniMax-M2.7`
+- Alternate chat model: `MiniMax-M2.7-highspeed`
+- Onboarding and direct API-key setup write text-only model definitions for both M2.7 variants
+- Image understanding uses the plugin-owned `MiniMax-VL-01` media provider
+- Update pricing values in `models.json` if you need exact cost tracking
+- Use `openclaw models list` to confirm the current provider id, then switch with `openclaw models set minimax/MiniMax-M2.7` or `openclaw models set minimax-portal/MiniMax-M2.7`
+
+Referral link for MiniMax Coding Plan (10% off): [MiniMax Coding Plan](https://platform.minimax.io/subscribe/coding-plan?code=DbXJTRClnb&source=link)
+
+See [Model providers](https://docs.openclaw.ai/concepts/model-providers) for provider rules.
+
+## Troubleshooting
+
+"Unknown model: minimax/MiniMax-M2.7"
+
+This usually means the **MiniMax provider is not configured** (no matching provider entry and no MiniMax auth profile/env key found). A fix for this detection is in **2026.1.12**. Fix by:
+
+- Upgrading to **2026.1.12** (or run from source `main`), then restarting the gateway.
+- Running `openclaw configure` and selecting a **MiniMax** auth option, or
+- Adding the matching `models.providers.minimax` or `models.providers.minimax-portal` block manually, or
+- Setting `MINIMAX_API_KEY`, `MINIMAX_OAUTH_TOKEN`, or a MiniMax auth profile so the matching provider can be injected.
+
+Make sure the model id is **case-sensitive**:
+
+- API-key path: `minimax/MiniMax-M2.7` or `minimax/MiniMax-M2.7-highspeed`
+- OAuth path: `minimax-portal/MiniMax-M2.7` or `minimax-portal/MiniMax-M2.7-highspeed`
+
+Then recheck with:
+
+```
+openclaw models list
+```
+
+More help: [Troubleshooting](https://docs.openclaw.ai/help/troubleshooting) and [FAQ](https://docs.openclaw.ai/help/faq).
+
+## Related
+
+[**Model selection** \\
+\\
+Choosing providers, model refs, and failover behavior.](https://docs.openclaw.ai/concepts/model-providers)
+
+[**Image generation** \\
+\\
+Shared image tool parameters and provider selection.](https://docs.openclaw.ai/tools/image-generation)
+
+[**Music generation** \\
+\\
+Shared music tool parameters and provider selection.](https://docs.openclaw.ai/tools/music-generation)
+
+[**Video generation** \\
+\\
+Shared video tool parameters and provider selection.](https://docs.openclaw.ai/tools/video-generation)
+
+[**MiniMax Search** \\
+\\
+Web search configuration via MiniMax Token Plan.](https://docs.openclaw.ai/tools/minimax-search)
+
+[**Troubleshooting** \\
+\\
+General troubleshooting and FAQ.](https://docs.openclaw.ai/help/troubleshooting)
+
+[LM Studio](https://docs.openclaw.ai/providers/lmstudio) [Mistral](https://docs.openclaw.ai/providers/mistral)
+
+Ctrl+I
 
 ---
 
@@ -2728,9 +4198,309 @@ Choose your preferred auth method and follow the setup steps.
  models: \[\
  {\
  id: "MiniMax-M2.7",\
+ name: "MiniMax M2.7",\
+ reasoning: true,\
+ input: \["text"\],\
+ cost: { input: 0.3, output: 1.2, cacheRead: 0.06, cacheWrite: 0.375 },\
+ contextWindow: 204800,\
+ maxTokens: 131072,\
+ },\
+ {\
+ id: "MiniMax-M2.7-highspeed",\
+ name: "MiniMax M2.7 Highspeed",\
+ reasoning: true,\
+ input: \["text"\],\
+ cost: { input: 0.6, output: 2.4, cacheRead: 0.06, cacheWrite: 0.375 },\
+ contextWindow: 204800,\
+ maxTokens: 131072,\
+ },\
+ \],
+ },
+ },
+ },
+ }
+ \`\`\`
 
-_… [truncated; see https://docs.openclaw.ai/providers/minimax.md for full content]_
+ On the Anthropic-compatible streaming path, OpenClaw disables MiniMax thinking by default unless you explicitly set \`thinking\` yourself. MiniMax's streaming endpoint emits \`reasoning\_content\` in OpenAI-style delta chunks instead of native Anthropic thinking blocks, which can leak internal reasoning into visible output if left enabled implicitly.
 
+ API-key setups use the \`minimax\` provider id. Model refs follow the form \`minimax/MiniMax-M2.7\`.
+
+\## Configure via \`openclaw configure\`
+
+Use the interactive config wizard to set MiniMax without editing JSON:
+
+ \`\`\`bash theme={"theme":{"light":"min-light","dark":"min-dark"}}
+ openclaw configure
+ \`\`\`
+
+ Choose \*\*Model/auth\*\* from the menu.
+
+ Pick one of the available MiniMax options:
+
+ \| Auth choice \| Description \|
+ \| \-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\- \| \-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\- \|
+ \| \`minimax-global-oauth\` \| International OAuth (Coding Plan) \|
+ \| \`minimax-cn-oauth\` \| China OAuth (Coding Plan) \|
+ \| \`minimax-global-api\` \| International API key \|
+ \| \`minimax-cn-api\` \| China API key \|
+
+ Select your default model when prompted.
+
+\## Capabilities
+
+\### Image generation
+
+The MiniMax plugin registers the \`image-01\` model for the \`image\_generate\` tool. It supports:
+
+\\* \*\*Text-to-image generation\*\* with aspect ratio control
+\\* \*\*Image-to-image editing\*\* (subject reference) with aspect ratio control
+\\* Up to \*\*9 output images\*\* per request
+\\* Up to \*\*1 reference image\*\* per edit request
+\\* Supported aspect ratios: \`1:1\`, \`16:9\`, \`4:3\`, \`3:2\`, \`2:3\`, \`3:4\`, \`9:16\`, \`21:9\`
+
+To use MiniMax for image generation, set it as the image generation provider:
+
+\`\`\`json5 theme={"theme":{"light":"min-light","dark":"min-dark"}}
+{
+ agents: {
+ defaults: {
+ imageGenerationModel: { primary: "minimax/image-01" },
+ },
+ },
+}
+\`\`\`
+
+The plugin uses the same \`MINIMAX\_API\_KEY\` or OAuth auth as the text models. No additional configuration is needed if MiniMax is already set up.
+
+Both \`minimax\` and \`minimax-portal\` register \`image\_generate\` with the same
+\`image-01\` model. API-key setups use \`MINIMAX\_API\_KEY\`; OAuth setups can use
+the bundled \`minimax-portal\` auth path instead.
+
+Image generation always uses MiniMax's dedicated image endpoint
+(\`/v1/image\_generation\`) and ignores \`models.providers.minimax.baseUrl\`,
+since that field configures the chat/Anthropic-compatible base URL. Set
+\`MINIMAX\_API\_HOST=https://api.minimaxi.com\` to route image generation
+through the CN endpoint; the default global endpoint is
+\`https://api.minimax.io\`.
+
+When onboarding or API-key setup writes explicit \`models.providers.minimax\`
+entries, OpenClaw materializes \`MiniMax-M2.7\` and
+\`MiniMax-M2.7-highspeed\` as text-only chat models. Image understanding is
+exposed separately through the plugin-owned \`MiniMax-VL-01\` media provider.
+
+ See \[Image Generation\](/tools/image-generation) for shared tool parameters, provider selection, and failover behavior.
+
+\### Text-to-speech
+
+The bundled \`minimax\` plugin registers MiniMax T2A v2 as a speech provider for
+\`messages.tts\`.
+
+\\* Default TTS model: \`speech-2.8-hd\`
+\\* Default voice: \`English\_expressive\_narrator\`
+\\* Supported bundled model ids include \`speech-2.8-hd\`, \`speech-2.8-turbo\`,
+ \`speech-2.6-hd\`, \`speech-2.6-turbo\`, \`speech-02-hd\`,
+ \`speech-02-turbo\`, \`speech-01-hd\`, and \`speech-01-turbo\`.
+\\* Auth resolution is \`messages.tts.providers.minimax.apiKey\`, then
+ \`minimax-portal\` OAuth/token auth profiles, then Token Plan environment
+ keys (\`MINIMAX\_OAUTH\_TOKEN\`, \`MINIMAX\_CODE\_PLAN\_KEY\`,
+ \`MINIMAX\_CODING\_API\_KEY\`), then \`MINIMAX\_API\_KEY\`.
+\\* If no TTS host is configured, OpenClaw reuses the configured
+ \`minimax-portal\` OAuth host and strips Anthropic-compatible path suffixes
+ such as \`/anthropic\`.
+\\* Normal audio attachments stay MP3.
+\\* Voice-note targets such as Feishu and Telegram are transcoded from MiniMax
+ MP3 to 48kHz Opus with \`ffmpeg\`, because the Feishu/Lark file API only
+ accepts \`file\_type: "opus"\` for native audio messages.
+\\* MiniMax T2A accepts fractional \`speed\` and \`vol\`, but \`pitch\` is sent as an
+ integer; OpenClaw truncates fractional \`pitch\` values before the API request.
+
+\| Setting \| Env var \| Default \| Description \|
+\| \-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\- \| \-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\- \| \-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\- \| \-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\- \|
+\| \`messages.tts.providers.minimax.baseUrl\` \| \`MINIMAX\_API\_HOST\` \| \`https://api.minimax.io\` \| MiniMax T2A API host. \|
+\| \`messages.tts.providers.minimax.model\` \| \`MINIMAX\_TTS\_MODEL\` \| \`speech-2.8-hd\` \| TTS model id. \|
+\| \`messages.tts.providers.minimax.voiceId\` \| \`MINIMAX\_TTS\_VOICE\_ID\` \| \`English\_expressive\_narrator\` \| Voice id used for speech output. \|
+\| \`messages.tts.providers.minimax.speed\` \| \| \`1.0\` \| Playback speed, \`0.5..2.0\`. \|
+\| \`messages.tts.providers.minimax.vol\` \| \| \`1.0\` \| Volume, \`(0, 10\]\`. \|
+\| \`messages.tts.providers.minimax.pitch\` \| \| \`0\` \| Integer pitch shift, \`-12..12\`. \|
+
+\### Music generation
+
+The bundled MiniMax plugin registers music generation through the shared
+\`music\_generate\` tool for both \`minimax\` and \`minimax-portal\`.
+
+\\* Default music model: \`minimax/music-2.6\`
+\\* OAuth music model: \`minimax-portal/music-2.6\`
+\\* Also supports \`minimax/music-2.5\` and \`minimax/music-2.0\`
+\\* Prompt controls: \`lyrics\`, \`instrumental\`, \`durationSeconds\`
+\\* Output format: \`mp3\`
+\\* Session-backed runs detach through the shared task/status flow, including \`action: "status"\`
+
+To use MiniMax as the default music provider:
+
+\`\`\`json5 theme={"theme":{"light":"min-light","dark":"min-dark"}}
+{
+ agents: {
+ defaults: {
+ musicGenerationModel: {
+ primary: "minimax/music-2.6",
+ },
+ },
+ },
+}
+\`\`\`
+
+ See \[Music Generation\](/tools/music-generation) for shared tool parameters, provider selection, and failover behavior.
+
+\### Video generation
+
+The bundled MiniMax plugin registers video generation through the shared
+\`video\_generate\` tool for both \`minimax\` and \`minimax-portal\`.
+
+\\* Default video model: \`minimax/MiniMax-Hailuo-2.3\`
+\\* OAuth video model: \`minimax-portal/MiniMax-Hailuo-2.3\`
+\\* Modes: text-to-video and single-image reference flows
+\\* Supports \`aspectRatio\` and \`resolution\`
+
+To use MiniMax as the default video provider:
+
+\`\`\`json5 theme={"theme":{"light":"min-light","dark":"min-dark"}}
+{
+ agents: {
+ defaults: {
+ videoGenerationModel: {
+ primary: "minimax/MiniMax-Hailuo-2.3",
+ },
+ },
+ },
+}
+\`\`\`
+
+ See \[Video Generation\](/tools/video-generation) for shared tool parameters, provider selection, and failover behavior.
+
+\### Image understanding
+
+The MiniMax plugin registers image understanding separately from the text
+catalog:
+
+\| Provider ID \| Default image model \|
+\| \-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\- \| \-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\- \|
+\| \`minimax\` \| \`MiniMax-VL-01\` \|
+\| \`minimax-portal\` \| \`MiniMax-VL-01\` \|
+
+That is why automatic media routing can use MiniMax image understanding even
+when the bundled text-provider catalog still shows text-only M2.7 chat refs.
+
+\### Web search
+
+The MiniMax plugin also registers \`web\_search\` through the MiniMax Token Plan
+search API.
+
+\\* Provider id: \`minimax\`
+\\* Structured results: titles, URLs, snippets, related queries
+\\* Preferred env var: \`MINIMAX\_CODE\_PLAN\_KEY\`
+\\* Accepted env aliases: \`MINIMAX\_CODING\_API\_KEY\`, \`MINIMAX\_OAUTH\_TOKEN\`
+\\* Compatibility fallback: \`MINIMAX\_API\_KEY\` when it already points at a token-plan credential
+\\* Region reuse: \`plugins.entries.minimax.config.webSearch.region\`, then \`MINIMAX\_API\_HOST\`, then MiniMax provider base URLs
+\\* Search stays on provider id \`minimax\`; OAuth CN/global setup can steer region indirectly through \`models.providers.minimax-portal.baseUrl\` and can provide bearer auth through \`MINIMAX\_OAUTH\_TOKEN\`
+
+Config lives under \`plugins.entries.minimax.config.webSearch.\*\`.
+
+ See \[MiniMax Search\](/tools/minimax-search) for full web search configuration and usage.
+
+\## Advanced configuration
+
+ \| Option \| Description \|
+ \| \-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\- \| \-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\- \|
+ \| \`models.providers.minimax.baseUrl\` \| Prefer \`https://api.minimax.io/anthropic\` (Anthropic-compatible); \`https://api.minimax.io/v1\` is optional for OpenAI-compatible payloads \|
+ \| \`models.providers.minimax.api\` \| Prefer \`anthropic-messages\`; \`openai-completions\` is optional for OpenAI-compatible payloads \|
+ \| \`models.providers.minimax.apiKey\` \| MiniMax API key (\`MINIMAX\_API\_KEY\`) \|
+ \| \`models.providers.minimax.models\` \| Define \`id\`, \`name\`, \`reasoning\`, \`contextWindow\`, \`maxTokens\`, \`cost\` \|
+ \| \`agents.defaults.models\` \| Alias models you want in the allowlist \|
+ \| \`models.mode\` \| Keep \`merge\` if you want to add MiniMax alongside built-ins \|
+
+ On \`api: "anthropic-messages"\`, OpenClaw injects \`thinking: { type: "disabled" }\` unless thinking is already explicitly set in params/config.
+
+ This prevents MiniMax's streaming endpoint from emitting \`reasoning\_content\` in OpenAI-style delta chunks, which would leak internal reasoning into visible output.
+
+ \`/fast on\` or \`params.fastMode: true\` rewrites \`MiniMax-M2.7\` to \`MiniMax-M2.7-highspeed\` on the Anthropic-compatible stream path.
+
+ \*\*Best for:\*\* keep your strongest latest-generation model as primary, fail over to MiniMax M2.7. Example below uses Opus as a concrete primary; swap to your preferred latest-gen primary model.
+
+ \`\`\`json5 theme={"theme":{"light":"min-light","dark":"min-dark"}}
+ {
+ env: { MINIMAX\_API\_KEY: "sk-..." },
+ agents: {
+ defaults: {
+ models: {
+ "anthropic/claude-opus-4-6": { alias: "primary" },
+ "minimax/MiniMax-M2.7": { alias: "minimax" },
+ },
+ model: {
+ primary: "anthropic/claude-opus-4-6",
+ fallbacks: \["minimax/MiniMax-M2.7"\],
+ },
+ },
+ },
+ }
+ \`\`\`
+
+ \\* Coding Plan usage API: \`https://api.minimaxi.com/v1/token\_plan/remains\` or \`https://api.minimax.io/v1/token\_plan/remains\` (requires a coding plan key).
+ \\* Usage polling derives the host from \`models.providers.minimax-portal.baseUrl\` or \`models.providers.minimax.baseUrl\` when configured, so global setups using \`https://api.minimax.io/anthropic\` poll \`api.minimax.io\`. Missing or malformed base URLs keep the CN fallback for compatibility.
+ \\* OpenClaw normalizes MiniMax coding-plan usage to the same \`% left\` display used by other providers. MiniMax's raw \`usage\_percent\` / \`usagePercent\` fields are remaining quota, not consumed quota, so OpenClaw inverts them. Count-based fields win when present.
+ \\* When the API returns \`model\_remains\`, OpenClaw prefers the chat-model entry, derives the window label from \`start\_time\` / \`end\_time\` when needed, and includes the selected model name in the plan label so coding-plan windows are easier to distinguish.
+ \\* Usage snapshots treat \`minimax\`, \`minimax-cn\`, and \`minimax-portal\` as the same MiniMax quota surface, and prefer stored MiniMax OAuth before falling back to Coding Plan key env vars.
+
+\## Notes
+
+\\* Model refs follow the auth path:
+ \\* API-key setup: \`minimax/\`
+ \\* OAuth setup: \`minimax-portal/\`
+\\* Default chat model: \`MiniMax-M2.7\`
+\\* Alternate chat model: \`MiniMax-M2.7-highspeed\`
+\\* Onboarding and direct API-key setup write text-only model definitions for both M2.7 variants
+\\* Image understanding uses the plugin-owned \`MiniMax-VL-01\` media provider
+\\* Update pricing values in \`models.json\` if you need exact cost tracking
+\\* Use \`openclaw models list\` to confirm the current provider id, then switch with \`openclaw models set minimax/MiniMax-M2.7\` or \`openclaw models set minimax-portal/MiniMax-M2.7\`
+
+ Referral link for MiniMax Coding Plan (10% off): \[MiniMax Coding Plan\](https://platform.minimax.io/subscribe/coding-plan?code=DbXJTRClnb\\&source=link)
+
+ See \[Model providers\](/concepts/model-providers) for provider rules.
+
+\## Troubleshooting
+
+ This usually means the \*\*MiniMax provider is not configured\*\* (no matching provider entry and no MiniMax auth profile/env key found). A fix for this detection is in \*\*2026.1.12\*\*. Fix by:
+
+ \\* Upgrading to \*\*2026.1.12\*\* (or run from source \`main\`), then restarting the gateway.
+ \\* Running \`openclaw configure\` and selecting a \*\*MiniMax\*\* auth option, or
+ \\* Adding the matching \`models.providers.minimax\` or \`models.providers.minimax-portal\` block manually, or
+ \\* Setting \`MINIMAX\_API\_KEY\`, \`MINIMAX\_OAUTH\_TOKEN\`, or a MiniMax auth profile so the matching provider can be injected.
+
+ Make sure the model id is \*\*case-sensitive\*\*:
+
+ \\* API-key path: \`minimax/MiniMax-M2.7\` or \`minimax/MiniMax-M2.7-highspeed\`
+ \\* OAuth path: \`minimax-portal/MiniMax-M2.7\` or \`minimax-portal/MiniMax-M2.7-highspeed\`
+
+ Then recheck with:
+
+ \`\`\`bash theme={"theme":{"light":"min-light","dark":"min-dark"}}
+ openclaw models list
+ \`\`\`
+
+ More help: \[Troubleshooting\](/help/troubleshooting) and \[FAQ\](/help/faq).
+
+\## Related
+
+ Choosing providers, model refs, and failover behavior.
+
+ Shared image tool parameters and provider selection.
+
+ Shared music tool parameters and provider selection.
+
+ Shared video tool parameters and provider selection.
+
+ Web search configuration via MiniMax Token Plan.
+
+ General troubleshooting and FAQ.
 
 ---
 
@@ -2881,10 +4651,43 @@ Adjustable reasoning (mistral-small-latest)
 
 `mistral/mistral-small-latest` maps to Mistral Small 4 and supports [adjustable reasoning](https://docs.mistral.ai/capabilities/reasoning/adjustable) on the Chat Completions API via `reasoning_effort` (`none` minimizes extra thinking in the output; `high` surfaces full thinking traces before the final answer).OpenClaw maps the session **thinking** level to Mistral’s API:
 
-| OpenClaw thinking level | Mistral
+| OpenClaw thinking level | Mistral `reasoning_effort` |
+| --- | --- |
+| **off** / **minimal** | `none` |
+| **low** / **medium** / **high** / **xhigh** / **adaptive** / **max** | `high` |
 
-_… [truncated; see https://docs.openclaw.ai/providers/mistral for full content]_
+Other bundled Mistral catalog models do not use this parameter. Keep using `magistral-*` models when you want Mistral’s native reasoning-first behavior.
 
+Memory embeddings
+
+Mistral can serve memory embeddings via `/v1/embeddings` (default model: `mistral-embed`).
+
+```
+{
+  memorySearch: { provider: "mistral" },
+}
+```
+
+Auth and base URL
+
+- Mistral auth uses `MISTRAL_API_KEY`.
+- Provider base URL defaults to `https://api.mistral.ai/v1`.
+- Onboarding default model is `mistral/mistral-large-latest`.
+- Z.AI uses Bearer auth with your API key.
+
+## Related
+
+[**Model selection** \\
+\\
+Choosing providers, model refs, and failover behavior.](https://docs.openclaw.ai/concepts/model-providers)
+
+[**Media understanding** \\
+\\
+Audio transcription setup and provider selection.](https://docs.openclaw.ai/nodes/media-understanding)
+
+[MiniMax](https://docs.openclaw.ai/providers/minimax) [Moonshot AI](https://docs.openclaw.ai/providers/moonshot)
+
+Ctrl+I
 
 ---
 
@@ -2955,7 +4758,6 @@ see [Model providers](https://docs.openclaw.ai/concepts/model-providers).
 [Provider directory](https://docs.openclaw.ai/providers) [Models CLI](https://docs.openclaw.ai/concepts/models)
 
 Ctrl+I
-
 
 ---
 
@@ -3108,9 +4910,291 @@ usage metadata.
           // moonshot-kimi-k2-models:start\
           {\
             id: "kimi-k2.6",\
+            name: "Kimi K2.6",\
+            reasoning: false,\
+            input: ["text", "image"],\
+            cost: { input: 0.95, output: 4, cacheRead: 0.16, cacheWrite: 0 },\
+            contextWindow: 262144,\
+            maxTokens: 262144,\
+          },\
+          {\
+            id: "kimi-k2.5",\
+            name: "Kimi K2.5",\
+            reasoning: false,\
+            input: ["text", "image"],\
+            cost: { input: 0.6, output: 3, cacheRead: 0.1, cacheWrite: 0 },\
+            contextWindow: 262144,\
+            maxTokens: 262144,\
+          },\
+          {\
+            id: "kimi-k2-thinking",\
+            name: "Kimi K2 Thinking",\
+            reasoning: true,\
+            input: ["text"],\
+            cost: { input: 0, output: 0, cacheRead: 0, cacheWrite: 0 },\
+            contextWindow: 262144,\
+            maxTokens: 262144,\
+          },\
+          {\
+            id: "kimi-k2-thinking-turbo",\
+            name: "Kimi K2 Thinking Turbo",\
+            reasoning: true,\
+            input: ["text"],\
+            cost: { input: 0, output: 0, cacheRead: 0, cacheWrite: 0 },\
+            contextWindow: 262144,\
+            maxTokens: 262144,\
+          },\
+          {\
+            id: "kimi-k2-turbo",\
+            name: "Kimi K2 Turbo",\
+            reasoning: false,\
+            input: ["text"],\
+            cost: { input: 0, output: 0, cacheRead: 0, cacheWrite: 0 },\
+            contextWindow: 256000,\
+            maxTokens: 16384,\
+          },\
+          // moonshot-kimi-k2-models:end\
+        ],
+      },
+    },
+  },
+}
+```
 
-_… [truncated; see https://docs.openclaw.ai/providers/moonshot for full content]_
+**Best for:** code-focused tasks via the Kimi Coding endpoint.
 
+Kimi Coding uses a different API key and provider prefix (`kimi/...`) than Moonshot (`moonshot/...`). Legacy model ref `kimi/k2p5` remains accepted as a compatibility id.
+
+1
+
+[Navigate to header](https://docs.openclaw.ai/providers/moonshot#)
+
+Run onboarding
+
+```
+openclaw onboard --auth-choice kimi-code-api-key
+```
+
+2
+
+[Navigate to header](https://docs.openclaw.ai/providers/moonshot#)
+
+Set a default model
+
+```
+{
+  agents: {
+    defaults: {
+      model: { primary: "kimi/kimi-code" },
+    },
+  },
+}
+```
+
+3
+
+[Navigate to header](https://docs.openclaw.ai/providers/moonshot#)
+
+Verify the model is available
+
+```
+openclaw models list --provider kimi
+```
+
+### Config example
+
+```
+{
+  env: { KIMI_API_KEY: "sk-..." },
+  agents: {
+    defaults: {
+      model: { primary: "kimi/kimi-code" },
+      models: {
+        "kimi/kimi-code": { alias: "Kimi" },
+      },
+    },
+  },
+}
+```
+
+## Kimi web search
+
+OpenClaw also ships **Kimi** as a `web_search` provider, backed by Moonshot web
+search.
+
+1
+
+[Navigate to header](https://docs.openclaw.ai/providers/moonshot#)
+
+Run interactive web search setup
+
+```
+openclaw configure --section web
+```
+
+Choose **Kimi** in the web-search section to store
+`plugins.entries.moonshot.config.webSearch.*`.
+
+2
+
+[Navigate to header](https://docs.openclaw.ai/providers/moonshot#)
+
+Configure the web search region and model
+
+Interactive setup prompts for:
+
+| Setting | Options |
+| --- | --- |
+| API region | `https://api.moonshot.ai/v1` (international) or `https://api.moonshot.cn/v1` (China) |
+| Web search model | Defaults to `kimi-k2.6` |
+
+Config lives under `plugins.entries.moonshot.config.webSearch`:
+
+```
+{
+  plugins: {
+    entries: {
+      moonshot: {
+        config: {
+          webSearch: {
+            apiKey: "sk-...", // or use KIMI_API_KEY / MOONSHOT_API_KEY
+            baseUrl: "https://api.moonshot.ai/v1",
+            model: "kimi-k2.6",
+          },
+        },
+      },
+    },
+  },
+  tools: {
+    web: {
+      search: {
+        provider: "kimi",
+      },
+    },
+  },
+}
+```
+
+## Advanced configuration
+
+Native thinking mode
+
+Moonshot Kimi supports binary native thinking:
+
+- `thinking: { type: "enabled" }`
+- `thinking: { type: "disabled" }`
+
+Configure it per model via `agents.defaults.models.<provider/model>.params`:
+
+```
+{
+  agents: {
+    defaults: {
+      models: {
+        "moonshot/kimi-k2.6": {
+          params: {
+            thinking: { type: "disabled" },
+          },
+        },
+      },
+    },
+  },
+}
+```
+
+OpenClaw also maps runtime `/think` levels for Moonshot:
+
+| `/think` level | Moonshot behavior |
+| --- | --- |
+| `/think off` | `thinking.type=disabled` |
+| Any non-off level | `thinking.type=enabled` |
+
+When Moonshot thinking is enabled, `tool_choice` must be `auto` or `none`. OpenClaw normalizes incompatible `tool_choice` values to `auto` for compatibility.
+
+Kimi K2.6 also accepts an optional `thinking.keep` field that controls
+multi-turn retention of `reasoning_content`. Set it to `"all"` to keep full
+reasoning across turns; omit it (or leave it `null`) to use the server
+default strategy. OpenClaw only forwards `thinking.keep` for
+`moonshot/kimi-k2.6` and strips it from other models.
+
+```
+{
+  agents: {
+    defaults: {
+      models: {
+        "moonshot/kimi-k2.6": {
+          params: {
+            thinking: { type: "enabled", keep: "all" },
+          },
+        },
+      },
+    },
+  },
+}
+```
+
+Tool call id sanitization
+
+Moonshot Kimi serves tool\_call ids shaped like `functions.<name>:<index>`. OpenClaw preserves them unchanged so multi-turn tool calls keep working.To force strict sanitization on a custom OpenAI-compatible provider, set `sanitizeToolCallIds: true`:
+
+```
+{
+  models: {
+    providers: {
+      "my-kimi-proxy": {
+        api: "openai-completions",
+        sanitizeToolCallIds: true,
+      },
+    },
+  },
+}
+```
+
+Streaming usage compatibility
+
+Native Moonshot endpoints (`https://api.moonshot.ai/v1` and
+`https://api.moonshot.cn/v1`) advertise streaming usage compatibility on the
+shared `openai-completions` transport. OpenClaw keys that off endpoint
+capabilities, so compatible custom provider ids targeting the same native
+Moonshot hosts inherit the same streaming-usage behavior.With the bundled K2.6 pricing, streamed usage that includes input, output,
+and cache-read tokens is also converted into local estimated USD cost for
+`/status`, `/usage full`, `/usage cost`, and transcript-backed session
+accounting.
+
+Endpoint and model ref reference
+
+| Provider | Model ref prefix | Endpoint | Auth env var |
+| --- | --- | --- | --- |
+| Moonshot | `moonshot/` | `https://api.moonshot.ai/v1` | `MOONSHOT_API_KEY` |
+| Moonshot CN | `moonshot/` | `https://api.moonshot.cn/v1` | `MOONSHOT_API_KEY` |
+| Kimi Coding | `kimi/` | Kimi Coding endpoint | `KIMI_API_KEY` |
+| Web search | N/A | Same as Moonshot API region | `KIMI_API_KEY` or `MOONSHOT_API_KEY` |
+
+- Kimi web search uses `KIMI_API_KEY` or `MOONSHOT_API_KEY`, and defaults to `https://api.moonshot.ai/v1` with model `kimi-k2.6`.
+- Override pricing and context metadata in `models.providers` if needed.
+- If Moonshot publishes different context limits for a model, adjust `contextWindow` accordingly.
+
+## Related
+
+[**Model selection** \\
+\\
+Choosing providers, model refs, and failover behavior.](https://docs.openclaw.ai/concepts/model-providers)
+
+[**Web search** \\
+\\
+Configuring web search providers including Kimi.](https://docs.openclaw.ai/tools/web)
+
+[**Configuration reference** \\
+\\
+Full config schema for providers, models, and plugins.](https://docs.openclaw.ai/gateway/configuration-reference)
+
+[**Moonshot Open Platform** \\
+\\
+Moonshot API key management and documentation.](https://platform.moonshot.ai/)
+
+[Mistral](https://docs.openclaw.ai/providers/mistral) [NVIDIA](https://docs.openclaw.ai/providers/nvidia)
+
+Ctrl+I
 
 ---
 
@@ -3234,7 +5318,6 @@ Full config reference for agents, models, and providers.](https://docs.openclaw.
 
 Ctrl+I
 
-
 ---
 
 ## Ollama - OpenClaw
@@ -3323,10 +5406,903 @@ full `ollama/<model>:cloud` ref, OpenClaw validates that exact missing model wit
 metadata. Typos still fail as unknown models instead of being auto-created.
 
 ```
-# See
+# See what models are available
+ollama list
+openclaw models list
+```
 
-_… [truncated; see https://docs.openclaw.ai/providers/ollama for full content]_
+For a narrow text-generation smoke test that avoids the full agent tool surface,
+use local `infer model run` with a full Ollama model ref:
 
+```
+OLLAMA_API_KEY=ollama-local \
+  openclaw infer model run \
+    --local \
+    --model ollama/llama3.2:latest \
+    --prompt "Reply with exactly: pong" \
+    --json
+```
+
+That path still uses OpenClaw’s configured provider, auth, and native Ollama
+transport, but it does not start a chat-agent turn or load MCP/tool context. If
+this succeeds while normal agent replies fail, troubleshoot the model’s agent
+prompt/tool capacity next.For a narrow vision-model smoke test on the same lean path, add one or more
+image files to `infer model run`. This sends the prompt and image directly to
+the selected Ollama vision model without loading chat tools, memory, or prior
+session context:
+
+```
+OLLAMA_API_KEY=ollama-local \
+  openclaw infer model run \
+    --local \
+    --model ollama/qwen2.5vl:7b \
+    --prompt "Describe this image in one sentence." \
+    --file ./photo.jpg \
+    --json
+```
+
+`model run --file` accepts files detected as `image/*`, including common PNG,
+JPEG, and WebP inputs. Non-image files are rejected before Ollama is called.
+For speech recognition, use `openclaw infer audio transcribe` instead.When you switch a conversation with `/model ollama/<model>`, OpenClaw treats
+that as an exact user selection. If the configured Ollama `baseUrl` is
+unreachable, the next reply fails with the provider error instead of silently
+answering from another configured fallback model.Isolated cron jobs do one extra local safety check before they start the agent
+turn. If the selected model resolves to a local, private-network, or `.local`
+Ollama provider and `/api/tags` is unreachable, OpenClaw records that cron run
+as `skipped` with the selected `ollama/<model>` in the error text. The endpoint
+preflight is cached for 5 minutes, so multiple cron jobs pointed at the same
+stopped Ollama daemon do not all launch failing model requests.Live-verify the local text path, native stream path, and embeddings against
+local Ollama with:
+
+```
+OPENCLAW_LIVE_TEST=1 OPENCLAW_LIVE_OLLAMA=1 OPENCLAW_LIVE_OLLAMA_WEB_SEARCH=0 \
+  pnpm test:live -- extensions/ollama/ollama.live.test.ts
+```
+
+To add a new model, simply pull it with Ollama:
+
+```
+ollama pull mistral
+```
+
+The new model will be automatically discovered and available to use.
+
+If you set `models.providers.ollama` explicitly, or configure a custom remote provider such as `models.providers.ollama-cloud` with `api: "ollama"`, auto-discovery is skipped and you must define models manually. Loopback custom providers such as `http://127.0.0.2:11434` are still treated as local. See the explicit config section below.
+
+## Vision and image description
+
+The bundled Ollama plugin registers Ollama as an image-capable media-understanding provider. This lets OpenClaw route explicit image-description requests and configured image-model defaults through local or hosted Ollama vision models.For local vision, pull a model that supports images:
+
+```
+ollama pull qwen2.5vl:7b
+export OLLAMA_API_KEY="ollama-local"
+```
+
+Then verify with the infer CLI:
+
+```
+openclaw infer image describe \
+  --file ./photo.jpg \
+  --model ollama/qwen2.5vl:7b \
+  --json
+```
+
+`--model` must be a full `<provider/model>` ref. When it is set, `openclaw infer image describe` runs that model directly instead of skipping description because the model supports native vision.Use `infer image describe` when you want OpenClaw’s image-understanding provider flow, configured `agents.defaults.imageModel`, and image-description output shape. Use `infer model run --file` when you want a raw multimodal model probe with a custom prompt and one or more images.To make Ollama the default image-understanding model for inbound media, configure `agents.defaults.imageModel`:
+
+```
+{
+  agents: {
+    defaults: {
+      imageModel: {
+        primary: "ollama/qwen2.5vl:7b",
+      },
+    },
+  },
+}
+```
+
+Prefer the full `ollama/<model>` ref. If the same model is listed under `models.providers.ollama.models` with `input: ["text", "image"]` and no other configured image provider exposes that bare model ID, OpenClaw also normalizes a bare `imageModel` ref such as `qwen2.5vl:7b` to `ollama/qwen2.5vl:7b`. If more than one configured image provider has the same bare ID, use the provider prefix explicitly.Slow local vision models can need a longer image-understanding timeout than cloud models. They can also crash or stop when Ollama tries to allocate the full advertised vision context on constrained hardware. Set a capability timeout, and cap `num_ctx` on the model entry when you only need a normal image-description turn:
+
+```
+{
+  models: {
+    providers: {
+      ollama: {
+        models: [\
+          {\
+            id: "qwen2.5vl:7b",\
+            name: "qwen2.5vl:7b",\
+            input: ["text", "image"],\
+            params: { num_ctx: 2048, keep_alive: "1m" },\
+          },\
+        ],
+      },
+    },
+  },
+  tools: {
+    media: {
+      image: {
+        timeoutSeconds: 180,
+        models: [{ provider: "ollama", model: "qwen2.5vl:7b", timeoutSeconds: 300 }],
+      },
+    },
+  },
+}
+```
+
+This timeout applies to inbound image understanding and to the explicit `image` tool the agent can call during a turn. Provider-level `models.providers.ollama.timeoutSeconds` still controls the underlying Ollama HTTP request guard for normal model calls.Live-verify the explicit image tool against local Ollama with:
+
+```
+OPENCLAW_LIVE_TEST=1 OPENCLAW_LIVE_OLLAMA_IMAGE=1 \
+  pnpm test:live -- src/agents/tools/image-tool.ollama.live.test.ts
+```
+
+If you define `models.providers.ollama.models` manually, mark vision models with image input support:
+
+```
+{
+  id: "qwen2.5vl:7b",
+  name: "qwen2.5vl:7b",
+  input: ["text", "image"],
+  contextWindow: 128000,
+  maxTokens: 8192,
+}
+```
+
+OpenClaw rejects image-description requests for models that are not marked image-capable. With implicit discovery, OpenClaw reads this from Ollama when `/api/show` reports a vision capability.
+
+## Configuration
+
+- Basic (implicit discovery)
+
+- Explicit (manual models)
+
+- Custom base URL
+
+The simplest local-only enablement path is via environment variable:
+
+```
+export OLLAMA_API_KEY="ollama-local"
+```
+
+If `OLLAMA_API_KEY` is set, you can omit `apiKey` in the provider entry and OpenClaw will fill it for availability checks.
+
+Use explicit config when you want hosted cloud setup, Ollama runs on another host/port, you want to force specific context windows or model lists, or you want fully manual model definitions.
+
+```
+{
+  models: {
+    providers: {
+      ollama: {
+        baseUrl: "https://ollama.com",
+        apiKey: "OLLAMA_API_KEY",
+        api: "ollama",
+        models: [\
+          {\
+            id: "kimi-k2.5:cloud",\
+            name: "kimi-k2.5:cloud",\
+            reasoning: false,\
+            input: ["text", "image"],\
+            cost: { input: 0, output: 0, cacheRead: 0, cacheWrite: 0 },\
+            contextWindow: 128000,\
+            maxTokens: 8192\
+          }\
+        ]
+      }
+    }
+  }
+}
+```
+
+If Ollama is running on a different host or port (explicit config disables auto-discovery, so define models manually):
+
+```
+{
+  models: {
+    providers: {
+      ollama: {
+        apiKey: "ollama-local",
+        baseUrl: "http://ollama-host:11434", // No /v1 - use native Ollama API URL
+        api: "ollama", // Set explicitly to guarantee native tool-calling behavior
+        timeoutSeconds: 300, // Optional: give cold local models longer to connect and stream
+        models: [\
+          {\
+            id: "qwen3:32b",\
+            name: "qwen3:32b",\
+            params: {\
+              keep_alive: "15m", // Optional: keep the model loaded between turns\
+            },\
+          },\
+        ],
+      },
+    },
+  },
+}
+```
+
+Do not add `/v1` to the URL. The `/v1` path uses OpenAI-compatible mode, where tool calling is not reliable. Use the base Ollama URL without a path suffix.
+
+## Common recipes
+
+Use these as starting points and replace model IDs with the exact names from `ollama list` or `openclaw models list --provider ollama`.
+
+Local model with auto-discovery
+
+Use this when Ollama runs on the same machine as the Gateway and you want OpenClaw to discover the installed models automatically.
+
+```
+ollama serve
+ollama pull gemma4
+export OLLAMA_API_KEY="ollama-local"
+openclaw models list --provider ollama
+openclaw models set ollama/gemma4
+```
+
+This path keeps config minimal. Do not add a `models.providers.ollama` block unless you want to define models manually.
+
+LAN Ollama host with manual models
+
+Use native Ollama URLs for LAN hosts. Do not add `/v1`.
+
+```
+{
+  models: {
+    providers: {
+      ollama: {
+        baseUrl: "http://gpu-box.local:11434",
+        apiKey: "ollama-local",
+        api: "ollama",
+        timeoutSeconds: 300,
+        contextWindow: 32768,
+        maxTokens: 8192,
+        models: [\
+          {\
+            id: "qwen3.5:9b",\
+            name: "qwen3.5:9b",\
+            reasoning: true,\
+            input: ["text"],\
+            params: {\
+              num_ctx: 32768,\
+              thinking: false,\
+              keep_alive: "15m",\
+            },\
+          },\
+        ],
+      },
+    },
+  },
+  agents: {
+    defaults: {
+      model: { primary: "ollama/qwen3.5:9b" },
+    },
+  },
+}
+```
+
+`contextWindow` is the OpenClaw-side context budget. `params.num_ctx` is sent to Ollama for the request. Keep them aligned when your hardware cannot run the model’s full advertised context.
+
+Ollama Cloud only
+
+Use this when you do not run a local daemon and want hosted Ollama models directly.
+
+```
+export OLLAMA_API_KEY="your-ollama-api-key"
+```
+
+```
+{
+  models: {
+    providers: {
+      ollama: {
+        baseUrl: "https://ollama.com",
+        apiKey: "OLLAMA_API_KEY",
+        api: "ollama",
+        models: [\
+          {\
+            id: "kimi-k2.5:cloud",\
+            name: "kimi-k2.5:cloud",\
+            reasoning: false,\
+            input: ["text", "image"],\
+            contextWindow: 128000,\
+            maxTokens: 8192,\
+          },\
+        ],
+      },
+    },
+  },
+  agents: {
+    defaults: {
+      model: { primary: "ollama/kimi-k2.5:cloud" },
+    },
+  },
+}
+```
+
+Cloud plus local through a signed-in daemon
+
+Use this when a local or LAN Ollama daemon is signed in with `ollama signin` and should serve both local models and `:cloud` models.
+
+```
+ollama signin
+ollama pull gemma4
+```
+
+```
+{
+  models: {
+    providers: {
+      ollama: {
+        baseUrl: "http://127.0.0.1:11434",
+        apiKey: "ollama-local",
+        api: "ollama",
+        timeoutSeconds: 300,
+        models: [\
+          { id: "gemma4", name: "gemma4", input: ["text"] },\
+          { id: "kimi-k2.5:cloud", name: "kimi-k2.5:cloud", input: ["text", "image"] },\
+        ],
+      },
+    },
+  },
+  agents: {
+    defaults: {
+      model: {
+        primary: "ollama/gemma4",
+        fallbacks: ["ollama/kimi-k2.5:cloud"],
+      },
+    },
+  },
+}
+```
+
+Multiple Ollama hosts
+
+Use custom provider IDs when you have more than one Ollama server. Each provider gets its own host, models, auth, timeout, and model refs.
+
+```
+{
+  models: {
+    providers: {
+      "ollama-fast": {
+        baseUrl: "http://mini.local:11434",
+        apiKey: "ollama-local",
+        api: "ollama",
+        contextWindow: 32768,
+        models: [{ id: "gemma4", name: "gemma4", input: ["text"] }],
+      },
+      "ollama-large": {
+        baseUrl: "http://gpu-box.local:11434",
+        apiKey: "ollama-local",
+        api: "ollama",
+        timeoutSeconds: 420,
+        contextWindow: 131072,
+        maxTokens: 16384,
+        models: [{ id: "qwen3.5:27b", name: "qwen3.5:27b", input: ["text"] }],
+      },
+    },
+  },
+  agents: {
+    defaults: {
+      model: {
+        primary: "ollama-fast/gemma4",
+        fallbacks: ["ollama-large/qwen3.5:27b"],
+      },
+    },
+  },
+}
+```
+
+When OpenClaw sends the request, the active provider prefix is stripped so `ollama-large/qwen3.5:27b` reaches Ollama as `qwen3.5:27b`.
+
+Lean local model profile
+
+Some local models can answer simple prompts but struggle with the full agent tool surface. Start by limiting tools and context before changing global runtime settings.
+
+```
+{
+  agents: {
+    defaults: {
+      experimental: {
+        localModelLean: true,
+      },
+      model: { primary: "ollama/gemma4" },
+    },
+  },
+  models: {
+    providers: {
+      ollama: {
+        baseUrl: "http://127.0.0.1:11434",
+        apiKey: "ollama-local",
+        api: "ollama",
+        contextWindow: 32768,
+        models: [\
+          {\
+            id: "gemma4",\
+            name: "gemma4",\
+            input: ["text"],\
+            params: { num_ctx: 32768 },\
+            compat: { supportsTools: false },\
+          },\
+        ],
+      },
+    },
+  },
+}
+```
+
+Use `compat.supportsTools: false` only when the model or server reliably fails on tool schemas. It trades agent capability for stability.
+`localModelLean` removes the browser, cron, and message tools from the agent surface, but it does not change Ollama’s runtime context or thinking mode. Pair it with explicit `params.num_ctx` and `params.thinking: false` for small Qwen-style thinking models that loop or spend their response budget on hidden reasoning.
+
+### Model selection
+
+Once configured, all your Ollama models are available:
+
+```
+{
+  agents: {
+    defaults: {
+      model: {
+        primary: "ollama/gpt-oss:20b",
+        fallbacks: ["ollama/llama3.3", "ollama/qwen2.5-coder:32b"],
+      },
+    },
+  },
+}
+```
+
+Custom Ollama provider ids are also supported. When a model ref uses the active
+provider prefix, such as `ollama-spark/qwen3:32b`, OpenClaw strips only that
+prefix before calling Ollama so the server receives `qwen3:32b`.For slow local models, prefer provider-scoped request tuning before raising the
+whole agent runtime timeout:
+
+```
+{
+  models: {
+    providers: {
+      ollama: {
+        timeoutSeconds: 300,
+        models: [\
+          {\
+            id: "gemma4:26b",\
+            name: "gemma4:26b",\
+            params: { keep_alive: "15m" },\
+          },\
+        ],
+      },
+    },
+  },
+}
+```
+
+`timeoutSeconds` applies to the model HTTP request, including connection setup,
+headers, body streaming, and the total guarded-fetch abort. `params.keep_alive`
+is forwarded to Ollama as top-level `keep_alive` on native `/api/chat` requests;
+set it per model when first-turn load time is the bottleneck.
+
+### Quick verification
+
+```
+# Ollama daemon visible to this machine
+curl http://127.0.0.1:11434/api/tags
+
+# OpenClaw catalog and selected model
+openclaw models list --provider ollama
+openclaw models status
+
+# Direct model smoke
+openclaw infer model run \
+  --model ollama/gemma4 \
+  --prompt "Reply with exactly: ok"
+```
+
+For remote hosts, replace `127.0.0.1` with the host used in `baseUrl`. If `curl` works but OpenClaw does not, check whether the Gateway runs on a different machine, container, or service account.
+
+## Ollama Web Search
+
+OpenClaw supports **Ollama Web Search** as a bundled `web_search` provider.
+
+| Property | Detail |
+| --- | --- |
+| Host | Uses your configured Ollama host (`models.providers.ollama.baseUrl` when set, otherwise `http://127.0.0.1:11434`); `https://ollama.com` uses the hosted API directly |
+| Auth | Key-free for signed-in local Ollama hosts; `OLLAMA_API_KEY` or configured provider auth for direct `https://ollama.com` search or auth-protected hosts |
+| Requirement | Local/self-hosted hosts must be running and signed in with `ollama signin`; direct hosted search requires `baseUrl: "https://ollama.com"` plus a real Ollama API key |
+
+Choose **Ollama Web Search** during `openclaw onboard` or `openclaw configure --section web`, or set:
+
+```
+{
+  tools: {
+    web: {
+      search: {
+        provider: "ollama",
+      },
+    },
+  },
+}
+```
+
+For direct hosted search through Ollama Cloud:
+
+```
+{
+  models: {
+    providers: {
+      ollama: {
+        baseUrl: "https://ollama.com",
+        apiKey: "OLLAMA_API_KEY",
+        api: "ollama",
+        models: [{ id: "kimi-k2.5:cloud", name: "kimi-k2.5:cloud", input: ["text"] }],
+      },
+    },
+  },
+  tools: {
+    web: {
+      search: { provider: "ollama" },
+    },
+  },
+}
+```
+
+For a signed-in local daemon, OpenClaw uses the daemon’s `/api/experimental/web_search` proxy. For `https://ollama.com`, it calls the hosted `/api/web_search` endpoint directly.
+
+For the full setup and behavior details, see [Ollama Web Search](https://docs.openclaw.ai/tools/ollama-search).
+
+## Advanced configuration
+
+Legacy OpenAI-compatible mode
+
+**Tool calling is not reliable in OpenAI-compatible mode.** Use this mode only if you need OpenAI format for a proxy and do not depend on native tool calling behavior.
+
+If you need to use the OpenAI-compatible endpoint instead (for example, behind a proxy that only supports OpenAI format), set `api: "openai-completions"` explicitly:
+
+```
+{
+  models: {
+    providers: {
+      ollama: {
+        baseUrl: "http://ollama-host:11434/v1",
+        api: "openai-completions",
+        injectNumCtxForOpenAICompat: true, // default: true
+        apiKey: "ollama-local",
+        models: [...]
+      }
+    }
+  }
+}
+```
+
+This mode may not support streaming and tool calling simultaneously. You may need to disable streaming with `params: { streaming: false }` in model config.When `api: "openai-completions"` is used with Ollama, OpenClaw injects `options.num_ctx` by default so Ollama does not silently fall back to a 4096 context window. If your proxy/upstream rejects unknown `options` fields, disable this behavior:
+
+```
+{
+  models: {
+    providers: {
+      ollama: {
+        baseUrl: "http://ollama-host:11434/v1",
+        api: "openai-completions",
+        injectNumCtxForOpenAICompat: false,
+        apiKey: "ollama-local",
+        models: [...]
+      }
+    }
+  }
+}
+```
+
+Context windows
+
+For auto-discovered models, OpenClaw uses the context window reported by Ollama when available, including larger `PARAMETER num_ctx` values from custom Modelfiles. Otherwise it falls back to the default Ollama context window used by OpenClaw.You can set provider-level `contextWindow`, `contextTokens`, and `maxTokens` defaults for every model under that Ollama provider, then override them per model when needed. `contextWindow` is OpenClaw’s prompt and compaction budget. Native Ollama requests leave `options.num_ctx` unset unless you explicitly configure `params.num_ctx`, so Ollama can apply its own model, `OLLAMA_CONTEXT_LENGTH`, or VRAM-based default. To cap or force Ollama’s per-request runtime context without rebuilding a Modelfile, set `params.num_ctx`; invalid, zero, negative, and non-finite values are ignored. The OpenAI-compatible Ollama adapter still injects `options.num_ctx` by default from the configured `params.num_ctx` or `contextWindow`; disable that with `injectNumCtxForOpenAICompat: false` if your upstream rejects `options`.Native Ollama model entries also accept the common Ollama runtime options under `params`, including `temperature`, `top_p`, `top_k`, `min_p`, `num_predict`, `stop`, `repeat_penalty`, `num_batch`, `num_thread`, and `use_mmap`. OpenClaw forwards only Ollama request keys, so OpenClaw runtime params such as `streaming` are not leaked to Ollama. Use `params.think` or `params.thinking` to send top-level Ollama `think`; `false` disables API-level thinking for Qwen-style thinking models.
+
+```
+{
+  models: {
+    providers: {
+      ollama: {
+        contextWindow: 32768,
+        models: [\
+          {\
+            id: "llama3.3",\
+            contextWindow: 131072,\
+            maxTokens: 65536,\
+            params: {\
+              num_ctx: 32768,\
+              temperature: 0.7,\
+              top_p: 0.9,\
+              thinking: false,\
+            },\
+          }\
+        ]
+      }
+    }
+  }
+}
+```
+
+Per-model `agents.defaults.models["ollama/<model>"].params.num_ctx` works too. If both are configured, the explicit provider model entry wins over the agent default.
+
+Thinking control
+
+For native Ollama models, OpenClaw forwards thinking control as Ollama expects it: top-level `think`, not `options.think`. Auto-discovered models whose `/api/show` response includes the `thinking` capability expose `/think low`, `/think medium`, `/think high`, and `/think max`; non-thinking models expose only `/think off`.
+
+```
+openclaw agent --model ollama/gemma4 --thinking off
+openclaw agent --model ollama/gemma4 --thinking low
+```
+
+You can also set a model default:
+
+```
+{
+  agents: {
+    defaults: {
+      models: {
+        "ollama/gemma4": {
+          thinking: "low",
+        },
+      },
+    },
+  },
+}
+```
+
+Per-model `params.think` or `params.thinking` can disable or force Ollama API thinking for a specific configured model. OpenClaw preserves those explicit model params when the active run only has the implicit default `off`; non-off runtime commands such as `/think medium` still override the active run.
+
+Reasoning models
+
+OpenClaw treats models with names such as `deepseek-r1`, `reasoning`, or `think` as reasoning-capable by default.
+
+```
+ollama pull deepseek-r1:32b
+```
+
+No additional configuration is needed. OpenClaw marks them automatically.
+
+Model costs
+
+Ollama is free and runs locally, so all model costs are set to $0. This applies to both auto-discovered and manually defined models.
+
+Memory embeddings
+
+The bundled Ollama plugin registers a memory embedding provider for
+[memory search](https://docs.openclaw.ai/concepts/memory). It uses the configured Ollama base URL
+and API key, calls Ollama’s current `/api/embed` endpoint, and batches
+multiple memory chunks into one `input` request when possible.
+
+| Property | Value |
+| --- | --- |
+| Default model | `nomic-embed-text` |
+| Auto-pull | Yes — the embedding model is pulled automatically if not present locally |
+
+Query-time embeddings use retrieval prefixes for models that require or recommend them, including `nomic-embed-text`, `qwen3-embedding`, and `mxbai-embed-large`. Memory document batches stay raw so existing indexes do not need a format migration.To select Ollama as the memory search embedding provider:
+
+```
+{
+  agents: {
+    defaults: {
+      memorySearch: {
+        provider: "ollama",
+        remote: {
+          // Default for Ollama. Raise on larger hosts if reindexing is too slow.
+          nonBatchConcurrency: 1,
+        },
+      },
+    },
+  },
+}
+```
+
+For a remote embedding host, keep auth scoped to that host:
+
+```
+{
+  agents: {
+    defaults: {
+      memorySearch: {
+        provider: "ollama",
+        model: "nomic-embed-text",
+        remote: {
+          baseUrl: "http://gpu-box.local:11434",
+          apiKey: "ollama-local",
+          nonBatchConcurrency: 2,
+        },
+      },
+    },
+  },
+}
+```
+
+Streaming configuration
+
+OpenClaw’s Ollama integration uses the **native Ollama API** (`/api/chat`) by default, which fully supports streaming and tool calling simultaneously. No special configuration is needed.For native `/api/chat` requests, OpenClaw also forwards thinking control directly to Ollama: `/think off` and `openclaw agent --thinking off` send top-level `think: false` unless an explicit model `params.think`/`params.thinking` value is configured, while `/think low|medium|high` send the matching top-level `think` effort string. `/think max` maps to Ollama’s highest native effort, `think: "high"`.
+
+If you need to use the OpenAI-compatible endpoint, see the “Legacy OpenAI-compatible mode” section above. Streaming and tool calling may not work simultaneously in that mode.
+
+## Troubleshooting
+
+WSL2 crash loop (repeated reboots)
+
+On WSL2 with NVIDIA/CUDA, the official Ollama Linux installer creates an `ollama.service` systemd unit with `Restart=always`. If that service autostarts and loads a GPU-backed model during WSL2 boot, Ollama can pin host memory while the model loads. Hyper-V memory reclaim cannot always reclaim those pinned pages, so Windows can terminate the WSL2 VM, systemd starts Ollama again, and the loop repeats.Common evidence:
+
+- repeated WSL2 reboots or terminations from the Windows side
+- high CPU in `app.slice` or `ollama.service` shortly after WSL2 startup
+- SIGTERM from systemd rather than a Linux OOM-killer event
+
+OpenClaw logs a startup warning when it detects WSL2, `ollama.service` enabled with `Restart=always`, and visible CUDA markers.Mitigation:
+
+```
+sudo systemctl disable ollama
+```
+
+Add this to `%USERPROFILE%\.wslconfig` on the Windows side, then run `wsl --shutdown`:
+
+```
+[experimental]
+autoMemoryReclaim=disabled
+```
+
+Set a shorter keep-alive in the Ollama service environment, or start Ollama manually only when you need it:
+
+```
+export OLLAMA_KEEP_ALIVE=5m
+ollama serve
+```
+
+See [ollama/ollama#11317](https://github.com/ollama/ollama/issues/11317).
+
+Ollama not detected
+
+Make sure Ollama is running and that you set `OLLAMA_API_KEY` (or an auth profile), and that you did **not** define an explicit `models.providers.ollama` entry:
+
+```
+ollama serve
+```
+
+Verify that the API is accessible:
+
+```
+curl http://localhost:11434/api/tags
+```
+
+No models available
+
+If your model is not listed, either pull the model locally or define it explicitly in `models.providers.ollama`.
+
+```
+ollama list  # See what's installed
+ollama pull gemma4
+ollama pull gpt-oss:20b
+ollama pull llama3.3     # Or another model
+```
+
+Connection refused
+
+Check that Ollama is running on the correct port:
+
+```
+# Check if Ollama is running
+ps aux | grep ollama
+
+# Or restart Ollama
+ollama serve
+```
+
+Remote host works with curl but not OpenClaw
+
+Verify from the same machine and runtime that runs the Gateway:
+
+```
+openclaw gateway status --deep
+curl http://ollama-host:11434/api/tags
+```
+
+Common causes:
+
+- `baseUrl` points at `localhost`, but the Gateway runs in Docker or on another host.
+- The URL uses `/v1`, which selects OpenAI-compatible behavior instead of native Ollama.
+- The remote host needs firewall or LAN binding changes on the Ollama side.
+- The model is present on your laptop’s daemon but not on the remote daemon.
+
+Model outputs tool JSON as text
+
+This usually means the provider is using OpenAI-compatible mode or the model cannot handle tool schemas.Prefer native Ollama mode:
+
+```
+{
+  models: {
+    providers: {
+      ollama: {
+        baseUrl: "http://ollama-host:11434",
+        api: "ollama",
+      },
+    },
+  },
+}
+```
+
+If a small local model still fails on tool schemas, set `compat.supportsTools: false` on that model entry and retest.
+
+Kimi or GLM returns garbled symbols
+
+Hosted Kimi/GLM responses that are long, non-linguistic symbol runs are treated as failed provider output instead of a successful assistant answer. That lets normal retry, fallback, or error handling take over without persisting the corrupted text into the session.If it happens repeatedly, capture the raw model name, the current session file, and whether the run used `Cloud + Local` or `Cloud only`, then try a fresh session and a fallback model:
+
+```
+openclaw infer model run --model ollama/kimi-k2.5:cloud --prompt "Reply with exactly: ok" --json
+openclaw models set ollama/gemma4
+```
+
+Cold local model times out
+
+Large local models can need a long first load before streaming begins. Keep the timeout scoped to the Ollama provider, and optionally ask Ollama to keep the model loaded between turns:
+
+```
+{
+  models: {
+    providers: {
+      ollama: {
+        timeoutSeconds: 300,
+        models: [\
+          {\
+            id: "gemma4:26b",\
+            name: "gemma4:26b",\
+            params: { keep_alive: "15m" },\
+          },\
+        ],
+      },
+    },
+  },
+}
+```
+
+If the host itself is slow to accept connections, `timeoutSeconds` also extends the guarded Undici connect timeout for this provider.
+
+Large-context model is too slow or runs out of memory
+
+Many Ollama models advertise contexts that are larger than your hardware can run comfortably. Native Ollama uses Ollama’s own runtime context default unless you set `params.num_ctx`. Cap both OpenClaw’s budget and Ollama’s request context when you want predictable first-token latency:
+
+```
+{
+  models: {
+    providers: {
+      ollama: {
+        contextWindow: 32768,
+        maxTokens: 8192,
+        models: [\
+          {\
+            id: "qwen3.5:9b",\
+            name: "qwen3.5:9b",\
+            params: { num_ctx: 32768, thinking: false },\
+          },\
+        ],
+      },
+    },
+  },
+}
+```
+
+Lower `contextWindow` first if OpenClaw is sending too much prompt. Lower `params.num_ctx` if Ollama is loading a runtime context that is too large for the machine. Lower `maxTokens` if generation runs too long.
+
+More help: [Troubleshooting](https://docs.openclaw.ai/help/troubleshooting) and [FAQ](https://docs.openclaw.ai/help/faq).
+
+## Related
+
+[**Model providers** \\
+\\
+Overview of all providers, model refs, and failover behavior.](https://docs.openclaw.ai/concepts/model-providers)
+
+[**Model selection** \\
+\\
+How to choose and configure models.](https://docs.openclaw.ai/concepts/models)
+
+[**Ollama Web Search** \\
+\\
+Full setup and behavior details for Ollama-powered web search.](https://docs.openclaw.ai/tools/ollama-search)
+
+[**Configuration** \\
+\\
+Full config reference.](https://docs.openclaw.ai/gateway/configuration)
+
+[NVIDIA](https://docs.openclaw.ai/providers/nvidia) [OpenAI](https://docs.openclaw.ai/providers/openai)
+
+Ctrl+I
 
 ---
 
@@ -3401,10 +6377,845 @@ through PI, `openclaw doctor` warns and leaves the route unchanged.
 | OpenAI capability | OpenClaw surface | Status |
 | --- | --- | --- |
 | Chat / Responses | `openai/<model>` model provider | Yes |
-| Codex subscription mode
+| Codex subscription models | `openai-codex/<model>` with `openai-codex` OAuth | Yes |
+| Codex app-server harness | `openai/<model>` with `agentRuntime.id: codex` | Yes |
+| Server-side web search | Native OpenAI Responses tool | Yes, when web search is enabled and no provider pinned |
+| Images | `image_generate` | Yes |
+| Videos | `video_generate` | Yes |
+| Text-to-speech | `messages.tts.provider: "openai"` / `tts` | Yes |
+| Batch speech-to-text | `tools.media.audio` / media understanding | Yes |
+| Streaming speech-to-text | Voice Call `streaming.provider: "openai"` | Yes |
+| Realtime voice | Voice Call `realtime.provider: "openai"` / Control UI Talk | Yes |
+| Embeddings | memory embedding provider | Yes |
 
-_… [truncated; see https://docs.openclaw.ai/providers/openai for full content]_
+## Memory embeddings
 
+OpenClaw can use OpenAI, or an OpenAI-compatible embedding endpoint, for
+`memory_search` indexing and query embeddings:
+
+```
+{
+  agents: {
+    defaults: {
+      memorySearch: {
+        provider: "openai",
+        model: "text-embedding-3-small",
+      },
+    },
+  },
+}
+```
+
+For OpenAI-compatible endpoints that require asymmetric embedding labels, set
+`queryInputType` and `documentInputType` under `memorySearch`. OpenClaw forwards
+those as provider-specific `input_type` request fields: query embeddings use
+`queryInputType`; indexed memory chunks and batch indexing use
+`documentInputType`. See the [Memory configuration reference](https://docs.openclaw.ai/reference/memory-config#provider-specific-config) for the full example.
+
+## Getting started
+
+Choose your preferred auth method and follow the setup steps.
+
+- API key (OpenAI Platform)
+
+- Codex subscription
+
+**Best for:** direct API access and usage-based billing.
+
+1
+
+[Navigate to header](https://docs.openclaw.ai/providers/openai#)
+
+Get your API key
+
+Create or copy an API key from the [OpenAI Platform dashboard](https://platform.openai.com/api-keys).
+
+2
+
+[Navigate to header](https://docs.openclaw.ai/providers/openai#)
+
+Run onboarding
+
+```
+openclaw onboard --auth-choice openai-api-key
+```
+
+Or pass the key directly:
+
+```
+openclaw onboard --openai-api-key "$OPENAI_API_KEY"
+```
+
+3
+
+[Navigate to header](https://docs.openclaw.ai/providers/openai#)
+
+Verify the model is available
+
+```
+openclaw models list --provider openai
+```
+
+### Route summary
+
+| Model ref | Runtime config | Route | Auth |
+| --- | --- | --- | --- |
+| `openai/gpt-5.5` | omitted / `agentRuntime.id: "pi"` | Direct OpenAI Platform API | `OPENAI_API_KEY` |
+| `openai/gpt-5.4-mini` | omitted / `agentRuntime.id: "pi"` | Direct OpenAI Platform API | `OPENAI_API_KEY` |
+| `openai/gpt-5.5` | `agentRuntime.id: "codex"` | Codex app-server harness | Codex app-server |
+
+`openai/*` is the direct OpenAI API-key route unless you explicitly force
+the Codex app-server harness. Use `openai-codex/*` for Codex OAuth through
+the default PI runner, or use `openai/gpt-5.5` with
+`agentRuntime.id: "codex"` for native Codex app-server execution.
+
+### Config example
+
+```
+{
+  env: { OPENAI_API_KEY: "sk-..." },
+  agents: { defaults: { model: { primary: "openai/gpt-5.5" } } },
+}
+```
+
+OpenClaw does **not** expose `openai/gpt-5.3-codex-spark`. Live OpenAI API requests reject that model, and the current Codex catalog does not expose it either.
+
+**Best for:** using your ChatGPT/Codex subscription with native Codex app-server execution instead of a separate API key. Codex cloud requires ChatGPT sign-in.
+
+1
+
+[Navigate to header](https://docs.openclaw.ai/providers/openai#)
+
+Run Codex OAuth
+
+```
+openclaw onboard --auth-choice openai-codex
+```
+
+Or run OAuth directly:
+
+```
+openclaw models auth login --provider openai-codex
+```
+
+For headless or callback-hostile setups, add `--device-code` to sign in with a ChatGPT device-code flow instead of the localhost browser callback:
+
+```
+openclaw models auth login --provider openai-codex --device-code
+```
+
+2
+
+[Navigate to header](https://docs.openclaw.ai/providers/openai#)
+
+Use the native Codex runtime
+
+```
+openclaw config set plugins.entries.codex '{"enabled":true}' --strict-json --merge
+openclaw config set agents.defaults.model.primary openai/gpt-5.5
+openclaw config set agents.defaults.agentRuntime '{"id":"codex"}' --strict-json
+```
+
+3
+
+[Navigate to header](https://docs.openclaw.ai/providers/openai#)
+
+Verify Codex auth is available
+
+```
+openclaw models list --provider openai-codex
+```
+
+After the gateway is running, send `/codex status` or `/codex models`
+in chat to verify the native app-server runtime.
+
+### Route summary
+
+| Model ref | Runtime config | Route | Auth |
+| --- | --- | --- | --- |
+| `openai/gpt-5.5` | `agentRuntime.id: "codex"` | Native Codex app-server harness | Codex sign-in or selected `openai-codex` profile |
+| `openai-codex/gpt-5.5` | omitted / `runtime: "pi"` | ChatGPT/Codex OAuth through PI | Codex sign-in |
+| `openai-codex/gpt-5.4-mini` | omitted / `runtime: "pi"` | ChatGPT/Codex OAuth through PI | Codex sign-in |
+| `openai-codex/gpt-5.5` | `runtime: "auto"` | Still PI unless a plugin explicitly claims `openai-codex` | Codex sign-in |
+
+Keep using the `openai-codex` provider id for auth/profile commands. The
+`openai-codex/*` model prefix is also the explicit PI route for Codex OAuth.
+It does not select or auto-enable the bundled Codex app-server harness. For
+the common subscription plus native runtime setup, sign in with
+`openai-codex` but keep the model ref as `openai/gpt-5.5` and set
+`agentRuntime.id: "codex"`.
+
+### Config example
+
+```
+{
+  plugins: { entries: { codex: { enabled: true } } },
+  agents: {
+    defaults: {
+      model: { primary: "openai/gpt-5.5" },
+      agentRuntime: { id: "codex" },
+    },
+  },
+}
+```
+
+To keep Codex OAuth on the normal PI runner instead, use
+`openai-codex/gpt-5.5` and omit the Codex runtime override.
+
+Onboarding no longer imports OAuth material from `~/.codex`. Sign in with browser OAuth (default) or the device-code flow above — OpenClaw manages the resulting credentials in its own agent auth store.
+
+### Status indicator
+
+Chat `/status` shows which model runtime is active for the current session.
+The default PI harness appears as `Runtime: OpenClaw Pi Default`. When the
+bundled Codex app-server harness is selected, `/status` shows
+`Runtime: OpenAI Codex`. Existing sessions keep their recorded harness id, so use
+`/new` or `/reset` after changing `agentRuntime` if you want `/status` to
+reflect a new PI/Codex choice.
+
+### Doctor warning
+
+If the bundled `codex` plugin is enabled while an `openai-codex/*` route is
+selected, `openclaw doctor` warns that the model still resolves through PI.
+Keep the config unchanged only when that PI subscription-auth route is
+intentional. Switch to `openai/<model>` plus `agentRuntime.id: "codex"` when
+you want native Codex app-server execution.
+
+### Context window cap
+
+OpenClaw treats model metadata and the runtime context cap as separate values.For `openai-codex/gpt-5.5` through Codex OAuth:
+
+- Native `contextWindow`: `1000000`
+- Default runtime `contextTokens` cap: `272000`
+
+The smaller default cap has better latency and quality characteristics in practice. Override it with `contextTokens`:
+
+```
+{
+  models: {
+    providers: {
+      "openai-codex": {
+        models: [{ id: "gpt-5.5", contextTokens: 160000 }],
+      },
+    },
+  },
+}
+```
+
+Use `contextWindow` to declare native model metadata. Use `contextTokens` to limit the runtime context budget.
+
+### Catalog recovery
+
+OpenClaw uses upstream Codex catalog metadata for `gpt-5.5` when it is
+present. If live Codex discovery omits the `openai-codex/gpt-5.5` row while
+the account is authenticated, OpenClaw synthesizes that OAuth model row so
+cron, sub-agent, and configured default-model runs do not fail with
+`Unknown model`.
+
+## Native Codex app-server auth
+
+The native Codex app-server harness uses `openai/*` model refs plus
+`agentRuntime.id: "codex"`, but its auth is still account-based. OpenClaw
+selects auth in this order:
+
+1. An explicit OpenClaw `openai-codex` auth profile bound to the agent.
+2. The app-server’s existing account, such as a local Codex CLI ChatGPT sign-in.
+3. For local stdio app-server launches only, `CODEX_API_KEY`, then
+`OPENAI_API_KEY`, when the app-server reports no account and still requires
+OpenAI auth.
+
+That means a local ChatGPT/Codex subscription sign-in is not replaced just
+because the gateway process also has `OPENAI_API_KEY` for direct OpenAI models
+or embeddings. Env API-key fallback is only the local stdio no-account path; it
+is not sent to WebSocket app-server connections. When a subscription-style Codex
+profile is selected, OpenClaw also keeps `CODEX_API_KEY` and `OPENAI_API_KEY`
+out of the spawned stdio app-server child and sends the selected credentials
+through the app-server login RPC.
+
+## Image generation
+
+The bundled `openai` plugin registers image generation through the `image_generate` tool.
+It supports both OpenAI API-key image generation and Codex OAuth image
+generation through the same `openai/gpt-image-2` model ref.
+
+| Capability | OpenAI API key | Codex OAuth |
+| --- | --- | --- |
+| Model ref | `openai/gpt-image-2` | `openai/gpt-image-2` |
+| Auth | `OPENAI_API_KEY` | OpenAI Codex OAuth sign-in |
+| Transport | OpenAI Images API | Codex Responses backend |
+| Max images per request | 4 | 4 |
+| Edit mode | Enabled (up to 5 reference images) | Enabled (up to 5 reference images) |
+| Size overrides | Supported, including 2K/4K sizes | Supported, including 2K/4K sizes |
+| Aspect ratio / resolution | Not forwarded to OpenAI Images API | Mapped to a supported size when safe |
+
+```
+{
+  agents: {
+    defaults: {
+      imageGenerationModel: { primary: "openai/gpt-image-2" },
+    },
+  },
+}
+```
+
+See [Image Generation](https://docs.openclaw.ai/tools/image-generation) for shared tool parameters, provider selection, and failover behavior.
+
+`gpt-image-2` is the default for both OpenAI text-to-image generation and image
+editing. `gpt-image-1.5`, `gpt-image-1`, and `gpt-image-1-mini` remain usable as
+explicit model overrides. Use `openai/gpt-image-1.5` for transparent-background
+PNG/WebP output; the current `gpt-image-2` API rejects
+`background: "transparent"`.For a transparent-background request, agents should call `image_generate` with
+`model: "openai/gpt-image-1.5"`, `outputFormat: "png"` or `"webp"`, and
+`background: "transparent"`; the older `openai.background` provider option is
+still accepted. OpenClaw also protects the public OpenAI and
+OpenAI Codex OAuth routes by rewriting default `openai/gpt-image-2` transparent
+requests to `gpt-image-1.5`; Azure and custom OpenAI-compatible endpoints keep
+their configured deployment/model names.The same setting is exposed for headless CLI runs:
+
+```
+openclaw infer image generate \
+  --model openai/gpt-image-1.5 \
+  --output-format png \
+  --background transparent \
+  --prompt "A simple red circle sticker on a transparent background" \
+  --json
+```
+
+Use the same `--output-format` and `--background` flags with
+`openclaw infer image edit` when starting from an input file.
+`--openai-background` remains available as an OpenAI-specific alias.For Codex OAuth installs, keep the same `openai/gpt-image-2` ref. When an
+`openai-codex` OAuth profile is configured, OpenClaw resolves that stored OAuth
+access token and sends image requests through the Codex Responses backend. It
+does not first try `OPENAI_API_KEY` or silently fall back to an API key for that
+request. Configure `models.providers.openai` explicitly with an API key,
+custom base URL, or Azure endpoint when you want the direct OpenAI Images API
+route instead.
+If that custom image endpoint is on a trusted LAN/private address, also set
+`browser.ssrfPolicy.dangerouslyAllowPrivateNetwork: true`; OpenClaw keeps
+private/internal OpenAI-compatible image endpoints blocked unless this opt-in is
+present.Generate:
+
+```
+/tool image_generate model=openai/gpt-image-2 prompt="A polished launch poster for OpenClaw on macOS" size=3840x2160 count=1
+```
+
+Generate a transparent PNG:
+
+```
+/tool image_generate model=openai/gpt-image-1.5 prompt="A simple red circle sticker on a transparent background" outputFormat=png background=transparent
+```
+
+Edit:
+
+```
+/tool image_generate model=openai/gpt-image-2 prompt="Preserve the object shape, change the material to translucent glass" image=/path/to/reference.png size=1024x1536
+```
+
+## Video generation
+
+The bundled `openai` plugin registers video generation through the `video_generate` tool.
+
+| Capability | Value |
+| --- | --- |
+| Default model | `openai/sora-2` |
+| Modes | Text-to-video, image-to-video, single-video edit |
+| Reference inputs | 1 image or 1 video |
+| Size overrides | Supported |
+| Other overrides | `aspectRatio`, `resolution`, `audio`, `watermark` are ignored with a tool warning |
+
+```
+{
+  agents: {
+    defaults: {
+      videoGenerationModel: { primary: "openai/sora-2" },
+    },
+  },
+}
+```
+
+See [Video Generation](https://docs.openclaw.ai/tools/video-generation) for shared tool parameters, provider selection, and failover behavior.
+
+## GPT-5 prompt contribution
+
+OpenClaw adds a shared GPT-5 prompt contribution for GPT-5-family runs across providers. It applies by model id, so `openai-codex/gpt-5.5`, `openai/gpt-5.5`, `openrouter/openai/gpt-5.5`, `opencode/gpt-5.5`, and other compatible GPT-5 refs receive the same overlay. Older GPT-4.x models do not.The bundled native Codex harness uses the same GPT-5 behavior and heartbeat overlay through Codex app-server developer instructions, so `openai/gpt-5.x` sessions forced through `agentRuntime.id: "codex"` keep the same follow-through and proactive heartbeat guidance even though Codex owns the rest of the harness prompt.The GPT-5 contribution adds a tagged behavior contract for persona persistence, execution safety, tool discipline, output shape, completion checks, and verification. Channel-specific reply and silent-message behavior stays in the shared OpenClaw system prompt and outbound delivery policy. The GPT-5 guidance is always enabled for matching models. The friendly interaction-style layer is separate and configurable.
+
+| Value | Effect |
+| --- | --- |
+| `"friendly"` (default) | Enable the friendly interaction-style layer |
+| `"on"` | Alias for `"friendly"` |
+| `"off"` | Disable only the friendly style layer |
+
+- Config
+
+- CLI
+
+```
+{
+  agents: {
+    defaults: {
+      promptOverlays: {
+        gpt5: { personality: "friendly" },
+      },
+    },
+  },
+}
+```
+
+```
+openclaw config set agents.defaults.promptOverlays.gpt5.personality off
+```
+
+Values are case-insensitive at runtime, so `"Off"` and `"off"` both disable the friendly style layer.
+
+Legacy `plugins.entries.openai.config.personality` is still read as a compatibility fallback when the shared `agents.defaults.promptOverlays.gpt5.personality` setting is not set.
+
+## Voice and speech
+
+Speech synthesis (TTS)
+
+The bundled `openai` plugin registers speech synthesis for the `messages.tts` surface.
+
+| Setting | Config path | Default |
+| --- | --- | --- |
+| Model | `messages.tts.providers.openai.model` | `gpt-4o-mini-tts` |
+| Voice | `messages.tts.providers.openai.voice` | `coral` |
+| Speed | `messages.tts.providers.openai.speed` | (unset) |
+| Instructions | `messages.tts.providers.openai.instructions` | (unset, `gpt-4o-mini-tts` only) |
+| Format | `messages.tts.providers.openai.responseFormat` | `opus` for voice notes, `mp3` for files |
+| API key | `messages.tts.providers.openai.apiKey` | Falls back to `OPENAI_API_KEY` |
+| Base URL | `messages.tts.providers.openai.baseUrl` | `https://api.openai.com/v1` |
+| Extra body | `messages.tts.providers.openai.extraBody` / `extra_body` | (unset) |
+
+Available models: `gpt-4o-mini-tts`, `tts-1`, `tts-1-hd`. Available voices: `alloy`, `ash`, `ballad`, `cedar`, `coral`, `echo`, `fable`, `juniper`, `marin`, `onyx`, `nova`, `sage`, `shimmer`, `verse`.`extraBody` is merged into `/audio/speech` request JSON after OpenClaw’s generated fields, so use it for OpenAI-compatible endpoints that require additional keys such as `lang`. Prototype keys are ignored.
+
+```
+{
+  messages: {
+    tts: {
+      providers: {
+        openai: { model: "gpt-4o-mini-tts", voice: "coral" },
+      },
+    },
+  },
+}
+```
+
+Set `OPENAI_TTS_BASE_URL` to override the TTS base URL without affecting the chat API endpoint.
+
+Speech-to-text
+
+The bundled `openai` plugin registers batch speech-to-text through
+OpenClaw’s media-understanding transcription surface.
+
+- Default model: `gpt-4o-transcribe`
+- Endpoint: OpenAI REST `/v1/audio/transcriptions`
+- Input path: multipart audio file upload
+- Supported by OpenClaw wherever inbound audio transcription uses
+`tools.media.audio`, including Discord voice-channel segments and channel
+audio attachments
+
+To force OpenAI for inbound audio transcription:
+
+```
+{
+  tools: {
+    media: {
+      audio: {
+        models: [\
+          {\
+            type: "provider",\
+            provider: "openai",\
+            model: "gpt-4o-transcribe",\
+          },\
+        ],
+      },
+    },
+  },
+}
+```
+
+Language and prompt hints are forwarded to OpenAI when supplied by the
+shared audio media config or per-call transcription request.
+
+Realtime transcription
+
+The bundled `openai` plugin registers realtime transcription for the Voice Call plugin.
+
+| Setting | Config path | Default |
+| --- | --- | --- |
+| Model | `plugins.entries.voice-call.config.streaming.providers.openai.model` | `gpt-4o-transcribe` |
+| Language | `...openai.language` | (unset) |
+| Prompt | `...openai.prompt` | (unset) |
+| Silence duration | `...openai.silenceDurationMs` | `800` |
+| VAD threshold | `...openai.vadThreshold` | `0.5` |
+| API key | `...openai.apiKey` | Falls back to `OPENAI_API_KEY` |
+
+Uses a WebSocket connection to `wss://api.openai.com/v1/realtime` with G.711 u-law (`g711_ulaw` / `audio/pcmu`) audio. This streaming provider is for Voice Call’s realtime transcription path; Discord voice currently records short segments and uses the batch `tools.media.audio` transcription path instead.
+
+Realtime voice
+
+The bundled `openai` plugin registers realtime voice for the Voice Call plugin.
+
+| Setting | Config path | Default |
+| --- | --- | --- |
+| Model | `plugins.entries.voice-call.config.realtime.providers.openai.model` | `gpt-realtime-1.5` |
+| Voice | `...openai.voice` | `alloy` |
+| Temperature | `...openai.temperature` | `0.8` |
+| VAD threshold | `...openai.vadThreshold` | `0.5` |
+| Silence duration | `...openai.silenceDurationMs` | `500` |
+| API key | `...openai.apiKey` | Falls back to `OPENAI_API_KEY` |
+
+Supports Azure OpenAI via `azureEndpoint` and `azureDeployment` config keys for backend realtime bridges. Supports bidirectional tool calling. Uses G.711 u-law audio format.
+
+Control UI Talk uses OpenAI browser realtime sessions with a Gateway-minted
+ephemeral client secret and a direct browser WebRTC SDP exchange against the
+OpenAI Realtime API. Maintainer live verification is available with
+`OPENAI_API_KEY=... GEMINI_API_KEY=... node --import tsx scripts/dev/realtime-talk-live-smoke.ts`;
+the OpenAI leg mints a client secret in Node, generates a browser SDP offer
+with fake microphone media, posts it to OpenAI, and applies the SDP answer
+without logging secrets.
+
+## Azure OpenAI endpoints
+
+The bundled `openai` provider can target an Azure OpenAI resource for image
+generation by overriding the base URL. On the image-generation path, OpenClaw
+detects Azure hostnames on `models.providers.openai.baseUrl` and switches to
+Azure’s request shape automatically.
+
+Realtime voice uses a separate configuration path
+(`plugins.entries.voice-call.config.realtime.providers.openai.azureEndpoint`)
+and is not affected by `models.providers.openai.baseUrl`. See the **Realtime**
+**voice** accordion under [Voice and speech](https://docs.openclaw.ai/providers/openai#voice-and-speech) for its Azure
+settings.
+
+Use Azure OpenAI when:
+
+- You already have an Azure OpenAI subscription, quota, or enterprise agreement
+- You need regional data residency or compliance controls Azure provides
+- You want to keep traffic inside an existing Azure tenancy
+
+### Configuration
+
+For Azure image generation through the bundled `openai` provider, point
+`models.providers.openai.baseUrl` at your Azure resource and set `apiKey` to
+the Azure OpenAI key (not an OpenAI Platform key):
+
+```
+{
+  models: {
+    providers: {
+      openai: {
+        baseUrl: "https://<your-resource>.openai.azure.com",
+        apiKey: "<azure-openai-api-key>",
+      },
+    },
+  },
+}
+```
+
+OpenClaw recognizes these Azure host suffixes for the Azure image-generation
+route:
+
+- `*.openai.azure.com`
+- `*.services.ai.azure.com`
+- `*.cognitiveservices.azure.com`
+
+For image-generation requests on a recognized Azure host, OpenClaw:
+
+- Sends the `api-key` header instead of `Authorization: Bearer`
+- Uses deployment-scoped paths (`/openai/deployments/{deployment}/...`)
+- Appends `?api-version=...` to each request
+- Uses a 600s default request timeout for Azure image-generation calls.
+Per-call `timeoutMs` values still override this default.
+
+Other base URLs (public OpenAI, OpenAI-compatible proxies) keep the standard
+OpenAI image request shape.
+
+Azure routing for the `openai` provider’s image-generation path requires
+OpenClaw 2026.4.22 or later. Earlier versions treat any custom
+`openai.baseUrl` like the public OpenAI endpoint and will fail against Azure
+image deployments.
+
+### API version
+
+Set `AZURE_OPENAI_API_VERSION` to pin a specific Azure preview or GA version
+for the Azure image-generation path:
+
+```
+export AZURE_OPENAI_API_VERSION="2024-12-01-preview"
+```
+
+The default is `2024-12-01-preview` when the variable is unset.
+
+### Model names are deployment names
+
+Azure OpenAI binds models to deployments. For Azure image-generation requests
+routed through the bundled `openai` provider, the `model` field in OpenClaw
+must be the **Azure deployment name** you configured in the Azure portal, not
+the public OpenAI model id.If you create a deployment called `gpt-image-2-prod` that serves `gpt-image-2`:
+
+```
+/tool image_generate model=openai/gpt-image-2-prod prompt="A clean poster" size=1024x1024 count=1
+```
+
+The same deployment-name rule applies to image-generation calls routed through
+the bundled `openai` provider.
+
+### Regional availability
+
+Azure image generation is currently available only in a subset of regions
+(for example `eastus2`, `swedencentral`, `polandcentral`, `westus3`,
+`uaenorth`). Check Microsoft’s current region list before creating a
+deployment, and confirm the specific model is offered in your region.
+
+### Parameter differences
+
+Azure OpenAI and public OpenAI do not always accept the same image parameters.
+Azure may reject options that public OpenAI allows (for example certain
+`background` values on `gpt-image-2`) or expose them only on specific model
+versions. These differences come from Azure and the underlying model, not
+OpenClaw. If an Azure request fails with a validation error, check the
+parameter set supported by your specific deployment and API version in the
+Azure portal.
+
+Azure OpenAI uses native transport and compat behavior but does not receive
+OpenClaw’s hidden attribution headers — see the **Native vs OpenAI-compatible**
+**routes** accordion under [Advanced configuration](https://docs.openclaw.ai/providers/openai#advanced-configuration).For chat or Responses traffic on Azure (beyond image generation), use the
+onboarding flow or a dedicated Azure provider config — `openai.baseUrl` alone
+does not pick up the Azure API/auth shape. A separate
+`azure-openai-responses/*` provider exists; see
+the Server-side compaction accordion below.
+
+## Advanced configuration
+
+Transport (WebSocket vs SSE)
+
+OpenClaw uses WebSocket-first with SSE fallback (`"auto"`) for both `openai/*` and `openai-codex/*`.In `"auto"` mode, OpenClaw:
+
+- Retries one early WebSocket failure before falling back to SSE
+- After a failure, marks WebSocket as degraded for ~60 seconds and uses SSE during cool-down
+- Attaches stable session and turn identity headers for retries and reconnects
+- Normalizes usage counters (`input_tokens` / `prompt_tokens`) across transport variants
+
+| Value | Behavior |
+| --- | --- |
+| `"auto"` (default) | WebSocket first, SSE fallback |
+| `"sse"` | Force SSE only |
+| `"websocket"` | Force WebSocket only |
+
+```
+{
+  agents: {
+    defaults: {
+      models: {
+        "openai/gpt-5.5": {
+          params: { transport: "auto" },
+        },
+        "openai-codex/gpt-5.5": {
+          params: { transport: "auto" },
+        },
+      },
+    },
+  },
+}
+```
+
+Related OpenAI docs:
+
+- [Realtime API with WebSocket](https://platform.openai.com/docs/guides/realtime-websocket)
+- [Streaming API responses (SSE)](https://platform.openai.com/docs/guides/streaming-responses)
+
+WebSocket warm-up
+
+OpenClaw enables WebSocket warm-up by default for `openai/*` and `openai-codex/*` to reduce first-turn latency.
+
+```
+// Disable warm-up
+{
+  agents: {
+    defaults: {
+      models: {
+        "openai/gpt-5.5": {
+          params: { openaiWsWarmup: false },
+        },
+      },
+    },
+  },
+}
+```
+
+Fast mode
+
+OpenClaw exposes a shared fast-mode toggle for `openai/*` and `openai-codex/*`:
+
+- **Chat/UI:**`/fast status|on|off`
+- **Config:**`agents.defaults.models["<provider>/<model>"].params.fastMode`
+
+When enabled, OpenClaw maps fast mode to OpenAI priority processing (`service_tier = "priority"`). Existing `service_tier` values are preserved, and fast mode does not rewrite `reasoning` or `text.verbosity`.
+
+```
+{
+  agents: {
+    defaults: {
+      models: {
+        "openai/gpt-5.5": { params: { fastMode: true } },
+      },
+    },
+  },
+}
+```
+
+Session overrides win over config. Clearing the session override in the Sessions UI returns the session to the configured default.
+
+Priority processing (service\_tier)
+
+OpenAI’s API exposes priority processing via `service_tier`. Set it per model in OpenClaw:
+
+```
+{
+  agents: {
+    defaults: {
+      models: {
+        "openai/gpt-5.5": { params: { serviceTier: "priority" } },
+      },
+    },
+  },
+}
+```
+
+Supported values: `auto`, `default`, `flex`, `priority`.
+
+`serviceTier` is only forwarded to native OpenAI endpoints (`api.openai.com`) and native Codex endpoints (`chatgpt.com/backend-api`). If you route either provider through a proxy, OpenClaw leaves `service_tier` untouched.
+
+Server-side compaction (Responses API)
+
+For direct OpenAI Responses models (`openai/*` on `api.openai.com`), the OpenAI plugin’s Pi-harness stream wrapper auto-enables server-side compaction:
+
+- Forces `store: true` (unless model compat sets `supportsStore: false`)
+- Injects `context_management: [{ type: "compaction", compact_threshold: ... }]`
+- Default `compact_threshold`: 70% of `contextWindow` (or `80000` when unavailable)
+
+This applies to the built-in Pi harness path and to OpenAI provider hooks used by embedded runs. The native Codex app-server harness manages its own context through Codex and is configured separately with `agents.defaults.agentRuntime.id`.
+
+- Enable explicitly
+
+- Custom threshold
+
+- Disable
+
+Useful for compatible endpoints like Azure OpenAI Responses:
+
+```
+{
+  agents: {
+    defaults: {
+      models: {
+        "azure-openai-responses/gpt-5.5": {
+          params: { responsesServerCompaction: true },
+        },
+      },
+    },
+  },
+}
+```
+
+```
+{
+  agents: {
+    defaults: {
+      models: {
+        "openai/gpt-5.5": {
+          params: {
+            responsesServerCompaction: true,
+            responsesCompactThreshold: 120000,
+          },
+        },
+      },
+    },
+  },
+}
+```
+
+```
+{
+  agents: {
+    defaults: {
+      models: {
+        "openai/gpt-5.5": {
+          params: { responsesServerCompaction: false },
+        },
+      },
+    },
+  },
+}
+```
+
+`responsesServerCompaction` only controls `context_management` injection. Direct OpenAI Responses models still force `store: true` unless compat sets `supportsStore: false`.
+
+Strict-agentic GPT mode
+
+For GPT-5-family runs on `openai/*`, OpenClaw can use a stricter embedded execution contract:
+
+```
+{
+  agents: {
+    defaults: {
+      embeddedPi: { executionContract: "strict-agentic" },
+    },
+  },
+}
+```
+
+With `strict-agentic`, OpenClaw:
+
+- No longer treats a plan-only turn as successful progress when a tool action is available
+- Retries the turn with an act-now steer
+- Auto-enables `update_plan` for substantial work
+- Surfaces an explicit blocked state if the model keeps planning without acting
+
+Scoped to OpenAI and Codex GPT-5-family runs only. Other providers and older model families keep default behavior.
+
+Native vs OpenAI-compatible routes
+
+OpenClaw treats direct OpenAI, Codex, and Azure OpenAI endpoints differently from generic OpenAI-compatible `/v1` proxies:**Native routes** (`openai/*`, Azure OpenAI):
+
+- Keep `reasoning: { effort: "none" }` only for models that support the OpenAI `none` effort
+- Omit disabled reasoning for models or proxies that reject `reasoning.effort: "none"`
+- Default tool schemas to strict mode
+- Attach hidden attribution headers on verified native hosts only
+- Keep OpenAI-only request shaping (`service_tier`, `store`, reasoning-compat, prompt-cache hints)
+
+**Proxy/compatible routes:**
+
+- Use looser compat behavior
+- Strip Completions `store` from non-native `openai-completions` payloads
+- Accept advanced `params.extra_body`/`params.extraBody` pass-through JSON for OpenAI-compatible Completions proxies
+- Accept `params.chat_template_kwargs` for OpenAI-compatible Completions proxies such as vLLM
+- Do not force strict tool schemas or native-only headers
+
+Azure OpenAI uses native transport and compat behavior but does not receive the hidden attribution headers.
+
+## Related
+
+[**Model selection** \\
+\\
+Choosing providers, model refs, and failover behavior.](https://docs.openclaw.ai/concepts/model-providers)
+
+[**Image generation** \\
+\\
+Shared image tool parameters and provider selection.](https://docs.openclaw.ai/tools/image-generation)
+
+[**Video generation** \\
+\\
+Shared video tool parameters and provider selection.](https://docs.openclaw.ai/tools/video-generation)
+
+[**OAuth and auth** \\
+\\
+Auth details and credential reuse rules.](https://docs.openclaw.ai/gateway/authentication)
+
+[Ollama](https://docs.openclaw.ai/providers/ollama) [OpenCode](https://docs.openclaw.ai/providers/opencode)
+
+Ctrl+I
 
 ---
 
@@ -3579,7 +7390,6 @@ Full config reference for agents, models, and providers.](https://docs.openclaw.
 
 Ctrl+I
 
-
 ---
 
 ## OpenCode Go - OpenClaw
@@ -3721,7 +7531,6 @@ Choosing providers, model refs, and failover behavior.](https://docs.openclaw.ai
 [OpenCode](https://docs.openclaw.ai/providers/opencode) [OpenRouter](https://docs.openclaw.ai/providers/openrouter)
 
 Ctrl+I
-
 
 ---
 
@@ -3875,10 +7684,73 @@ OpenRouter’s documented app-attribution headers:
 
 | Header | Value |
 | --- | --- |
-| `HTTP-Referer` | `ht
+| `HTTP-Referer` | `https://openclaw.ai` |
+| `X-OpenRouter-Title` | `OpenClaw` |
+| `X-OpenRouter-Categories` | `cli-agent` |
 
-_… [truncated; see https://docs.openclaw.ai/providers/openrouter for full content]_
+If you repoint the OpenRouter provider at some other proxy or base URL, OpenClaw
+does **not** inject those OpenRouter-specific headers or Anthropic cache markers.
 
+## Advanced configuration
+
+Anthropic cache markers
+
+On verified OpenRouter routes, Anthropic model refs keep the
+OpenRouter-specific Anthropic `cache_control` markers that OpenClaw uses for
+better prompt-cache reuse on system/developer prompt blocks.
+
+Anthropic reasoning prefill
+
+On verified OpenRouter routes, Anthropic model refs with reasoning enabled
+drop trailing assistant prefill turns before the request reaches OpenRouter,
+matching Anthropic’s requirement that reasoning conversations end with a user
+turn.
+
+Thinking / reasoning injection
+
+On supported non-`auto` routes, OpenClaw maps the selected thinking level to
+OpenRouter proxy reasoning payloads. Unsupported model hints and
+`openrouter/auto` skip that reasoning injection. Hunter Alpha also skips
+proxy reasoning for stale configured model refs because OpenRouter could
+return final answer text in reasoning fields for that retired route.
+
+DeepSeek V4 reasoning replay
+
+On verified OpenRouter routes, `openrouter/deepseek/deepseek-v4-flash` and
+`openrouter/deepseek/deepseek-v4-pro` fill missing `reasoning_content` on
+replayed assistant turns so thinking/tool conversations keep DeepSeek V4’s
+required follow-up shape.
+
+OpenAI-only request shaping
+
+OpenRouter still runs through the proxy-style OpenAI-compatible path, so
+native OpenAI-only request shaping such as `serviceTier`, Responses `store`,
+OpenAI reasoning-compat payloads, and prompt-cache hints is not forwarded.
+
+Gemini-backed routes
+
+Gemini-backed OpenRouter refs stay on the proxy-Gemini path: OpenClaw keeps
+Gemini thought-signature sanitation there, but does not enable native Gemini
+replay validation or bootstrap rewrites.
+
+Provider routing metadata
+
+If you pass OpenRouter provider routing under model params, OpenClaw forwards
+it as OpenRouter routing metadata before the shared stream wrappers run.
+
+## Related
+
+[**Model selection** \\
+\\
+Choosing providers, model refs, and failover behavior.](https://docs.openclaw.ai/concepts/model-providers)
+
+[**Configuration reference** \\
+\\
+Full config reference for agents, models, and providers.](https://docs.openclaw.ai/gateway/configuration-reference)
+
+[OpenCode Go](https://docs.openclaw.ai/providers/opencode-go) [Perplexity](https://docs.openclaw.ai/providers/perplexity-provider)
+
+Ctrl+I
 
 ---
 
@@ -4023,10 +7895,13 @@ Full OpenClaw configuration reference.](https://docs.openclaw.ai/gateway/configu
 \\
 Configuring agent defaults and model assignments.](https://docs.openclaw.ai/concepts/agent)
 
-[**Qianfan API docs*
+[**Qianfan API docs** \\
+\\
+Official Qianfan API documentation.](https://cloud.baidu.com/doc/qianfan-api/s/3m7of64lb)
 
-_… [truncated; see https://docs.openclaw.ai/providers/qianfan for full content]_
+[Perplexity](https://docs.openclaw.ai/providers/perplexity-provider) [Qwen](https://docs.openclaw.ai/providers/qwen)
 
+Ctrl+I
 
 ---
 
@@ -4195,10 +8070,180 @@ alias.
 | Standard (pay-as-you-go) | China | `qwen-standard-api-key-cn` | `dashscope.aliyuncs.com/compatible-mode/v1` |
 | Standard (pay-as-you-go) | Global | `qwen-standard-api-key` | `dashscope-intl.aliyuncs.com/compatible-mode/v1` |
 | Coding Plan (subscription) | China | `qwen-api-key-cn` | `coding.dashscope.aliyuncs.com/v1` |
-| Coding Plan (subscription) | Global
+| Coding Plan (subscription) | Global | `qwen-api-key` | `coding-intl.dashscope.aliyuncs.com/v1` |
 
-_… [truncated; see https://docs.openclaw.ai/providers/qwen for full content]_
+The provider auto-selects the endpoint based on your auth choice. Canonical
+choices use the `qwen-*` family; `modelstudio-*` remains compatibility-only.
+You can override with a custom `baseUrl` in config.
 
+**Manage keys:** [home.qwencloud.com/api-keys](https://home.qwencloud.com/api-keys) \|
+**Docs:** [docs.qwencloud.com](https://docs.qwencloud.com/developer-guides/getting-started/introduction)
+
+## Built-in catalog
+
+OpenClaw currently ships this bundled Qwen catalog. The configured catalog is
+endpoint-aware: Coding Plan configs omit models that are only known to work on
+the Standard endpoint.
+
+| Model ref | Input | Context | Notes |
+| --- | --- | --- | --- |
+| `qwen/qwen3.5-plus` | text, image | 1,000,000 | Default model |
+| `qwen/qwen3.6-plus` | text, image | 1,000,000 | Prefer Standard endpoints when you need this model |
+| `qwen/qwen3-max-2026-01-23` | text | 262,144 | Qwen Max line |
+| `qwen/qwen3-coder-next` | text | 262,144 | Coding |
+| `qwen/qwen3-coder-plus` | text | 1,000,000 | Coding |
+| `qwen/MiniMax-M2.5` | text | 1,000,000 | Reasoning enabled |
+| `qwen/glm-5` | text | 202,752 | GLM |
+| `qwen/glm-4.7` | text | 202,752 | GLM |
+| `qwen/kimi-k2.5` | text, image | 262,144 | Moonshot AI via Alibaba |
+
+Availability can still vary by endpoint and billing plan even when a model is
+present in the bundled catalog.
+
+## Thinking Controls
+
+For reasoning-enabled Qwen Cloud models, the bundled provider maps OpenClaw
+thinking levels to DashScope’s top-level `enable_thinking` request flag. Disabled
+thinking sends `enable_thinking: false`; other thinking levels send
+`enable_thinking: true`.
+
+## Multimodal add-ons
+
+The `qwen` plugin also exposes multimodal capabilities on the **Standard**
+DashScope endpoints (not the Coding Plan endpoints):
+
+- **Video understanding** via `qwen-vl-max-latest`
+- **Wan video generation** via `wan2.6-t2v` (default), `wan2.6-i2v`, `wan2.6-r2v`, `wan2.6-r2v-flash`, `wan2.7-r2v`
+
+To use Qwen as the default video provider:
+
+```
+{
+  agents: {
+    defaults: {
+      videoGenerationModel: { primary: "qwen/wan2.6-t2v" },
+    },
+  },
+}
+```
+
+See [Video Generation](https://docs.openclaw.ai/tools/video-generation) for shared tool parameters, provider selection, and failover behavior.
+
+## Advanced configuration
+
+Image and video understanding
+
+The bundled Qwen plugin registers media understanding for images and video
+on the **Standard** DashScope endpoints (not the Coding Plan endpoints).
+
+| Property | Value |
+| --- | --- |
+| Model | `qwen-vl-max-latest` |
+| Supported input | Images, video |
+
+Media understanding is auto-resolved from the configured Qwen auth — no
+additional config is needed. Ensure you are using a Standard (pay-as-you-go)
+endpoint for media understanding support.
+
+Qwen 3.6 Plus availability
+
+`qwen3.6-plus` is available on the Standard (pay-as-you-go) Model Studio
+endpoints:
+
+- China: `dashscope.aliyuncs.com/compatible-mode/v1`
+- Global: `dashscope-intl.aliyuncs.com/compatible-mode/v1`
+
+If the Coding Plan endpoints return an “unsupported model” error for
+`qwen3.6-plus`, switch to Standard (pay-as-you-go) instead of the Coding Plan
+endpoint/key pair.OpenClaw’s bundled Qwen catalog does not advertise `qwen3.6-plus` on Coding
+Plan endpoints, but explicitly configured `qwen/qwen3.6-plus` entries under
+`models.providers.qwen.models` are honored on Coding Plan baseUrls so you
+can opt that model in if Aliyun enables it on your subscription. The
+upstream API still decides whether the call succeeds.
+
+Capability plan
+
+The `qwen` plugin is being positioned as the vendor home for the full Qwen
+Cloud surface, not just coding/text models.
+
+- **Text/chat models:** bundled now
+- **Tool calling, structured output, thinking:** inherited from the OpenAI-compatible transport
+- **Image generation:** planned at the provider-plugin layer
+- **Image/video understanding:** bundled now on the Standard endpoint
+- **Speech/audio:** planned at the provider-plugin layer
+- **Memory embeddings/reranking:** planned through the embedding adapter surface
+- **Video generation:** bundled now through the shared video-generation capability
+
+Video generation details
+
+For video generation, OpenClaw maps the configured Qwen region to the matching
+DashScope AIGC host before submitting the job:
+
+- Global/Intl: `https://dashscope-intl.aliyuncs.com`
+- China: `https://dashscope.aliyuncs.com`
+
+That means a normal `models.providers.qwen.baseUrl` pointing at either the
+Coding Plan or Standard Qwen hosts still keeps video generation on the correct
+regional DashScope video endpoint.Current bundled Qwen video-generation limits:
+
+- Up to **1** output video per request
+- Up to **1** input image
+- Up to **4** input videos
+- Up to **10 seconds** duration
+- Supports `size`, `aspectRatio`, `resolution`, `audio`, and `watermark`
+- Reference image/video mode currently requires **remote http(s) URLs**. Local
+file paths are rejected up front because the DashScope video endpoint does not
+accept uploaded local buffers for those references.
+
+Streaming usage compatibility
+
+Native Model Studio endpoints advertise streaming usage compatibility on the
+shared `openai-completions` transport. OpenClaw keys that off endpoint
+capabilities now, so DashScope-compatible custom provider ids targeting the
+same native hosts inherit the same streaming-usage behavior instead of
+requiring the built-in `qwen` provider id specifically.Native-streaming usage compatibility applies to both the Coding Plan hosts and
+the Standard DashScope-compatible hosts:
+
+- `https://coding.dashscope.aliyuncs.com/v1`
+- `https://coding-intl.dashscope.aliyuncs.com/v1`
+- `https://dashscope.aliyuncs.com/compatible-mode/v1`
+- `https://dashscope-intl.aliyuncs.com/compatible-mode/v1`
+
+Multimodal endpoint regions
+
+Multimodal surfaces (video understanding and Wan video generation) use the
+**Standard** DashScope endpoints, not the Coding Plan endpoints:
+
+- Global/Intl Standard base URL: `https://dashscope-intl.aliyuncs.com/compatible-mode/v1`
+- China Standard base URL: `https://dashscope.aliyuncs.com/compatible-mode/v1`
+
+Environment and daemon setup
+
+If the Gateway runs as a daemon (launchd/systemd), make sure `QWEN_API_KEY` is
+available to that process (for example, in `~/.openclaw/.env` or via
+`env.shellEnv`).
+
+## Related
+
+[**Model selection** \\
+\\
+Choosing providers, model refs, and failover behavior.](https://docs.openclaw.ai/concepts/model-providers)
+
+[**Video generation** \\
+\\
+Shared video tool parameters and provider selection.](https://docs.openclaw.ai/tools/video-generation)
+
+[**Alibaba (ModelStudio)** \\
+\\
+Legacy ModelStudio provider and migration notes.](https://docs.openclaw.ai/providers/alibaba)
+
+[**Troubleshooting** \\
+\\
+General troubleshooting and FAQ.](https://docs.openclaw.ai/help/troubleshooting)
+
+[Qianfan](https://docs.openclaw.ai/providers/qianfan) [Runway](https://docs.openclaw.ai/providers/runway)
+
+Ctrl+I
 
 ---
 
@@ -4277,7 +8322,6 @@ continues to use providers with streaming STT support.
 [Runway](https://docs.openclaw.ai/providers/runway) [SGLang](https://docs.openclaw.ai/providers/sglang)
 
 Ctrl+I
-
 
 ---
 
@@ -4434,7 +8478,6 @@ Full config schema including provider entries.](https://docs.openclaw.ai/gateway
 
 Ctrl+I
 
-
 ---
 
 ## Synthetic - OpenClaw
@@ -4570,10 +8613,39 @@ from the agent.
 
 Base URL override
 
-If Synthetic changes its API endpoint, overri
+If Synthetic changes its API endpoint, override the base URL in your config:
 
-_… [truncated; see https://docs.openclaw.ai/providers/synthetic for full content]_
+```
+{
+  models: {
+    providers: {
+      synthetic: {
+        baseUrl: "https://new-api.synthetic.new/anthropic",
+      },
+    },
+  },
+}
+```
 
+Remember that OpenClaw appends `/v1` automatically.
+
+## Related
+
+[**Model selection** \\
+\\
+Provider rules, model refs, and failover behavior.](https://docs.openclaw.ai/concepts/model-providers)
+
+[**Configuration reference** \\
+\\
+Full config schema including provider settings.](https://docs.openclaw.ai/gateway/configuration-reference)
+
+[**Synthetic** \\
+\\
+Synthetic dashboard and API docs.](https://synthetic.new/)
+
+[StepFun](https://docs.openclaw.ai/providers/stepfun) [Tencent Cloud (TokenHub)](https://docs.openclaw.ai/providers/tencent)
+
+Ctrl+I
 
 ---
 
@@ -4722,10 +8794,11 @@ Full config schema including provider settings.](https://docs.openclaw.ai/gatewa
 
 [**Together AI** \\
 \\
-Together AI dashboard, API docs,
+Together AI dashboard, API docs, and pricing.](https://together.ai/)
 
-_… [truncated; see https://docs.openclaw.ai/providers/together for full content]_
+[Tencent Cloud (TokenHub)](https://docs.openclaw.ai/providers/tencent) [Venice AI](https://docs.openclaw.ai/providers/venice)
 
+Ctrl+I
 
 ---
 
@@ -4823,7 +8896,6 @@ Current Venice credit rates and plans.](https://venice.ai/pricing)
 [Together AI](https://docs.openclaw.ai/providers/together) [Vercel AI gateway](https://docs.openclaw.ai/providers/vercel-ai-gateway)
 
 Ctrl+I
-
 
 ---
 
@@ -4963,6 +9035,1032 @@ General troubleshooting and FAQ.](https://docs.openclaw.ai/help/troubleshooting)
 
 Ctrl+I
 
+---
+
+## vLLM - OpenClaw
+
+_Source: <https://docs.openclaw.ai/providers/vllm>_
+
+[OpenClaw home page](https://docs.openclaw.ai/)
+
+Providers
+
+vLLM
+
+vLLM can serve open-source (and some custom) models via an **OpenAI-compatible** HTTP API. OpenClaw connects to vLLM using the `openai-completions` API.OpenClaw can also **auto-discover** available models from vLLM when you opt in with `VLLM_API_KEY` (any value works if your server does not enforce auth) and you do not define an explicit `models.providers.vllm` entry.OpenClaw treats `vllm` as a local OpenAI-compatible provider that supports
+streamed usage accounting, so status/context token counts can update from
+`stream_options.include_usage` responses.
+
+| Property | Value |
+| --- | --- |
+| Provider ID | `vllm` |
+| API | `openai-completions` (OpenAI-compatible) |
+| Auth | `VLLM_API_KEY` environment variable |
+| Default base URL | `http://127.0.0.1:8000/v1` |
+
+## Getting started
+
+1
+
+[Navigate to header](https://docs.openclaw.ai/providers/vllm#)
+
+Start vLLM with an OpenAI-compatible server
+
+Your base URL should expose `/v1` endpoints (e.g. `/v1/models`, `/v1/chat/completions`). vLLM commonly runs on:
+
+```
+http://127.0.0.1:8000/v1
+```
+
+2
+
+[Navigate to header](https://docs.openclaw.ai/providers/vllm#)
+
+Set the API key environment variable
+
+Any value works if your server does not enforce auth:
+
+```
+export VLLM_API_KEY="vllm-local"
+```
+
+3
+
+[Navigate to header](https://docs.openclaw.ai/providers/vllm#)
+
+Select a model
+
+Replace with one of your vLLM model IDs:
+
+```
+{
+  agents: {
+    defaults: {
+      model: { primary: "vllm/your-model-id" },
+    },
+  },
+}
+```
+
+4
+
+[Navigate to header](https://docs.openclaw.ai/providers/vllm#)
+
+Verify the model is available
+
+```
+openclaw models list --provider vllm
+```
+
+## Model discovery (implicit provider)
+
+When `VLLM_API_KEY` is set (or an auth profile exists) and you **do not** define `models.providers.vllm`, OpenClaw queries:
+
+```
+GET http://127.0.0.1:8000/v1/models
+```
+
+and converts the returned IDs into model entries.
+
+If you set `models.providers.vllm` explicitly, auto-discovery is skipped and you must define models manually.
+
+## Explicit configuration (manual models)
+
+Use explicit config when:
+
+- vLLM runs on a different host or port
+- You want to pin `contextWindow` or `maxTokens` values
+- Your server requires a real API key (or you want to control headers)
+- You connect to a trusted loopback, LAN, or Tailscale vLLM endpoint
+
+```
+{
+  models: {
+    providers: {
+      vllm: {
+        baseUrl: "http://127.0.0.1:8000/v1",
+        apiKey: "${VLLM_API_KEY}",
+        api: "openai-completions",
+        request: { allowPrivateNetwork: true },
+        timeoutSeconds: 300, // Optional: extend connect/header/body/request timeout for slow local models
+        models: [\
+          {\
+            id: "your-model-id",\
+            name: "Local vLLM Model",\
+            reasoning: false,\
+            input: ["text"],\
+            cost: { input: 0, output: 0, cacheRead: 0, cacheWrite: 0 },\
+            contextWindow: 128000,\
+            maxTokens: 8192,\
+          },\
+        ],
+      },
+    },
+  },
+}
+```
+
+## Advanced configuration
+
+Proxy-style behavior
+
+vLLM is treated as a proxy-style OpenAI-compatible `/v1` backend, not a native
+OpenAI endpoint. This means:
+
+| Behavior | Applied? |
+| --- | --- |
+| Native OpenAI request shaping | No |
+| `service_tier` | Not sent |
+| Responses `store` | Not sent |
+| Prompt-cache hints | Not sent |
+| OpenAI reasoning-compat payload shaping | Not applied |
+| Hidden OpenClaw attribution headers | Not injected on custom base URLs |
+
+Qwen thinking controls
+
+For Qwen models served through vLLM, set
+`params.qwenThinkingFormat: "chat-template"` on the model entry when the
+server expects Qwen chat-template kwargs. OpenClaw maps `/think off` to:
+
+```
+{
+  "chat_template_kwargs": {
+    "enable_thinking": false,
+    "preserve_thinking": true
+  }
+}
+```
+
+Non-`off` thinking levels send `enable_thinking: true`. If your endpoint
+expects DashScope-style top-level flags instead, use
+`params.qwenThinkingFormat: "top-level"` to send `enable_thinking` at the
+request root. Snake-case `params.qwen_thinking_format` is also accepted.
+
+Nemotron 3 thinking controls
+
+vLLM/Nemotron 3 can use chat-template kwargs to control whether reasoning is
+returned as hidden reasoning or visible answer text. When an OpenClaw session
+uses `vllm/nemotron-3-*` with thinking off, the bundled vLLM plugin sends:
+
+```
+{
+  "chat_template_kwargs": {
+    "enable_thinking": false,
+    "force_nonempty_content": true
+  }
+}
+```
+
+To customize these values, set `chat_template_kwargs` under the model params.
+If you also set `params.extra_body.chat_template_kwargs`, that value has
+final precedence because `extra_body` is the last request-body override.
+
+```
+{
+  agents: {
+    defaults: {
+      models: {
+        "vllm/nemotron-3-super": {
+          params: {
+            chat_template_kwargs: {
+              enable_thinking: false,
+              force_nonempty_content: true,
+            },
+          },
+        },
+      },
+    },
+  },
+}
+```
+
+Qwen tool calls appear as text
+
+First make sure vLLM was started with the right tool-call parser and chat
+template for the model. For example, vLLM documents `hermes` for Qwen2.5
+models and `qwen3_xml` for Qwen3-Coder models.Symptoms:
+
+- skills or tools never run
+- the assistant prints raw JSON/XML such as `{"name":"read","arguments":...}`
+- vLLM returns an empty `tool_calls` array when OpenClaw sends
+`tool_choice: "auto"`
+
+Some Qwen/vLLM combinations return structured tool calls only when the
+request uses `tool_choice: "required"`. For those model entries, force the
+OpenAI-compatible request field with `params.extra_body`:
+
+```
+{
+  agents: {
+    defaults: {
+      models: {
+        "vllm/Qwen-Qwen2.5-Coder-32B-Instruct": {
+          params: {
+            extra_body: {
+              tool_choice: "required",
+            },
+          },
+        },
+      },
+    },
+  },
+}
+```
+
+Replace `Qwen-Qwen2.5-Coder-32B-Instruct` with the exact id returned by:
+
+```
+openclaw models list --provider vllm
+```
+
+You can apply the same override from the CLI:
+
+```
+openclaw config set agents.defaults.models '{"vllm/Qwen-Qwen2.5-Coder-32B-Instruct":{"params":{"extra_body":{"tool_choice":"required"}}}}' --strict-json --merge
+```
+
+This is an opt-in compatibility workaround. It makes every model turn with
+tools require a tool call, so use it only for a dedicated local model entry
+where that behavior is acceptable. Do not use it as a global default for all
+vLLM models, and do not use a proxy that blindly converts arbitrary
+assistant text into executable tool calls.
+
+Custom base URL
+
+If your vLLM server runs on a non-default host or port, set `baseUrl` in the explicit provider config:
+
+```
+{
+  models: {
+    providers: {
+      vllm: {
+        baseUrl: "http://192.168.1.50:9000/v1",
+        apiKey: "${VLLM_API_KEY}",
+        api: "openai-completions",
+        request: { allowPrivateNetwork: true },
+        timeoutSeconds: 300,
+        models: [\
+          {\
+            id: "my-custom-model",\
+            name: "Remote vLLM Model",\
+            reasoning: false,\
+            input: ["text"],\
+            contextWindow: 64000,\
+            maxTokens: 4096,\
+          },\
+        ],
+      },
+    },
+  },
+}
+```
+
+## Troubleshooting
+
+Slow first response or remote server timeout
+
+For large local models, remote LAN hosts, or tailnet links, set a
+provider-scoped request timeout:
+
+```
+{
+  models: {
+    providers: {
+      vllm: {
+        baseUrl: "http://192.168.1.50:8000/v1",
+        apiKey: "${VLLM_API_KEY}",
+        api: "openai-completions",
+        request: { allowPrivateNetwork: true },
+        timeoutSeconds: 300,
+        models: [{ id: "your-model-id", name: "Local vLLM Model" }],
+      },
+    },
+  },
+}
+```
+
+`timeoutSeconds` applies to vLLM model HTTP requests only, including
+connection setup, response headers, body streaming, and the total
+guarded-fetch abort. Prefer this before increasing
+`agents.defaults.timeoutSeconds`, which controls the whole agent run.
+
+Server not reachable
+
+Check that the vLLM server is running and accessible:
+
+```
+curl http://127.0.0.1:8000/v1/models
+```
+
+If you see a connection error, verify the host, port, and that vLLM started with the OpenAI-compatible server mode.
+For explicit loopback, LAN, or Tailscale endpoints, also set
+`models.providers.vllm.request.allowPrivateNetwork: true`; provider
+requests block private-network URLs by default unless the provider is
+explicitly trusted.
+
+Auth errors on requests
+
+If requests fail with auth errors, set a real `VLLM_API_KEY` that matches your server configuration, or configure the provider explicitly under `models.providers.vllm`.
+
+If your vLLM server does not enforce auth, any non-empty value for `VLLM_API_KEY` works as an opt-in signal for OpenClaw.
+
+No models discovered
+
+Auto-discovery requires `VLLM_API_KEY` to be set **and** no explicit `models.providers.vllm` config entry. If you have defined the provider manually, OpenClaw skips discovery and uses only your declared models.
+
+Tools render as raw text
+
+If a Qwen model prints JSON/XML tool syntax instead of executing a skill,
+check the Qwen guidance in Advanced configuration above. The usual fix is:
+
+- start vLLM with the correct parser/template for that model
+- confirm the exact model id with `openclaw models list --provider vllm`
+- add a dedicated per-model `params.extra_body.tool_choice: "required"`
+override only if `tool_choice: "auto"` still returns empty or text-only
+tool calls
+
+More help: [Troubleshooting](https://docs.openclaw.ai/help/troubleshooting) and [FAQ](https://docs.openclaw.ai/help/faq).
+
+## Related
+
+[**Model selection** \\
+\\
+Choosing providers, model refs, and failover behavior.](https://docs.openclaw.ai/concepts/model-providers)
+
+[**OpenAI** \\
+\\
+Native OpenAI provider and OpenAI-compatible route behavior.](https://docs.openclaw.ai/providers/openai)
+
+[**OAuth and auth** \\
+\\
+Auth details and credential reuse rules.](https://docs.openclaw.ai/gateway/authentication)
+
+[**Troubleshooting** \\
+\\
+Common issues and how to resolve them.](https://docs.openclaw.ai/help/troubleshooting)
+
+[Vercel AI gateway](https://docs.openclaw.ai/providers/vercel-ai-gateway) [Volcengine (Doubao)](https://docs.openclaw.ai/providers/volcengine)
+
+Ctrl+I
+
+---
+
+## xAI - OpenClaw
+
+_Source: <https://docs.openclaw.ai/providers/xai>_
+
+[OpenClaw home page](https://docs.openclaw.ai/)
+
+Providers
+
+xAI
+
+OpenClaw ships a bundled `xai` provider plugin for Grok models.
+
+## Getting started
+
+1
+
+[Navigate to header](https://docs.openclaw.ai/providers/xai#)
+
+Create an API key
+
+Create an API key in the [xAI console](https://console.x.ai/).
+
+2
+
+[Navigate to header](https://docs.openclaw.ai/providers/xai#)
+
+Set your API key
+
+Set `XAI_API_KEY`, or run:
+
+```
+openclaw onboard --auth-choice xai-api-key
+```
+
+3
+
+[Navigate to header](https://docs.openclaw.ai/providers/xai#)
+
+Pick a model
+
+```
+{
+  agents: { defaults: { model: { primary: "xai/grok-4.3" } } },
+}
+```
+
+OpenClaw uses the xAI Responses API as the bundled xAI transport. The same
+`XAI_API_KEY` can also power Grok-backed `web_search`, first-class `x_search`,
+and remote `code_execution`.
+If you store an xAI key under `plugins.entries.xai.config.webSearch.apiKey`,
+the bundled xAI model provider reuses that key as a fallback too.
+Set `plugins.entries.xai.config.webSearch.baseUrl` to route Grok `web_search`
+and, by default, `x_search` through an operator xAI Responses proxy.
+`code_execution` tuning lives under `plugins.entries.xai.config.codeExecution`.
+
+## Built-in catalog
+
+OpenClaw includes these xAI model families out of the box:
+
+| Family | Model ids |
+| --- | --- |
+| Grok 3 | `grok-3`, `grok-3-fast`, `grok-3-mini`, `grok-3-mini-fast` |
+| Grok 4.3 | `grok-4.3` |
+| Grok 4 | `grok-4`, `grok-4-0709` |
+| Grok 4 Fast | `grok-4-fast`, `grok-4-fast-non-reasoning` |
+| Grok 4.1 Fast | `grok-4-1-fast`, `grok-4-1-fast-non-reasoning` |
+| Grok 4.20 Beta | `grok-4.20-beta-latest-reasoning`, `grok-4.20-beta-latest-non-reasoning` |
+| Grok Code | `grok-code-fast-1` |
+
+The plugin also forward-resolves newer `grok-4*` and `grok-code-fast*` ids when
+they follow the same API shape.
+
+`grok-4.3`, `grok-4-fast`, `grok-4-1-fast`, and the `grok-4.20-beta-*`
+variants are the current image-capable Grok refs in the bundled catalog.
+
+## OpenClaw feature coverage
+
+The bundled plugin maps xAI’s current public API surface onto OpenClaw’s shared
+provider and tool contracts. Capabilities that don’t fit the shared contract
+(for example streaming TTS and realtime voice) are not exposed — see the table
+below.
+
+| xAI capability | OpenClaw surface | Status |
+| --- | --- | --- |
+| Chat / Responses | `xai/<model>` model provider | Yes |
+| Server-side web search | `web_search` provider `grok` | Yes |
+| Server-side X search | `x_search` tool | Yes |
+| Server-side code execution | `code_execution` tool | Yes |
+| Images | `image_generate` | Yes |
+| Videos | `video_generate` | Yes |
+| Batch text-to-speech | `messages.tts.provider: "xai"` / `tts` | Yes |
+| Streaming TTS | — | Not exposed; OpenClaw’s TTS contract returns complete audio buffers |
+| Batch speech-to-text | `tools.media.audio` / media understanding | Yes |
+| Streaming speech-to-text | Voice Call `streaming.provider: "xai"` | Yes |
+| Realtime voice | — | Not exposed yet; different session/WebSocket contract |
+| Files / batches | Generic model API compatibility only | Not a first-class OpenClaw tool |
+
+OpenClaw uses xAI’s REST image/video/TTS/STT APIs for media generation,
+speech, and batch transcription, xAI’s streaming STT WebSocket for live
+voice-call transcription, and the Responses API for model, search, and
+code-execution tools. Features that need different OpenClaw contracts, such as
+Realtime voice sessions, are documented here as upstream capabilities rather
+than hidden plugin behavior.
+
+### Fast-mode mappings
+
+`/fast on` or `agents.defaults.models["xai/<model>"].params.fastMode: true`
+rewrites native xAI requests as follows:
+
+| Source model | Fast-mode target |
+| --- | --- |
+| `grok-3` | `grok-3-fast` |
+| `grok-3-mini` | `grok-3-mini-fast` |
+| `grok-4` | `grok-4-fast` |
+| `grok-4-0709` | `grok-4-fast` |
+
+### Legacy compatibility aliases
+
+Legacy aliases still normalize to the canonical bundled ids:
+
+| Legacy alias | Canonical id |
+| --- | --- |
+| `grok-4-fast-reasoning` | `grok-4-fast` |
+| `grok-4-1-fast-reasoning` | `grok-4-1-fast` |
+| `grok-4.20-reasoning` | `grok-4.20-beta-latest-reasoning` |
+| `grok-4.20-non-reasoning` | `grok-4.20-beta-latest-non-reasoning` |
+
+## Features
+
+Web search
+
+The bundled `grok` web-search provider uses `XAI_API_KEY` too:
+
+```
+openclaw config set tools.web.search.provider grok
+```
+
+Video generation
+
+The bundled `xai` plugin registers video generation through the shared
+`video_generate` tool.
+
+- Default video model: `xai/grok-imagine-video`
+- Modes: text-to-video, image-to-video, reference-image generation, remote
+video edit, and remote video extension
+- Aspect ratios: `1:1`, `16:9`, `9:16`, `4:3`, `3:4`, `3:2`, `2:3`
+- Resolutions: `480P`, `720P`
+- Duration: 1-15 seconds for generation/image-to-video, 1-10 seconds when
+using `reference_image` roles, 2-10 seconds for extension
+- Reference-image generation: set `imageRoles` to `reference_image` for
+every supplied image; xAI accepts up to 7 such images
+
+Local video buffers are not accepted. Use remote `http(s)` URLs for
+video edit/extend inputs. Image-to-video accepts local image buffers because
+OpenClaw can encode those as data URLs for xAI.
+
+To use xAI as the default video provider:
+
+```
+{
+  agents: {
+    defaults: {
+      videoGenerationModel: {
+        primary: "xai/grok-imagine-video",
+      },
+    },
+  },
+}
+```
+
+See [Video Generation](https://docs.openclaw.ai/tools/video-generation) for shared tool parameters,
+provider selection, and failover behavior.
+
+Image generation
+
+The bundled `xai` plugin registers image generation through the shared
+`image_generate` tool.
+
+- Default image model: `xai/grok-imagine-image`
+- Additional model: `xai/grok-imagine-image-pro`
+- Modes: text-to-image and reference-image edit
+- Reference inputs: one `image` or up to five `images`
+- Aspect ratios: `1:1`, `16:9`, `9:16`, `4:3`, `3:4`, `2:3`, `3:2`
+- Resolutions: `1K`, `2K`
+- Count: up to 4 images
+
+OpenClaw asks xAI for `b64_json` image responses so generated media can be
+stored and delivered through the normal channel attachment path. Local
+reference images are converted to data URLs; remote `http(s)` references are
+passed through.To use xAI as the default image provider:
+
+```
+{
+  agents: {
+    defaults: {
+      imageGenerationModel: {
+        primary: "xai/grok-imagine-image",
+      },
+    },
+  },
+}
+```
+
+xAI also documents `quality`, `mask`, `user`, and additional native ratios
+such as `1:2`, `2:1`, `9:20`, and `20:9`. OpenClaw forwards only the
+shared cross-provider image controls today; unsupported native-only knobs
+are intentionally not exposed through `image_generate`.
+
+Text-to-speech
+
+The bundled `xai` plugin registers text-to-speech through the shared `tts`
+provider surface.
+
+- Voices: `eve`, `ara`, `rex`, `sal`, `leo`, `una`
+- Default voice: `eve`
+- Formats: `mp3`, `wav`, `pcm`, `mulaw`, `alaw`
+- Language: BCP-47 code or `auto`
+- Speed: provider-native speed override
+- Native Opus voice-note format is not supported
+
+To use xAI as the default TTS provider:
+
+```
+{
+  messages: {
+    tts: {
+      provider: "xai",
+      providers: {
+        xai: {
+          voiceId: "eve",
+        },
+      },
+    },
+  },
+}
+```
+
+OpenClaw uses xAI’s batch `/v1/tts` endpoint. xAI also offers streaming TTS
+over WebSocket, but the OpenClaw speech provider contract currently expects
+a complete audio buffer before reply delivery.
+
+Speech-to-text
+
+The bundled `xai` plugin registers batch speech-to-text through OpenClaw’s
+media-understanding transcription surface.
+
+- Default model: `grok-stt`
+- Endpoint: xAI REST `/v1/stt`
+- Input path: multipart audio file upload
+- Supported by OpenClaw wherever inbound audio transcription uses
+`tools.media.audio`, including Discord voice-channel segments and
+channel audio attachments
+
+To force xAI for inbound audio transcription:
+
+```
+{
+  tools: {
+    media: {
+      audio: {
+        models: [\
+          {\
+            type: "provider",\
+            provider: "xai",\
+            model: "grok-stt",\
+          },\
+        ],
+      },
+    },
+  },
+}
+```
+
+Language can be supplied through the shared audio media config or per-call
+transcription request. Prompt hints are accepted by the shared OpenClaw
+surface, but the xAI REST STT integration only forwards file, model, and
+language because those map cleanly to the current public xAI endpoint.
+
+Streaming speech-to-text
+
+The bundled `xai` plugin also registers a realtime transcription provider
+for live voice-call audio.
+
+- Endpoint: xAI WebSocket `wss://api.x.ai/v1/stt`
+- Default encoding: `mulaw`
+- Default sample rate: `8000`
+- Default endpointing: `800ms`
+- Interim transcripts: enabled by default
+
+Voice Call’s Twilio media stream sends G.711 µ-law audio frames, so the
+xAI provider can forward those frames directly without transcoding:
+
+```
+{
+  plugins: {
+    entries: {
+      "voice-call": {
+        config: {
+          streaming: {
+            enabled: true,
+            provider: "xai",
+            providers: {
+              xai: {
+                apiKey: "${XAI_API_KEY}",
+                endpointingMs: 800,
+                language: "en",
+              },
+            },
+          },
+        },
+      },
+    },
+  },
+}
+```
+
+Provider-owned config lives under
+`plugins.entries.voice-call.config.streaming.providers.xai`. Supported
+keys are `apiKey`, `baseUrl`, `sampleRate`, `encoding` (`pcm`, `mulaw`, or
+`alaw`), `interimResults`, `endpointingMs`, and `language`.
+
+This streaming provider is for Voice Call’s realtime transcription path.
+Discord voice currently records short segments and uses the batch
+`tools.media.audio` transcription path instead.
+
+x\_search configuration
+
+The bundled xAI plugin exposes `x_search` as an OpenClaw tool for searching
+X (formerly Twitter) content via Grok.Config path: `plugins.entries.xai.config.xSearch`
+
+| Key | Type | Default | Description |
+| --- | --- | --- | --- |
+| `enabled` | boolean | — | Enable or disable x\_search |
+| `model` | string | `grok-4-1-fast` | Model used for x\_search requests |
+| `baseUrl` | string | — | xAI Responses base URL override |
+| `inlineCitations` | boolean | — | Include inline citations in results |
+| `maxTurns` | number | — | Maximum conversation turns |
+| `timeoutSeconds` | number | — | Request timeout in seconds |
+| `cacheTtlMinutes` | number | — | Cache time-to-live in minutes |
+
+```
+{
+  plugins: {
+    entries: {
+      xai: {
+        config: {
+          xSearch: {
+            enabled: true,
+            model: "grok-4-1-fast",
+            baseUrl: "https://api.x.ai/v1",
+            inlineCitations: true,
+          },
+        },
+      },
+    },
+  },
+}
+```
+
+Code execution configuration
+
+The bundled xAI plugin exposes `code_execution` as an OpenClaw tool for
+remote code execution in xAI’s sandbox environment.Config path: `plugins.entries.xai.config.codeExecution`
+
+| Key | Type | Default | Description |
+| --- | --- | --- | --- |
+| `enabled` | boolean | `true` (if key available) | Enable or disable code execution |
+| `model` | string | `grok-4-1-fast` | Model used for code execution requests |
+| `maxTurns` | number | — | Maximum conversation turns |
+| `timeoutSeconds` | number | — | Request timeout in seconds |
+
+This is remote xAI sandbox execution, not local [`exec`](https://docs.openclaw.ai/tools/exec).
+
+```
+{
+  plugins: {
+    entries: {
+      xai: {
+        config: {
+          codeExecution: {
+            enabled: true,
+            model: "grok-4-1-fast",
+          },
+        },
+      },
+    },
+  },
+}
+```
+
+Known limits
+
+- Auth is API-key only today. There is no xAI OAuth or device-code flow in
+OpenClaw yet.
+- `grok-4.20-multi-agent-experimental-beta-0304` is not supported on the
+normal xAI provider path because it requires a different upstream API
+surface than the standard OpenClaw xAI transport.
+- xAI Realtime voice is not registered as an OpenClaw provider yet. It
+needs a different bidirectional voice session contract than batch STT or
+streaming transcription.
+- xAI image `quality`, image `mask`, and extra native-only aspect ratios are
+not exposed until the shared `image_generate` tool has corresponding
+cross-provider controls.
+
+Advanced notes
+
+- OpenClaw applies xAI-specific tool-schema and tool-call compatibility fixes
+automatically on the shared runner path.
+- Native xAI requests default `tool_stream: true`. Set
+`agents.defaults.models["xai/<model>"].params.tool_stream` to `false` to
+disable it.
+- The bundled xAI wrapper strips unsupported strict tool-schema flags and
+reasoning payload keys before sending native xAI requests.
+- `web_search`, `x_search`, and `code_execution` are exposed as OpenClaw
+tools. OpenClaw enables the specific xAI built-in it needs inside each tool
+request instead of attaching all native tools to every chat turn.
+- Grok `web_search` reads `plugins.entries.xai.config.webSearch.baseUrl`.
+`x_search` reads `plugins.entries.xai.config.xSearch.baseUrl`, then
+falls back to the Grok web-search base URL.
+- `x_search` and `code_execution` are owned by the bundled xAI plugin rather
+than hardcoded into the core model runtime.
+- `code_execution` is remote xAI sandbox execution, not local
+[`exec`](https://docs.openclaw.ai/tools/exec).
+
+## Live testing
+
+The xAI media paths are covered by unit tests and opt-in live suites. The live
+commands load secrets from your login shell, including `~/.profile`, before
+probing `XAI_API_KEY`.
+
+```
+pnpm test extensions/xai
+OPENCLAW_LIVE_TEST=1 OPENCLAW_LIVE_TEST_QUIET=1 pnpm test:live -- extensions/xai/xai.live.test.ts
+OPENCLAW_LIVE_TEST=1 OPENCLAW_LIVE_TEST_QUIET=1 OPENCLAW_LIVE_IMAGE_GENERATION_PROVIDERS=xai pnpm test:live -- test/image-generation.runtime.live.test.ts
+```
+
+The provider-specific live file synthesizes normal TTS, telephony-friendly PCM
+TTS, transcribes audio through xAI batch STT, streams the same PCM through xAI
+realtime STT, generates text-to-image output, and edits a reference image. The
+shared image live file verifies the same xAI provider through OpenClaw’s
+runtime selection, fallback, normalization, and media attachment path.
+
+## Related
+
+[**Model selection** \\
+\\
+Choosing providers, model refs, and failover behavior.](https://docs.openclaw.ai/concepts/model-providers)
+
+[**Video generation** \\
+\\
+Shared video tool parameters and provider selection.](https://docs.openclaw.ai/tools/video-generation)
+
+[**All providers** \\
+\\
+The broader provider overview.](https://docs.openclaw.ai/providers/index)
+
+[**Troubleshooting** \\
+\\
+Common issues and fixes.](https://docs.openclaw.ai/help/troubleshooting)
+
+[Vydra](https://docs.openclaw.ai/providers/vydra) [Xiaomi MiMo](https://docs.openclaw.ai/providers/xiaomi)
+
+Ctrl+I
+
+---
+
+## Xiaomi MiMo - OpenClaw
+
+_Source: <https://docs.openclaw.ai/providers/xiaomi>_
+
+[OpenClaw home page](https://docs.openclaw.ai/)
+
+Providers
+
+Xiaomi MiMo
+
+Xiaomi MiMo is the API platform for **MiMo** models. OpenClaw uses the Xiaomi
+OpenAI-compatible endpoint with API-key authentication.
+
+| Property | Value |
+| --- | --- |
+| Provider | `xiaomi` |
+| Auth | `XIAOMI_API_KEY` |
+| API | OpenAI-compatible |
+| Base URL | `https://api.xiaomimimo.com/v1` |
+
+## Getting started
+
+1
+
+[Navigate to header](https://docs.openclaw.ai/providers/xiaomi#)
+
+Get an API key
+
+Create an API key in the [Xiaomi MiMo console](https://platform.xiaomimimo.com/#/console/api-keys).
+
+2
+
+[Navigate to header](https://docs.openclaw.ai/providers/xiaomi#)
+
+Run onboarding
+
+```
+openclaw onboard --auth-choice xiaomi-api-key
+```
+
+Or pass the key directly:
+
+```
+openclaw onboard --auth-choice xiaomi-api-key --xiaomi-api-key "$XIAOMI_API_KEY"
+```
+
+3
+
+[Navigate to header](https://docs.openclaw.ai/providers/xiaomi#)
+
+Verify the model is available
+
+```
+openclaw models list --provider xiaomi
+```
+
+## Built-in catalog
+
+| Model ref | Input | Context | Max output | Reasoning | Notes |
+| --- | --- | --- | --- | --- | --- |
+| `xiaomi/mimo-v2-flash` | text | 262,144 | 8,192 | No | Default model |
+| `xiaomi/mimo-v2-pro` | text | 1,048,576 | 32,000 | Yes | Large context |
+| `xiaomi/mimo-v2-omni` | text, image | 262,144 | 32,000 | Yes | Multimodal |
+
+The default model ref is `xiaomi/mimo-v2-flash`. The provider is injected automatically when `XIAOMI_API_KEY` is set or an auth profile exists.
+
+## Text-to-speech
+
+The bundled `xiaomi` plugin also registers Xiaomi MiMo as a speech provider for
+`messages.tts`. It calls Xiaomi’s chat-completions TTS contract with the text as
+an `assistant` message and optional style guidance as a `user` message.
+
+| Property | Value |
+| --- | --- |
+| TTS id | `xiaomi` (`mimo` alias) |
+| Auth | `XIAOMI_API_KEY` |
+| API | `POST /v1/chat/completions` with `audio` |
+| Default | `mimo-v2.5-tts`, voice `mimo_default` |
+| Output | MP3 by default; WAV when configured |
+
+```
+{
+  messages: {
+    tts: {
+      auto: "always",
+      provider: "xiaomi",
+      providers: {
+        xiaomi: {
+          apiKey: "xiaomi_api_key",
+          model: "mimo-v2.5-tts",
+          voice: "mimo_default",
+          format: "mp3",
+          style: "Bright, natural, conversational tone.",
+        },
+      },
+    },
+  },
+}
+```
+
+Supported built-in voices include `mimo_default`, `default_zh`, `default_en`,
+`Mia`, `Chloe`, `Milo`, and `Dean`. `mimo-v2-tts` is supported for older MiMo
+TTS accounts; the default uses the current MiMo-V2.5 TTS model. For voice-note
+targets such as Feishu and Telegram, OpenClaw transcodes Xiaomi output to 48kHz
+Opus with `ffmpeg` before delivery.
+
+## Config example
+
+```
+{
+  env: { XIAOMI_API_KEY: "your-key" },
+  agents: { defaults: { model: { primary: "xiaomi/mimo-v2-flash" } } },
+  models: {
+    mode: "merge",
+    providers: {
+      xiaomi: {
+        baseUrl: "https://api.xiaomimimo.com/v1",
+        api: "openai-completions",
+        apiKey: "XIAOMI_API_KEY",
+        models: [\
+          {\
+            id: "mimo-v2-flash",\
+            name: "Xiaomi MiMo V2 Flash",\
+            reasoning: false,\
+            input: ["text"],\
+            cost: { input: 0, output: 0, cacheRead: 0, cacheWrite: 0 },\
+            contextWindow: 262144,\
+            maxTokens: 8192,\
+          },\
+          {\
+            id: "mimo-v2-pro",\
+            name: "Xiaomi MiMo V2 Pro",\
+            reasoning: true,\
+            input: ["text"],\
+            cost: { input: 0, output: 0, cacheRead: 0, cacheWrite: 0 },\
+            contextWindow: 1048576,\
+            maxTokens: 32000,\
+          },\
+          {\
+            id: "mimo-v2-omni",\
+            name: "Xiaomi MiMo V2 Omni",\
+            reasoning: true,\
+            input: ["text", "image"],\
+            cost: { input: 0, output: 0, cacheRead: 0, cacheWrite: 0 },\
+            contextWindow: 262144,\
+            maxTokens: 32000,\
+          },\
+        ],
+      },
+    },
+  },
+}
+```
+
+Auto-injection behavior
+
+The `xiaomi` provider is injected automatically when `XIAOMI_API_KEY` is set in your environment or an auth profile exists. You do not need to manually configure the provider unless you want to override model metadata or the base URL.
+
+Model details
+
+- **mimo-v2-flash** — lightweight and fast, ideal for general-purpose text tasks. No reasoning support.
+- **mimo-v2-pro** — supports reasoning with a 1M token context window for long-document workloads.
+- **mimo-v2-omni** — reasoning-enabled multimodal model that accepts both text and image inputs.
+
+All models use the `xiaomi/` prefix (for example `xiaomi/mimo-v2-pro`).
+
+Troubleshooting
+
+- If models do not appear, confirm `XIAOMI_API_KEY` is set and valid.
+- When the Gateway runs as a daemon, ensure the key is available to that process (for example in `~/.openclaw/.env` or via `env.shellEnv`).
+
+Keys set only in your interactive shell are not visible to daemon-managed gateway processes. Use `~/.openclaw/.env` or `env.shellEnv` config for persistent availability.
+
+## Related
+
+[**Model selection** \\
+\\
+Choosing providers, model refs, and failover behavior.](https://docs.openclaw.ai/concepts/model-providers)
+
+[**Configuration reference** \\
+\\
+Full OpenClaw configuration reference.](https://docs.openclaw.ai/gateway/configuration-reference)
+
+[**Xiaomi MiMo console** \\
+\\
+Xiaomi MiMo dashboard and API key management.](https://platform.xiaomimimo.com/)
+
+[xAI](https://docs.openclaw.ai/providers/xai) [Z.AI](https://docs.openclaw.ai/providers/zai)
+
+Ctrl+I
 
 ---
 
@@ -5119,7 +10217,364 @@ Choosing providers, model refs, and failover behavior.](https://docs.openclaw.ai
 
 Ctrl+I
 
+---
+
+## ElevenLabs - OpenClaw
+
+_Source: <https://docs.openclaw.ai/tr/providers/elevenlabs>_
+
+[Ana içeriğe atla](https://docs.openclaw.ai/tr/providers/elevenlabs#content-area)
+
+[OpenClaw home page](https://docs.openclaw.ai/tr)
+
+Türkçe
+
+Ara...
+
+Ara...
+
+Providers
+
+ElevenLabs
+
+[Get started](https://docs.openclaw.ai/tr) [Install](https://docs.openclaw.ai/tr/install) [Channels](https://docs.openclaw.ai/tr/channels) [Agents](https://docs.openclaw.ai/tr/concepts/architecture) [Tools & Plugins](https://docs.openclaw.ai/tr/tools) [Models](https://docs.openclaw.ai/tr/providers) [Platforms](https://docs.openclaw.ai/tr/platforms) [Gateway & Ops](https://docs.openclaw.ai/tr/gateway) [Reference](https://docs.openclaw.ai/tr/cli) [Help](https://docs.openclaw.ai/tr/help)
+
+Bu sayfada
+
+- [Kimlik doğrulama](https://docs.openclaw.ai/tr/providers/elevenlabs#kimlik-do%C4%9Frulama)
+- [Metinden konuşmaya](https://docs.openclaw.ai/tr/providers/elevenlabs#metinden-konu%C5%9Fmaya)
+- [Speech-to-text](https://docs.openclaw.ai/tr/providers/elevenlabs#speech-to-text)
+- [Voice Call akışlı STT](https://docs.openclaw.ai/tr/providers/elevenlabs#voice-call-ak%C4%B1%C5%9Fl%C4%B1-stt)
+- [İlgili](https://docs.openclaw.ai/tr/providers/elevenlabs#i%CC%87lgili)
+
+OpenClaw, metinden konuşmaya, Scribe
+v2 ile toplu speech-to-text ve Voice Call akışlı STT için Scribe v2 Realtime amacıyla ElevenLabs kullanır.
+
+| Yetenek | OpenClaw yüzeyi | Varsayılan |
+| --- | --- | --- |
+| Metinden konuşmaya | `messages.tts` / `talk` | `eleven_multilingual_v2` |
+| Toplu speech-to-text | `tools.media.audio` | `scribe_v2` |
+| Akışlı speech-to-text | Voice Call `streaming.provider: "elevenlabs"` | `scribe_v2_realtime` |
+
+## Kimlik doğrulama
+
+Ortamda `ELEVENLABS_API_KEY` ayarlayın. Mevcut
+ElevenLabs araçlarıyla uyumluluk için `XI_API_KEY` de kabul edilir.
+
+```
+export ELEVENLABS_API_KEY="..."
+```
+
+## Metinden konuşmaya
+
+```
+{
+  messages: {
+    tts: {
+      providers: {
+        elevenlabs: {
+          apiKey: "${ELEVENLABS_API_KEY}",
+          voiceId: "pMsXgVXv3BLzUgSXRplE",
+          modelId: "eleven_multilingual_v2",
+        },
+      },
+    },
+  },
+}
+```
+
+ElevenLabs v3 TTS kullanmak için `modelId` değerini `eleven_v3` olarak ayarlayın. OpenClaw
+mevcut kurulumlar için varsayılan olarak `eleven_multilingual_v2` değerini korur.
+
+## Speech-to-text
+
+Gelen ses ekleri ve kısa kaydedilmiş ses segmentleri için Scribe v2 kullanın:
+
+```
+{
+  tools: {
+    media: {
+      audio: {
+        enabled: true,
+        models: [{ provider: "elevenlabs", model: "scribe_v2" }],
+      },
+    },
+  },
+}
+```
+
+OpenClaw, çok parçalı sesi ElevenLabs `/v1/speech-to-text` uç noktasına
+`model_id: "scribe_v2"` ile gönderir. Dil ipuçları mevcut olduğunda `language_code` alanına eşlenir.
+
+## Voice Call akışlı STT
+
+Paketlenmiş `elevenlabs` Plugin’i, Voice Call
+akışlı transcription için Scribe v2 Realtime’ı kaydeder.
+
+| Ayar | Yapılandırma yolu | Varsayılan |
+| --- | --- | --- |
+| API anahtarı | `plugins.entries.voice-call.config.streaming.providers.elevenlabs.apiKey` | `ELEVENLABS_API_KEY` / `XI_API_KEY` değerine geri düşer |
+| Model | `...elevenlabs.modelId` | `scribe_v2_realtime` |
+| Ses biçimi | `...elevenlabs.audioFormat` | `ulaw_8000` |
+| Örnekleme oranı | `...elevenlabs.sampleRate` | `8000` |
+| Commit stratejisi | `...elevenlabs.commitStrategy` | `vad` |
+| Dil | `...elevenlabs.languageCode` | (ayarlanmamış) |
+
+```
+{
+  plugins: {
+    entries: {
+      "voice-call": {
+        config: {
+          streaming: {
+            enabled: true,
+            provider: "elevenlabs",
+            providers: {
+              elevenlabs: {
+                apiKey: "${ELEVENLABS_API_KEY}",
+                audioFormat: "ulaw_8000",
+                commitStrategy: "vad",
+                languageCode: "en",
+              },
+            },
+          },
+        },
+      },
+    },
+  },
+}
+```
+
+Voice Call, Twilio medyasını 8 kHz G.711 u-law olarak alır. ElevenLabs realtime
+sağlayıcısı varsayılan olarak `ulaw_8000` kullandığı için telefon çerçeveleri
+yeniden kodlama olmadan iletilebilir.
+
+## İlgili
+
+- [Metinden konuşmaya](https://docs.openclaw.ai/tr/tools/tts)
+- [Model seçimi](https://docs.openclaw.ai/tr/concepts/model-providers)
+
+[DeepSeek](https://docs.openclaw.ai/tr/providers/deepseek) [Fal](https://docs.openclaw.ai/tr/providers/fal)
+
+Ctrl+I
 
 ---
 
-_4 additional pages omitted to keep this file ≤ 146 KB. See https://docs.openclaw.ai for full content._
+## ElevenLabs - OpenClaw
+
+_Source: <https://docs.openclaw.ai/uk/providers/elevenlabs>_
+
+[Перейти до основного вмісту](https://docs.openclaw.ai/uk/providers/elevenlabs#content-area)
+
+[OpenClaw home page](https://docs.openclaw.ai/uk)
+
+Українська
+
+Пошук...
+
+Пошук...
+
+Providers
+
+ElevenLabs
+
+[Get started](https://docs.openclaw.ai/uk) [Install](https://docs.openclaw.ai/uk/install) [Channels](https://docs.openclaw.ai/uk/channels) [Agents](https://docs.openclaw.ai/uk/concepts/architecture) [Tools & Plugins](https://docs.openclaw.ai/uk/tools) [Models](https://docs.openclaw.ai/uk/providers) [Platforms](https://docs.openclaw.ai/uk/platforms) [Gateway & Ops](https://docs.openclaw.ai/uk/gateway) [Reference](https://docs.openclaw.ai/uk/cli) [Help](https://docs.openclaw.ai/uk/help)
+
+На цій сторінці
+
+- [Автентифікація](https://docs.openclaw.ai/uk/providers/elevenlabs#%D0%B0%D0%B2%D1%82%D0%B5%D0%BD%D1%82%D0%B8%D1%84%D1%96%D0%BA%D0%B0%D1%86%D1%96%D1%8F)
+- [Перетворення тексту на мовлення](https://docs.openclaw.ai/uk/providers/elevenlabs#%D0%BF%D0%B5%D1%80%D0%B5%D1%82%D0%B2%D0%BE%D1%80%D0%B5%D0%BD%D0%BD%D1%8F-%D1%82%D0%B5%D0%BA%D1%81%D1%82%D1%83-%D0%BD%D0%B0-%D0%BC%D0%BE%D0%B2%D0%BB%D0%B5%D0%BD%D0%BD%D1%8F)
+- [Перетворення мовлення на текст](https://docs.openclaw.ai/uk/providers/elevenlabs#%D0%BF%D0%B5%D1%80%D0%B5%D1%82%D0%B2%D0%BE%D1%80%D0%B5%D0%BD%D0%BD%D1%8F-%D0%BC%D0%BE%D0%B2%D0%BB%D0%B5%D0%BD%D0%BD%D1%8F-%D0%BD%D0%B0-%D1%82%D0%B5%D0%BA%D1%81%D1%82)
+- [Потокове STT Voice Call](https://docs.openclaw.ai/uk/providers/elevenlabs#%D0%BF%D0%BE%D1%82%D0%BE%D0%BA%D0%BE%D0%B2%D0%B5-stt-voice-call)
+- [Пов’язане](https://docs.openclaw.ai/uk/providers/elevenlabs#%D0%BF%D0%BE%D0%B2%E2%80%99%D1%8F%D0%B7%D0%B0%D0%BD%D0%B5)
+
+OpenClaw використовує ElevenLabs для перетворення тексту на мовлення, пакетного перетворення мовлення на текст із Scribe
+v2 і потокового STT Voice Call із Scribe v2 Realtime.
+
+| Можливість | Поверхня OpenClaw | За замовчуванням |
+| --- | --- | --- |
+| Перетворення тексту на мовлення | `messages.tts` / `talk` | `eleven_multilingual_v2` |
+| Пакетне перетворення мовлення на текст | `tools.media.audio` | `scribe_v2` |
+| Потокове перетворення мовлення на текст | Voice Call `streaming.provider: "elevenlabs"` | `scribe_v2_realtime` |
+
+## Автентифікація
+
+Установіть `ELEVENLABS_API_KEY` у середовищі. `XI_API_KEY` також підтримується для
+сумісності з наявними інструментами ElevenLabs.
+
+```
+export ELEVENLABS_API_KEY="..."
+```
+
+## Перетворення тексту на мовлення
+
+```
+{
+  messages: {
+    tts: {
+      providers: {
+        elevenlabs: {
+          apiKey: "${ELEVENLABS_API_KEY}",
+          voiceId: "pMsXgVXv3BLzUgSXRplE",
+          modelId: "eleven_multilingual_v2",
+        },
+      },
+    },
+  },
+}
+```
+
+Установіть `modelId` на `eleven_v3`, щоб використовувати ElevenLabs v3 TTS. OpenClaw зберігає
+`eleven_multilingual_v2` як значення за замовчуванням для наявних інсталяцій.
+
+## Перетворення мовлення на текст
+
+Використовуйте Scribe v2 для вхідних аудіовкладень і коротких записаних голосових сегментів:
+
+```
+{
+  tools: {
+    media: {
+      audio: {
+        enabled: true,
+        models: [{ provider: "elevenlabs", model: "scribe_v2" }],
+      },
+    },
+  },
+}
+```
+
+OpenClaw надсилає multipart-аудіо до ElevenLabs `/v1/speech-to-text` з
+`model_id: "scribe_v2"`. Підказки мови зіставляються з `language_code`, якщо вони задані.
+
+## Потокове STT Voice Call
+
+Вбудований Plugin `elevenlabs` реєструє Scribe v2 Realtime для потокової
+транскрипції Voice Call.
+
+| Налаштування | Шлях конфігурації | За замовчуванням |
+| --- | --- | --- |
+| API-ключ | `plugins.entries.voice-call.config.streaming.providers.elevenlabs.apiKey` | Резервно використовує `ELEVENLABS_API_KEY` / `XI_API_KEY` |
+| Модель | `...elevenlabs.modelId` | `scribe_v2_realtime` |
+| Формат аудіо | `...elevenlabs.audioFormat` | `ulaw_8000` |
+| Частота дискретизації | `...elevenlabs.sampleRate` | `8000` |
+| Стратегія коміту | `...elevenlabs.commitStrategy` | `vad` |
+| Мова | `...elevenlabs.languageCode` | (не задано) |
+
+```
+{
+  plugins: {
+    entries: {
+      "voice-call": {
+        config: {
+          streaming: {
+            enabled: true,
+            provider: "elevenlabs",
+            providers: {
+              elevenlabs: {
+                apiKey: "${ELEVENLABS_API_KEY}",
+                audioFormat: "ulaw_8000",
+                commitStrategy: "vad",
+                languageCode: "en",
+              },
+            },
+          },
+        },
+      },
+    },
+  },
+}
+```
+
+Voice Call отримує медіапотік Twilio як 8 кГц G.711 u-law. Провайдер ElevenLabs realtime
+за замовчуванням використовує `ulaw_8000`, тому телекомунікаційні фрейми можна пересилати без
+транскодування.
+
+## Пов’язане
+
+- [Перетворення тексту на мовлення](https://docs.openclaw.ai/uk/tools/tts)
+- [Вибір моделі](https://docs.openclaw.ai/uk/concepts/model-providers)
+
+[DeepSeek](https://docs.openclaw.ai/uk/providers/deepseek) [Fal](https://docs.openclaw.ai/uk/providers/fal)
+
+Ctrl+I
+
+---
+
+## Deepinfra - OpenClaw
+
+_Source: <https://docs.openclaw.ai/zh-CN/providers/deepinfra>_
+
+# DeepInfra
+
+DeepInfra 提供一个 **统一 API**，可通过单一端点和 API 密钥，将请求路由到最受欢迎的开源模型和前沿模型。它兼容 OpenAI，因此大多数 OpenAI SDK 只需切换 base URL 即可使用。
+
+## 获取 API 密钥
+
+1. 前往 [https://deepinfra.com/](https://deepinfra.com/)
+2. 登录或创建账户
+3. 进入 Dashboard / Keys，生成新的 API 密钥，或使用自动创建的密钥
+
+## CLI 设置
+
+```
+openclaw onboard --deepinfra-api-key <key>
+```
+
+或者设置环境变量：
+
+```
+export DEEPINFRA_API_KEY="<your-deepinfra-api-key>" # pragma: allowlist secret
+```
+
+## 配置片段
+
+```
+{
+  env: { DEEPINFRA_API_KEY: "<your-deepinfra-api-key>" }, // pragma: allowlist secret
+  agents: {
+    defaults: {
+      model: { primary: "deepinfra/deepseek-ai/DeepSeek-V3.2" },
+    },
+  },
+}
+```
+
+## 支持的 OpenClaw 界面
+
+内置插件会注册所有与当前 OpenClaw provider 契约匹配的 DeepInfra 界面：
+
+| 界面 | 默认模型 | OpenClaw 配置/工具 |
+| --- | --- | --- |
+| 聊天 / 模型 provider | `deepseek-ai/DeepSeek-V3.2` | `agents.defaults.model` |
+| 图像生成/编辑 | `black-forest-labs/FLUX-1-schnell` | `image_generate`, `agents.defaults.imageGenerationModel` |
+| 媒体理解 | 图像使用 `moonshotai/Kimi-K2.5` | 入站图像理解 |
+| 语音转文本 | `openai/whisper-large-v3-turbo` | 入站音频转录 |
+| 文本转语音 | `hexgrad/Kokoro-82M` | `messages.tts.provider: "deepinfra"` |
+| 视频生成 | `Pixverse/Pixverse-T2V` | `video_generate`, `agents.defaults.videoGenerationModel` |
+| 记忆嵌入 | `BAAI/bge-m3` | `agents.defaults.memorySearch.provider: "deepinfra"` |
+
+DeepInfra 还提供重排序、分类、目标检测及其他原生模型类型。OpenClaw 当前尚未为这些类别提供一流的 provider 契约，因此此插件暂时不会注册它们。
+
+## 可用模型
+
+OpenClaw 会在启动时动态发现可用的 DeepInfra 模型。使用 `/models deepinfra` 查看完整的可用模型列表。[DeepInfra.com](https://deepinfra.com/) 上可用的任何模型都可以通过 `deepinfra/` 前缀使用：
+
+```
+deepinfra/MiniMaxAI/MiniMax-M2.5
+deepinfra/deepseek-ai/DeepSeek-V3.2
+deepinfra/moonshotai/Kimi-K2.5
+deepinfra/zai-org/GLM-5.1
+...以及更多
+```
+
+## 说明
+
+- 模型引用格式为 `deepinfra/<provider>/<model>`（例如 `deepinfra/Qwen/Qwen3-Max`）。
+- 默认模型：`deepinfra/deepseek-ai/DeepSeek-V3.2`
+- Base URL：`https://api.deepinfra.com/v1/openai`
+- 原生视频生成使用 `https://api.deepinfra.com/v1/inference/<model>`。
+
+Ctrl+I
+
+---

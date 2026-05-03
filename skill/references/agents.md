@@ -1,433 +1,714 @@
 # Agents
 
-_4 pages from docs.openclaw.ai_
+_3 pages from docs.openclaw.ai — full content preserved._
 
+## Contents
 
----
-
-## Agent - OpenClaw
-
-_Source: <https://docs.openclaw.ai/cli/agent>_
-
-# `openclaw agent`
-
-Run an agent turn via the Gateway (use `--local` for embedded).
-Use `--agent <id>` to target a configured agent directly.Pass at least one session selector:
-
-- `--to <dest>`
-- `--session-id <id>`
-- `--agent <id>`
-
-Related:
-
-- Agent send tool: [Agent send](https://docs.openclaw.ai/tools/agent-send)
-
-## Options
-
-- `-m, --message <text>`: required message body
-- `-t, --to <dest>`: recipient used to derive the session key
-- `--session-id <id>`: explicit session id
-- `--agent <id>`: agent id; overrides routing bindings
-- `--model <id>`: model override for this run (`provider/model` or model id)
-- `--thinking <level>`: agent thinking level (`off`, `minimal`, `low`, `medium`, `high`, plus provider-supported custom levels such as `xhigh`, `adaptive`, or `max`)
-- `--verbose <on|off>`: persist verbose level for the session
-- `--channel <channel>`: delivery channel; omit to use the main session channel
-- `--reply-to <target>`: delivery target override
-- `--reply-channel <channel>`: delivery channel override
-- `--reply-account <id>`: delivery account override
-- `--local`: run the embedded agent directly (after plugin registry preload)
-- `--deliver`: send the reply back to the selected channel/target
-- `--timeout <seconds>`: override agent timeout (default 600 or config value)
-- `--json`: output JSON
-
-## Examples
-
-```
-openclaw agent --to +15555550123 --message "status update" --deliver
-openclaw agent --agent ops --message "Summarize logs"
-openclaw agent --agent ops --model openai/gpt-5.4 --message "Summarize logs"
-openclaw agent --session-id 1234 --message "Summarize inbox" --thinking medium
-openclaw agent --to +15555550123 --message "Trace logs" --verbose on --json
-openclaw agent --agent ops --message "Generate report" --deliver --reply-channel slack --reply-to "#reports"
-openclaw agent --agent ops --message "Run locally" --local
-```
-
-## Notes
-
-- Gateway mode falls back to the embedded agent when the Gateway request fails. Use `--local` to force embedded execution up front.
-- `--local` still preloads the plugin registry first, so plugin-provided providers, tools, and channels stay available during embedded runs.
-- `--local` and embedded fallback runs are treated as one-shot runs. Bundled MCP loopback resources and warm Claude stdio sessions opened for that local process are retired after the reply, so scripted invocations do not keep local child processes alive.
-- Gateway-backed runs leave Gateway-owned MCP loopback resources under the running Gateway process; older clients may still send the historical cleanup flag, but the Gateway accepts it as a compatibility no-op.
-- `--channel`, `--reply-channel`, and `--reply-account` affect reply delivery, not session routing.
-- `--json` keeps stdout reserved for the JSON response. Gateway, plugin, and embedded-fallback diagnostics are routed to stderr so scripts can parse stdout directly.
-- Embedded fallback JSON includes `meta.transport: "embedded"` and `meta.fallbackFrom: "gateway"` so scripts can distinguish fallback runs from Gateway runs.
-- If the Gateway accepts an agent run but the CLI times out waiting for the final reply, embedded fallback uses a fresh explicit `gateway-fallback-*` session/run id and reports `meta.fallbackReason: "gateway_timeout"` plus the fallback session fields. This avoids racing the Gateway-owned transcript lock or silently replacing the original routed conversation session.
-- When this command triggers `models.json` regeneration, SecretRef-managed provider credentials are persisted as non-secret markers (for example env var names, `secretref-env:ENV_VAR_NAME`, or `secretref-managed`), not resolved secret plaintext.
-- Marker writes are source-authoritative: OpenClaw persists markers from the active source config snapshot, not from resolved runtime secret values.
-
-## Related
-
-- [CLI reference](https://docs.openclaw.ai/cli)
-- [Agent runtime](https://docs.openclaw.ai/concepts/agent)
-
-[Update](https://docs.openclaw.ai/cli/update) [Agents](https://docs
-
-_… [truncated; see https://docs.openclaw.ai/cli/agent for full content]_
-
+- [Pi integration architecture - OpenClaw](#pi-integration-architecture---openclaw)
+- [Pi development workflow - OpenClaw](#pi-development-workflow---openclaw)
+- [AGENTS - OpenClaw](#agents---openclaw)
 
 ---
 
-## Agents - OpenClaw
+## Pi integration architecture - OpenClaw
 
-_Source: <https://docs.openclaw.ai/cli/agents>_
+_Source: <https://docs.openclaw.ai/pi>_
 
-# `openclaw agents`
+[OpenClaw home page](https://docs.openclaw.ai/)
 
-Manage isolated agents (workspaces + auth + routing).Related:
+Technical reference
 
-- [Multi-agent routing](https://docs.openclaw.ai/concepts/multi-agent)
-- [Agent workspace](https://docs.openclaw.ai/concepts/agent-workspace)
-- [Skills config](https://docs.openclaw.ai/tools/skills-config): skill visibility configuration.
+Pi integration architecture
 
-## Examples
+OpenClaw integrates with [pi-coding-agent](https://github.com/badlogic/pi-mono/tree/main/packages/coding-agent) and its sibling packages (`pi-ai`, `pi-agent-core`, `pi-tui`) to power its AI agent capabilities.
 
-```
-openclaw agents list
-openclaw agents list --bindings
-openclaw agents add work --workspace ~/.openclaw/workspace-work
-openclaw agents add ops --workspace ~/.openclaw/workspace-ops --bind telegram:ops --non-interactive
-openclaw agents bindings
-openclaw agents bind --agent work --bind telegram:ops
-openclaw agents unbind --agent work --bind telegram:ops
-openclaw agents set-identity --workspace ~/.openclaw/workspace --from-identity
-openclaw agents set-identity --agent main --avatar avatars/openclaw.png
-openclaw agents delete work
-```
+## Overview
 
-## Routing bindings
+OpenClaw uses the pi SDK to embed an AI coding agent into its messaging gateway architecture. Instead of spawning pi as a subprocess or using RPC mode, OpenClaw directly imports and instantiates pi’s `AgentSession` via `createAgentSession()`. This embedded approach provides:
 
-Use routing bindings to pin inbound channel traffic to a specific agent.If you also want different visible skills per agent, configure `agents.defaults.skills` and `agents.list[].skills` in `openclaw.json`. See [Skills config](https://docs.openclaw.ai/tools/skills-config) and [Configuration reference](https://docs.openclaw.ai/gateway/config-agents#agents-defaults-skills).List bindings:
+- Full control over session lifecycle and event handling
+- Custom tool injection (messaging, sandbox, channel-specific actions)
+- System prompt customization per channel/context
+- Session persistence with branching/compaction support
+- Multi-account auth profile rotation with failover
+- Provider-agnostic model switching
 
-```
-openclaw agents bindings
-openclaw agents bindings --agent work
-openclaw agents bindings --json
-```
-
-Add bindings:
-
-```
-openclaw agents bind --agent work --bind telegram:ops --bind discord:guild-a
-```
-
-If you omit `accountId` (`--bind <channel>`), OpenClaw resolves it from channel defaults and plugin setup hooks when available.If you omit `--agent` for `bind` or `unbind`, OpenClaw targets the current default agent.
-
-### Binding scope behavior
-
-- A binding without `accountId` matches the channel default account only.
-- `accountId: "*"` is the channel-wide fallback (all accounts) and is less specific than an explicit account binding.
-- If the same agent already has a matching channel binding without `accountId`, and you later bind with an explicit or resolved `accountId`, OpenClaw upgrades that existing binding in place instead of adding a duplicate.
-
-Example:
-
-```
-# initial channel-only binding
-openclaw agents bind --agent work --bind telegram
-
-# later upgrade to account-scoped binding
-openclaw agents bind --agent work --bind telegram:ops
-```
-
-After the upgrade, routing for that binding is scoped to `telegram:ops`. If you also want default-account routing, add it explicitly (for example `--bind telegram:default`).Remove bindings:
-
-```
-openclaw agents unbind --agent work --bind telegram:ops
-openclaw agents unbind --agent work --all
-```
-
-`unbind` accepts either `--all` or one or more `--bind` values, not both.
-
-## Command surface
-
-### `agents`
-
-Running `openclaw agents` with no subcommand is equivalent to `openclaw agents list`.
-
-### `agents list`
-
-Options:
-
-- `--json`
-- `--bindings`: include full routing rules, not only per-agent counts/summaries
-
-### `agents add [name]`
-
-Options:
-
-- `--workspace <dir>`
-- `--model <id>`
-- `--agent-dir <dir>`
-- `--bind <channel[:accountId]>` (repeatable)
-- `--non-interactive`
-- `--json`
-
-Notes:
-
-- Passing any explicit add flags switches the command into the non-interactive path.
-- Non-interactive mode requires both an agent name and `--workspace`.
-- `main` is reserved and cannot be used as the new agent id.
-- In interactive mode, auth seeding copies only portable static profiles
-(`api_key` and static `token` by default). OAuth refresh-token profiles remain
-available only by read-through inheritance from the real `main` agent store.
-If the configured default agent is not `main`, sign in separately for OAuth
-profiles on the new agent.
-
-### `agents bindings`
-
-Options:
-
-- `--agent <id>`
-- `--json`
-
-### `agents bind`
-
-Options:
-
-- `--agent <id>` (defaults to the current default agent)
-- `--bind <channel[:accountId]>` (repeatable)
-- `--json`
-
-### `agents unbind`
-
-Options:
-
-- `--agent <id>` (defaults to the current default agent)
-- `--bin
-
-_… [truncated; see https://docs.openclaw.ai/cli/agents for full content]_
-
-
----
-
-## Default AGENTS.md - OpenClaw
-
-_Source: <https://docs.openclaw.ai/reference/AGENTS.default>_
-
-# AGENTS.md - OpenClaw Personal Assistant (default)
-
-## First run (recommended)
-
-OpenClaw uses a dedicated workspace directory for the agent. Default: `~/.openclaw/workspace` (configurable via `agents.defaults.workspace`).
-
-1. Create the workspace (if it doesn’t already exist):
-
-```
-mkdir -p ~/.openclaw/workspace
-```
-
-2. Copy the default workspace templates into the workspace:
-
-```
-cp docs/reference/templates/AGENTS.md ~/.openclaw/workspace/AGENTS.md
-cp docs/reference/templates/SOUL.md ~/.openclaw/workspace/SOUL.md
-cp docs/reference/templates/TOOLS.md ~/.openclaw/workspace/TOOLS.md
-```
-
-3. Optional: if you want the personal assistant skill roster, replace AGENTS.md with this file:
-
-```
-cp docs/reference/AGENTS.default.md ~/.openclaw/workspace/AGENTS.md
-```
-
-4. Optional: choose a different workspace by setting `agents.defaults.workspace` (supports `~`):
+## Package dependencies
 
 ```
 {
-  agents: { defaults: { workspace: "~/.openclaw/workspace" } },
+  "@mariozechner/pi-agent-core": "0.70.2",
+  "@mariozechner/pi-ai": "0.70.2",
+  "@mariozechner/pi-coding-agent": "0.70.2",
+  "@mariozechner/pi-tui": "0.70.2"
 }
 ```
 
-## Safety defaults
+| Package | Purpose |
+| --- | --- |
+| `pi-ai` | Core LLM abstractions: `Model`, `streamSimple`, message types, provider APIs |
+| `pi-agent-core` | Agent loop, tool execution, `AgentMessage` types |
+| `pi-coding-agent` | High-level SDK: `createAgentSession`, `SessionManager`, `AuthStorage`, `ModelRegistry`, built-in tools |
+| `pi-tui` | Terminal UI components (used in OpenClaw’s local TUI mode) |
 
-- Don’t dump directories or secrets into chat.
-- Don’t run destructive commands unless explicitly asked.
-- Don’t send partial/streaming replies to external messaging surfaces (only final replies).
-
-## Session start (required)
-
-- Read `SOUL.md`, `USER.md`, and today+yesterday in `memory/`.
-- Read `MEMORY.md` when present.
-- Do it before responding.
-
-## Soul (required)
-
-- `SOUL.md` defines identity, tone, and boundaries. Keep it current.
-- If you change `SOUL.md`, tell the user.
-- You are a fresh instance each session; continuity lives in these files.
-
-## Shared spaces (recommended)
-
-- You’re not the user’s voice; be careful in group chats or public channels.
-- Don’t share private data, contact info, or internal notes.
-
-## Memory system (recommended)
-
-- Daily log: `memory/YYYY-MM-DD.md` (create `memory/` if needed).
-- Long-term memory: `MEMORY.md` for durable facts, preferences, and decisions.
-- Lowercase `memory.md` is legacy repair input only; do not keep both root files on purpose.
-- On session start, read today + yesterday + `MEMORY.md` when present.
-- Capture: decisions, preferences, constraints, open loops.
-- Avoid secrets unless explicitly requested.
-
-## Tools & skills
-
-- Tools live in skills; follow each skill’s `SKILL.md` when you need it.
-- Keep environment-specific notes in `TOOLS.md` (Notes for Skills).
-
-## Backup tip (recommended)
-
-If you treat this workspace as Clawd’s “memory”, make it a git repo (ideally private) so `AGENTS.md` and your memory files are backed up.
+## File structure
 
 ```
-cd ~/.openclaw/workspace
-git init
-git add AGENTS.md
-git commit -m "Add Clawd workspace"
-# Optional: add a private remote + push
+src/agents/
+├── pi-embedded-runner.ts          # Re-exports from pi-embedded-runner/
+├── pi-embedded-runner/
+│   ├── run.ts                     # Main entry: runEmbeddedPiAgent()
+│   ├── run/
+│   │   ├── attempt.ts             # Single attempt logic with session setup
+│   │   ├── params.ts              # RunEmbeddedPiAgentParams type
+│   │   ├── payloads.ts            # Build response payloads from run results
+│   │   ├── images.ts              # Vision model image injection
+│   │   └── types.ts               # EmbeddedRunAttemptResult
+│   ├── abort.ts                   # Abort error detection
+│   ├── cache-ttl.ts               # Cache TTL tracking for context pruning
+│   ├── compact.ts                 # Manual/auto compaction logic
+│   ├── extensions.ts              # Load pi extensions for embedded runs
+│   ├── extra-params.ts            # Provider-specific stream params
+│   ├── google.ts                  # Google/Gemini turn ordering fixes
+│   ├── history.ts                 # History limiting (DM vs group)
+│   ├── lanes.ts                   # Session/global command lanes
+│   ├── logger.ts                  # Subsystem logger
+│   ├── model.ts                   # Model resolution via ModelRegistry
+│   ├── runs.ts                    # Active run tracking, abort, queue
+│   ├── sandbox-info.ts            # Sandbox info for system prompt
+│   ├── session-manager-cache.ts   # SessionManager instance caching
+│   ├── session-manager-init.ts    # Session file initialization
+│   ├── system-prompt.ts           # System prompt builder
+│   ├── tool-split.ts              # Split tools into builtIn vs custom
+│   ├── types.ts                   # EmbeddedPiAgentMeta, EmbeddedPiRunResult
+│   └── utils.ts                   # ThinkLevel mapping, error description
+├── pi-embedded-subscribe.ts       # Session event subscription/dispatch
+├── pi-embedded-subscribe.types.ts # SubscribeEmbeddedPiSessionParams
+├── pi-embedded-subscribe.handlers.ts # Event handler factory
+├── pi-embedded-subscribe.handlers.lifecycle.ts
+├── pi-embedded-subscribe.handlers.types.ts
+├── pi-embedded-block-chunker.ts   # Streaming block reply chunking
+├── pi-embedded-messaging.ts       # Messaging tool sent tracking
+├── pi-embedded-helpers.ts         # Error classification, turn validation
+├── pi-embedded-helpers/           # Helper modules
+├── pi-embedded-utils.ts           # Formatting utilities
+├── pi-tools.ts                    # createOpenClawCodingTools()
+├── pi-tools.abort.ts              # AbortSignal wrapping for tools
+├── pi-tools.policy.ts             # Tool allowlist/denylist policy
+├── pi-tools.read.ts               # Read tool customizations
+├── pi-tools.schema.ts             # Tool schema normalization
+├── pi-tools.types.ts              # AnyAgentTool type alias
+├── pi-tool-definition-adapter.ts  # AgentTool -> ToolDefinition adapter
+├── pi-settings.ts                 # Settings overrides
+├── pi-hooks/                      # Custom pi hooks
+│   ├── compaction-safeguard.ts    # Safeguard extension
+│   ├── compaction-safeguard-runtime.ts
+│   ├── context-pruning.ts         # Cache-TTL context pruning extension
+│   └── context-pruning/
+├── model-auth.ts                  # Auth profile resolution
+├── auth-profiles.ts               # Profile store, cooldown, failover
+├── model-selection.ts             # Default model resolution
+├── models-config.ts               # models.json generation
+├── model-catalog.ts               # Model catalog cache
+├── context-window-guard.ts        # Context window validation
+├── failover-error.ts              # FailoverError class
+├── defaults.ts                    # DEFAULT_PROVIDER, DEFAULT_MODEL
+├── system-prompt.ts               # buildAgentSystemPrompt()
+├── system-prompt-params.ts        # System prompt parameter resolution
+├── system-prompt-report.ts        # Debug report generation
+├── tool-summaries.ts              # Tool description summaries
+├── tool-policy.ts                 # Tool policy resolution
+├── transcript-policy.ts           # Transcript validation policy
+├── skills.ts                      # Skill snapshot/prompt building
+├── skills/                        # Skill subsystem
+├── sandbox.ts                     # Sandbox context resolution
+├── sandbox/                       # Sandbox subsystem
+├── channel-tools.ts               # Channel-specific tool injection
+├── openclaw-tools.ts              # OpenClaw-specific tools
+├── bash-tools.ts                  # exec/process tools
+├── apply-patch.ts                 # apply_patch tool (OpenAI)
+├── tools/                         # Individual tool implementations
+│   ├── browser-tool.ts
+│   ├── canvas-tool.ts
+│   ├── cron-tool.ts
+│   ├── gateway-tool.ts
+│   ├── image-tool.ts
+│   ├── message-tool.ts
+│   ├── nodes-tool.ts
+│   ├── session*.ts
+│   ├── web-*.ts
+│   └── ...
+└── ...
 ```
 
-## What OpenClaw does
+Channel-specific message action runtimes now live in the plugin-owned extension
+directories instead of under `src/agents/tools`, for example:
 
-- Runs WhatsApp gateway + Pi coding agent so the assistant can read/write chats, fetch context, and run skills via the host Mac.
-- macOS app manages permissions (screen recording, notifications, microphone) and exposes the `openclaw` CLI via its bundled binary.
-- Direct chats collapse into the agent’s `main` session by default; groups stay isolated as `agent:<agentId>:<channel>:group:<id>` (rooms/channels: `agent:<agentId>:<channel>:channel:<id>`); heartbeats keep background tasks alive.
+- the Discord plugin action runtime files
+- the Slack plugin action runtime file
+- the Telegram plugin action runtime file
+- the WhatsApp plugin action runtime file
 
-## Core skills (enable in Settings → Skills)
+## Core integration flow
 
-- **mcporter** — Tool server runtime/CLI for managing external skill backends.
-- **Peekaboo** — Fast macOS screenshots with optional AI vision analysis.
-- **camsnap** — Capture frames, clips, or motion alerts from RTSP/ONVIF security cams.
-- **oracle** — OpenAI-ready agent CLI with session replay and browser control.
-- **eightctl** — Control your sleep, from the terminal.
-- **imsg** — Send, read, stream iMessage & SMS.
-- **wacli** — WhatsApp CLI: sync, search, send.
-- **discord** — Discord actions: react, stickers, polls. Use `user:<id>` or `channel:<id>` targets (bare numeric ids are ambiguous).
-- **gog** — Google Suite CLI: Gmail, Calendar, Drive, Contacts.
-- **spotify-player** — Terminal Spotify client to search/queue/control playback.
-- **sag** — ElevenLabs speech with mac-style say UX; streams to speakers by default.
+### 1\. Running an Embedded Agent
 
-_… [truncated; see https://docs.openclaw.ai/reference/AGENTS.default for full content]_
+The main entry point is `runEmbeddedPiAgent()` in `pi-embedded-runner/run.ts`:
 
+```
+import { runEmbeddedPiAgent } from "./agents/pi-embedded-runner.js";
+
+const result = await runEmbeddedPiAgent({
+  sessionId: "user-123",
+  sessionKey: "main:whatsapp:+1234567890",
+  sessionFile: "/path/to/session.jsonl",
+  workspaceDir: "/path/to/workspace",
+  config: openclawConfig,
+  prompt: "Hello, how are you?",
+  provider: "anthropic",
+  model: "claude-sonnet-4-6",
+  timeoutMs: 120_000,
+  runId: "run-abc",
+  onBlockReply: async (payload) => {
+    await sendToChannel(payload.text, payload.mediaUrls);
+  },
+});
+```
+
+### 2\. Session Creation
+
+Inside `runEmbeddedAttempt()` (called by `runEmbeddedPiAgent()`), the pi SDK is used:
+
+```
+import {
+  createAgentSession,
+  DefaultResourceLoader,
+  SessionManager,
+  SettingsManager,
+} from "@mariozechner/pi-coding-agent";
+
+const resourceLoader = new DefaultResourceLoader({
+  cwd: resolvedWorkspace,
+  agentDir,
+  settingsManager,
+  additionalExtensionPaths,
+});
+await resourceLoader.reload();
+
+const { session } = await createAgentSession({
+  cwd: resolvedWorkspace,
+  agentDir,
+  authStorage: params.authStorage,
+  modelRegistry: params.modelRegistry,
+  model: params.model,
+  thinkingLevel: mapThinkingLevel(params.thinkLevel),
+  tools: builtInTools,
+  customTools: allCustomTools,
+  sessionManager,
+  settingsManager,
+  resourceLoader,
+});
+
+applySystemPromptOverrideToSession(session, systemPromptOverride);
+```
+
+### 3\. Event Subscription
+
+`subscribeEmbeddedPiSession()` subscribes to pi’s `AgentSession` events:
+
+```
+const subscription = subscribeEmbeddedPiSession({
+  session: activeSession,
+  runId: params.runId,
+  verboseLevel: params.verboseLevel,
+  reasoningMode: params.reasoningLevel,
+  toolResultFormat: params.toolResultFormat,
+  onToolResult: params.onToolResult,
+  onReasoningStream: params.onReasoningStream,
+  onBlockReply: params.onBlockReply,
+  onPartialReply: params.onPartialReply,
+  onAgentEvent: params.onAgentEvent,
+});
+```
+
+Events handled include:
+
+- `message_start` / `message_end` / `message_update` (streaming text/thinking)
+- `tool_execution_start` / `tool_execution_update` / `tool_execution_end`
+- `turn_start` / `turn_end`
+- `agent_start` / `agent_end`
+- `compaction_start` / `compaction_end`
+
+### 4\. Prompting
+
+After setup, the session is prompted:
+
+```
+await session.prompt(effectivePrompt, { images: imageResult.images });
+```
+
+The SDK handles the full agent loop: sending to LLM, executing tool calls, streaming responses.Image injection is prompt-local: OpenClaw loads image refs from the current prompt and
+passes them via `images` for that turn only. It does not re-scan older history turns
+to re-inject image payloads.
+
+## Tool architecture
+
+### Tool pipeline
+
+1. **Base Tools**: pi’s `codingTools` (read, bash, edit, write)
+2. **Custom Replacements**: OpenClaw replaces bash with `exec`/`process`, customizes read/edit/write for sandbox
+3. **OpenClaw Tools**: messaging, browser, canvas, sessions, cron, gateway, etc.
+4. **Channel Tools**: Discord/Telegram/Slack/WhatsApp-specific action tools
+5. **Policy Filtering**: Tools filtered by profile, provider, agent, group, sandbox policies
+6. **Schema Normalization**: Schemas cleaned for Gemini/OpenAI quirks
+7. **AbortSignal Wrapping**: Tools wrapped to respect abort signals
+
+### Tool definition adapter
+
+pi-agent-core’s `AgentTool` has a different `execute` signature than pi-coding-agent’s `ToolDefinition`. The adapter in `pi-tool-definition-adapter.ts` bridges this:
+
+```
+export function toToolDefinitions(tools: AnyAgentTool[]): ToolDefinition[] {
+  return tools.map((tool) => ({
+    name: tool.name,
+    label: tool.label ?? name,
+    description: tool.description ?? "",
+    parameters: tool.parameters,
+    execute: async (toolCallId, params, onUpdate, _ctx, signal) => {
+      // pi-coding-agent signature differs from pi-agent-core
+      return await tool.execute(toolCallId, params, signal, onUpdate);
+    },
+  }));
+}
+```
+
+### Tool split strategy
+
+`splitSdkTools()` passes all tools via `customTools`:
+
+```
+export function splitSdkTools(options: { tools: AnyAgentTool[]; sandboxEnabled: boolean }) {
+  return {
+    builtInTools: [], // Empty. We override everything
+    customTools: toToolDefinitions(options.tools),
+  };
+}
+```
+
+This ensures OpenClaw’s policy filtering, sandbox integration, and extended toolset remain consistent across providers.
+
+## System prompt construction
+
+The system prompt is built in `buildAgentSystemPrompt()` (`system-prompt.ts`). It assembles a full prompt with sections including Tooling, Tool Call Style, Safety guardrails, OpenClaw CLI reference, Skills, Docs, Workspace, Sandbox, Messaging, Reply Tags, Voice, Silent Replies, Heartbeats, Runtime metadata, plus Memory and Reactions when enabled, and optional context files and extra system prompt content. Sections are trimmed for minimal prompt mode used by subagents.The prompt is applied after session creation via `applySystemPromptOverrideToSession()`:
+
+```
+const systemPromptOverride = createSystemPromptOverride(appendPrompt);
+applySystemPromptOverrideToSession(session, systemPromptOverride);
+```
+
+## Session management
+
+### Session files
+
+Sessions are JSONL files with tree structure (id/parentId linking). Pi’s `SessionManager` handles persistence:
+
+```
+const sessionManager = SessionManager.open(params.sessionFile);
+```
+
+OpenClaw wraps this with `guardSessionManager()` for tool result safety.
+
+### Session caching
+
+`session-manager-cache.ts` caches SessionManager instances to avoid repeated file parsing:
+
+```
+await prewarmSessionFile(params.sessionFile);
+sessionManager = SessionManager.open(params.sessionFile);
+trackSessionManagerAccess(params.sessionFile);
+```
+
+### History limiting
+
+`limitHistoryTurns()` trims conversation history based on channel type (DM vs group).
+
+### Compaction
+
+Auto-compaction triggers on context overflow. Common overflow signatures
+include `request_too_large`, `context length exceeded`, `input exceeds the maximum number of tokens`, `input token count exceeds the maximum number of input tokens`, `input is too long for the model`, and `ollama error: context length exceeded`. `compactEmbeddedPiSessionDirect()` handles manual
+compaction:
+
+```
+const compactResult = await compactEmbeddedPiSessionDirect({
+  sessionId, sessionFile, provider, model, ...
+});
+```
+
+## Authentication & Model Resolution
+
+### Auth profiles
+
+OpenClaw maintains an auth profile store with multiple API keys per provider:
+
+```
+const authStore = ensureAuthProfileStore(agentDir, { allowKeychainPrompt: false });
+const profileOrder = resolveAuthProfileOrder({ cfg, store: authStore, provider, preferredProfile });
+```
+
+Profiles rotate on failures with cooldown tracking:
+
+```
+await markAuthProfileFailure({ store, profileId, reason, cfg, agentDir });
+const rotated = await advanceAuthProfile();
+```
+
+### Model resolution
+
+```
+import { resolveModel } from "./pi-embedded-runner/model.js";
+
+const { model, error, authStorage, modelRegistry } = resolveModel(
+  provider,
+  modelId,
+  agentDir,
+  config,
+);
+
+// Uses pi's ModelRegistry and AuthStorage
+authStorage.setRuntimeApiKey(model.provider, apiKeyInfo.apiKey);
+```
+
+### Failover
+
+`FailoverError` triggers model fallback when configured:
+
+```
+if (fallbackConfigured && isFailoverErrorMessage(errorText)) {
+  throw new FailoverError(errorText, {
+    reason: promptFailoverReason ?? "unknown",
+    provider,
+    model: modelId,
+    profileId,
+    status: resolveFailoverStatus(promptFailoverReason),
+  });
+}
+```
+
+## Pi extensions
+
+OpenClaw loads custom pi extensions for specialized behavior:
+
+### Compaction safeguard
+
+`src/agents/pi-hooks/compaction-safeguard.ts` adds guardrails to compaction, including adaptive token budgeting plus tool failure and file operation summaries:
+
+```
+if (resolveCompactionMode(params.cfg) === "safeguard") {
+  setCompactionSafeguardRuntime(params.sessionManager, { maxHistoryShare });
+  paths.push(resolvePiExtensionPath("compaction-safeguard"));
+}
+```
+
+### Context pruning
+
+`src/agents/pi-hooks/context-pruning.ts` implements cache-TTL based context pruning:
+
+```
+if (cfg?.agents?.defaults?.contextPruning?.mode === "cache-ttl") {
+  setContextPruningRuntime(params.sessionManager, {
+    settings,
+    contextWindowTokens,
+    isToolPrunable,
+    lastCacheTouchAt,
+  });
+  paths.push(resolvePiExtensionPath("context-pruning"));
+}
+```
+
+## Streaming & Block Replies
+
+### Block chunking
+
+`EmbeddedBlockChunker` manages streaming text into discrete reply blocks:
+
+```
+const blockChunker = blockChunking ? new EmbeddedBlockChunker(blockChunking) : null;
+```
+
+### Thinking/Final Tag Stripping
+
+Streaming output is processed to strip `<think>`/`<thinking>` blocks and extract `<final>` content:
+
+```
+const stripBlockTags = (text: string, state: { thinking: boolean; final: boolean }) => {
+  // Strip <think>...</think> content
+  // If enforceFinalTag, only return <final>...</final> content
+};
+```
+
+### Reply directives
+
+Reply directives like `[[media:url]]`, `[[voice]]`, `[[reply:id]]` are parsed and extracted:
+
+```
+const { text: cleanedText, mediaUrls, audioAsVoice, replyToId } = consumeReplyDirectives(chunk);
+```
+
+## Error handling
+
+### Error classification
+
+`pi-embedded-helpers.ts` classifies errors for appropriate handling:
+
+```
+isContextOverflowError(errorText)     // Context too large
+isCompactionFailureError(errorText)   // Compaction failed
+isAuthAssistantError(lastAssistant)   // Auth failure
+isRateLimitAssistantError(...)        // Rate limited
+isFailoverAssistantError(...)         // Should failover
+classifyFailoverReason(errorText)     // "auth" | "rate_limit" | "quota" | "timeout" | ...
+```
+
+### Thinking level fallback
+
+If a thinking level is unsupported, it falls back:
+
+```
+const fallbackThinking = pickFallbackThinkingLevel({
+  message: errorText,
+  attempted: attemptedThinking,
+});
+if (fallbackThinking) {
+  thinkLevel = fallbackThinking;
+  continue;
+}
+```
+
+## Sandbox integration
+
+When sandbox mode is enabled, tools and paths are constrained:
+
+```
+const sandbox = await resolveSandboxContext({
+  config: params.config,
+  sessionKey: sandboxSessionKey,
+  workspaceDir: resolvedWorkspace,
+});
+
+if (sandboxRoot) {
+  // Use sandboxed read/edit/write tools
+  // Exec runs in container
+  // Browser uses bridge URL
+}
+```
+
+## Provider-Specific Handling
+
+### Anthropic
+
+- Refusal magic string scrubbing
+- Turn validation for consecutive roles
+- Strict upstream Pi tool parameter validation
+
+### Google/Gemini
+
+- Plugin-owned tool schema sanitization
+
+### OpenAI
+
+- `apply_patch` tool for Codex models
+- Thinking level downgrade handling
+
+## TUI Integration
+
+OpenClaw also has a local TUI mode that uses pi-tui components directly:
+
+```
+// src/tui/tui.ts
+import { ... } from "@mariozechner/pi-tui";
+```
+
+This provides the interactive terminal experience similar to pi’s native mode.
+
+## Key differences from Pi CLI
+
+| Aspect | Pi CLI | OpenClaw Embedded |
+| --- | --- | --- |
+| Invocation | `pi` command / RPC | SDK via `createAgentSession()` |
+| Tools | Default coding tools | Custom OpenClaw tool suite |
+| System prompt | AGENTS.md + prompts | Dynamic per-channel/context |
+| Session storage | `~/.pi/agent/sessions/` | `~/.openclaw/agents/<agentId>/sessions/` (or `$OPENCLAW_STATE_DIR/agents/<agentId>/sessions/`) |
+| Auth | Single credential | Multi-profile with rotation |
+| Extensions | Loaded from disk | Programmatic + disk paths |
+| Event handling | TUI rendering | Callback-based (onBlockReply, etc.) |
+
+## Future considerations
+
+Areas for potential rework:
+
+1. **Tool signature alignment**: Currently adapting between pi-agent-core and pi-coding-agent signatures
+2. **Session manager wrapping**: `guardSessionManager` adds safety but increases complexity
+3. **Extension loading**: Could use pi’s `ResourceLoader` more directly
+4. **Streaming handler complexity**: `subscribeEmbeddedPiSession` has grown large
+5. **Provider quirks**: Many provider-specific codepaths that pi could potentially handle
+
+## Tests
+
+Pi integration coverage spans these suites:
+
+- `src/agents/pi-*.test.ts`
+- `src/agents/pi-auth-json.test.ts`
+- `src/agents/pi-embedded-*.test.ts`
+- `src/agents/pi-embedded-helpers*.test.ts`
+- `src/agents/pi-embedded-runner*.test.ts`
+- `src/agents/pi-embedded-runner/**/*.test.ts`
+- `src/agents/pi-embedded-subscribe*.test.ts`
+- `src/agents/pi-tools*.test.ts`
+- `src/agents/pi-tool-definition-adapter*.test.ts`
+- `src/agents/pi-settings.test.ts`
+- `src/agents/pi-hooks/**/*.test.ts`
+
+Live/opt-in:
+
+- `src/agents/pi-embedded-runner-extraparams.live.test.ts` (enable `OPENCLAW_LIVE_TEST=1`)
+
+For current run commands, see [Pi Development Workflow](https://docs.openclaw.ai/pi-dev).
+
+## Related
+
+- [Pi development workflow](https://docs.openclaw.ai/pi-dev)
+- [Install overview](https://docs.openclaw.ai/install)
+
+[USER template](https://docs.openclaw.ai/reference/templates/USER) [Onboarding Reference](https://docs.openclaw.ai/reference/wizard)
+
+Ctrl+I
 
 ---
 
-## AGENTS.md template - OpenClaw
+## Pi development workflow - OpenClaw
 
-_Source: <https://docs.openclaw.ai/reference/templates/AGENTS>_
+_Source: <https://docs.openclaw.ai/pi-dev>_
 
-# AGENTS.md - Your Workspace
+[OpenClaw home page](https://docs.openclaw.ai/)
 
-This folder is home. Treat it that way.
+Advanced setup
 
-## First Run
+Pi development workflow
 
-If `BOOTSTRAP.md` exists, that’s your birth certificate. Follow it, figure out who you are, then delete it. You won’t need it again.
+A sane workflow for working on the Pi integration in OpenClaw.
 
-## Session Startup
+## Type checking and linting
 
-Use runtime-provided startup context first.That context may already include:
+- Default local gate: `pnpm check`
+- Build gate: `pnpm build` when the change can affect build output, packaging, or lazy-loading/module boundaries
+- Full landing gate for Pi-heavy changes: `pnpm check && pnpm test`
 
-- `AGENTS.md`, `SOUL.md`, and `USER.md`
-- recent daily memory such as `memory/YYYY-MM-DD.md`
-- `MEMORY.md` when this is the main session
+## Running Pi tests
 
-Do not manually reread startup files unless:
+Run the Pi-focused test set directly with Vitest:
 
-1. The user explicitly asks
-2. The provided context is missing something you need
-3. You need a deeper follow-up read beyond the provided startup context
+```
+pnpm test \
+  "src/agents/pi-*.test.ts" \
+  "src/agents/pi-embedded-*.test.ts" \
+  "src/agents/pi-tools*.test.ts" \
+  "src/agents/pi-settings.test.ts" \
+  "src/agents/pi-tool-definition-adapter*.test.ts" \
+  "src/agents/pi-hooks/**/*.test.ts"
+```
 
-## Memory
+To include the live provider exercise:
 
-You wake up fresh each session. These files are your continuity:
+```
+OPENCLAW_LIVE_TEST=1 pnpm test src/agents/pi-embedded-runner-extraparams.live.test.ts
+```
 
-- **Daily notes:**`memory/YYYY-MM-DD.md` (create `memory/` if needed) — raw logs of what happened
-- **Long-term:**`MEMORY.md` — your curated memories, like a human’s long-term memory
+This covers the main Pi unit suites:
 
-Capture what matters. Decisions, context, things to remember. Skip the secrets unless asked to keep them.
+- `src/agents/pi-*.test.ts`
+- `src/agents/pi-embedded-*.test.ts`
+- `src/agents/pi-tools*.test.ts`
+- `src/agents/pi-settings.test.ts`
+- `src/agents/pi-tool-definition-adapter.test.ts`
+- `src/agents/pi-hooks/*.test.ts`
 
-### 🧠 MEMORY.md - Your Long-Term Memory
+## Manual testing
 
-- **ONLY load in main session** (direct chats with your human)
-- **DO NOT load in shared contexts** (Discord, group chats, sessions with other people)
-- This is for **security** — contains personal context that shouldn’t leak to strangers
-- You can **read, edit, and update** MEMORY.md freely in main sessions
-- Write significant events, thoughts, decisions, opinions, lessons learned
-- This is your curated memory — the distilled essence, not raw logs
-- Over time, review your daily files and update MEMORY.md with what’s worth keeping
+Recommended flow:
 
-### 📝 Write It Down - No “Mental Notes”!
+- Run the gateway in dev mode:
+  - `pnpm gateway:dev`
+- Trigger the agent directly:
+  - `pnpm openclaw agent --message "Hello" --thinking low`
+- Use the TUI for interactive debugging:
+  - `pnpm tui`
 
-- **Memory is limited** — if you want to remember something, WRITE IT TO A FILE
-- “Mental notes” don’t survive session restarts. Files do.
-- When someone says “remember this” → update `memory/YYYY-MM-DD.md` or relevant file
-- When you learn a lesson → update AGENTS.md, TOOLS.md, or the relevant skill
-- When you make a mistake → document it so future-you doesn’t repeat it
-- **Text > Brain** 📝
+For tool call behavior, prompt for a `read` or `exec` action so you can see tool streaming and payload handling.
 
-## Red Lines
+## Clean slate reset
 
-- Don’t exfiltrate private data. Ever.
-- Don’t run destructive commands without asking.
-- `trash` \> `rm` (recoverable beats gone forever)
-- When in doubt, ask.
+State lives under the OpenClaw state directory. Default is `~/.openclaw`. If `OPENCLAW_STATE_DIR` is set, use that directory instead.To reset everything:
 
-## External vs Internal
+- `openclaw.json` for config
+- `agents/<agentId>/agent/auth-profiles.json` for model auth profiles (API keys + OAuth)
+- `credentials/` for provider/channel state that still lives outside the auth profile store
+- `agents/<agentId>/sessions/` for agent session history
+- `agents/<agentId>/sessions/sessions.json` for the session index
+- `sessions/` if legacy paths exist
+- `workspace/` if you want a blank workspace
 
-**Safe to do freely:**
+If you only want to reset sessions, delete `agents/<agentId>/sessions/` for that agent. If you want to keep auth, leave `agents/<agentId>/agent/auth-profiles.json` and any provider state under `credentials/` in place.
 
-- Read files, explore, organize, learn
-- Search the web, check calendars
-- Work within this workspace
+## References
 
-**Ask first:**
+- [Testing](https://docs.openclaw.ai/help/testing)
+- [Getting Started](https://docs.openclaw.ai/start/getting-started)
 
-- Sending emails, tweets, public posts
-- Anything that leaves the machine
-- Anything you’re uncertain about
+## Related
 
-## Group Chats
+- [Pi integration architecture](https://docs.openclaw.ai/pi)
 
-You have access to your human’s stuff. That doesn’t mean you _share_ their stuff. In groups, you’re a participant — not their voice, not their proxy. Think before you speak.
+[Setup](https://docs.openclaw.ai/start/setup)
 
-### 💬 Know When to Speak!
+Ctrl+I
 
-In group chats where you receive every message, be **smart about when to contribute**:**Respond when:**
+---
 
-- Directly mentioned or asked a question
-- You can add genuine value (info, insight, help)
-- Something witty/funny fits naturally
-- Correcting important misinformation
-- Summarizing when asked
+## AGENTS - OpenClaw
 
-**Stay silent when:**
+_Source: <https://docs.openclaw.ai/zh-CN/AGENTS>_
 
-- It’s just casual banter between humans
-- Someone already answered the question
-- Your response would just be “yeah” or “nice”
-- The conversation is flowing fine without you
-- Adding a message would interrupt the vibe
+# 文档指南
 
-**The human rule:** Humans in group chats don’t respond to every single message. Neither should you. Quality > quantity. If you wouldn’t send it in a real group chat with friends, don’t send it.**Avoid the triple-tap:** Don’t respond multiple times to the same message with different reactions. One thoughtful response beats three fragments.Participate, don’t dominate.
+此目录负责文档编写、Mintlify 链接规则以及文档 i18n 策略。
 
-### 😊 React Like a Human!
+## Mintlify 规则
 
-On platforms that support reactions (Discord, Slack), use emoji reactions naturally:**React when:**
+- 文档托管在 Mintlify（`https://docs.openclaw.ai`）上。
+- `docs/**/*.md` 中的内部文档链接必须保持为根相对路径，且不带 `.md` 或 `.mdx` 后缀（示例：`[配置](/gateway/configuration)`）。
+- 章节交叉引用应在根相对路径上使用锚点（示例：`[Hooks](/gateway/configuration-reference#hooks)`）。
+- 文档标题应避免使用长破折号和撇号，因为 Mintlify 的锚点生成在这些情况下不稳定。
+- README 和其他在 GitHub 上渲染的文档应保留绝对文档 URL，以确保链接在 Mintlify 之外也能正常工作。
+- 文档内容必须保持通用：不要使用个人设备名称、主机名或本地路径；请使用类似 `user@gateway-host` 的占位符。
 
-- You appreciate something but don’t need to reply (👍, ❤️, 🙌)
-- Something made you laugh (😂, 💀)
-- You find it interesting or thought-provoking (🤔, 💡)
-- You want to acknowledge without interrupting the flow
-- It’s a simple yes/no or approval situat
+## 文档内容规则
 
-_… [truncated; see https://docs.openclaw.ai/reference/templates/AGENTS for full content]_
+- 对于文档、UI 文案和选择器列表，服务/提供商应按字母顺序排列，除非该部分明确是在描述运行时顺序或自动检测顺序。
+- 保持内置 plugin 的命名与根 `AGENTS.md` 中的全仓库 plugin 术语规则一致。
+
+## 文档 i18n
+
+- 此仓库不维护外语文档。生成后的发布输出位于单独的 `openclaw/docs` 仓库中（本地通常克隆为 `../openclaw-docs`）。
+- 不要在此仓库中的 `docs/<locale>/**` 下添加或编辑本地化文档。
+- 将此仓库中的英文文档以及术语表文件视为唯一事实来源。
+- 流程：先在此处更新英文文档，再按需要更新 `docs/.i18n/glossary.<locale>.json`，然后让发布仓库同步，并在 `openclaw/docs` 中运行 `scripts/docs-i18n`。
+- 在重新运行 `scripts/docs-i18n` 之前，为任何必须保留英文或需要固定译法的新技术术语、页面标题或简短导航标签添加术语表条目。
+- `pnpm docs:check-i18n-glossary` 是用于检查已变更英文文档标题和简短内部文档标签的守卫命令。
+- 翻译记忆库存储在发布仓库中生成的 `docs/.i18n/*.tm.jsonl` 文件里。
+- 参见 `docs/.i18n/README.md`。
+
+[文档目录](https://docs.openclaw.ai/zh-CN/start/docs-directory)
+
+Ctrl+I
+
+---
